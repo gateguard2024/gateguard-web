@@ -46,6 +46,21 @@ export default function Home() {
 
         </div>
       </div>
+      {/* Trust Bar Section */}
+<section className="py-12 bg-zinc-950 border-t border-zinc-900">
+  <div className="container mx-auto px-6">
+    <p className="text-center text-zinc-500 text-sm font-medium uppercase tracking-widest mb-8">
+      Protecting Premier Properties
+    </p>
+    <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-50 grayscale hover:opacity-100 transition-opacity">
+      <span className="text-xl font-bold text-white tracking-tighter">HOA MANAGERS</span>
+      <span className="text-xl font-bold text-white tracking-tighter">MULTI-FAMILY</span>
+      <span className="text-xl font-bold text-white tracking-tighter">GATED ESTATES</span>
+      <span className="text-xl font-bold text-white tracking-tighter">COMMERCIAL HUB</span>
+      <span className="text-xl font-bold text-white tracking-tighter">STORAGE DEPOT</span>
+    </div>
+  </div>
+</section>
     </main>
   );
 }

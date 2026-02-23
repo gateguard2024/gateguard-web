@@ -23,9 +23,9 @@ export default function Home() {
         <div className="container mx-auto px-6 h-24 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-3">
-              <img src="/logo.png" alt="GateGuard" className="h-10 w-10 object-contain" />
+              <img src="/logo.png" alt="Gate Guard" className="h-10 w-10 object-contain" />
               <div className="flex flex-col">
-                 <span className="text-xl md:text-2xl font-black tracking-tighter uppercase italic leading-none text-white">GateGuard</span>
+                 <span className="text-xl md:text-2xl font-black tracking-tighter uppercase italic leading-none text-white">Gate Guard</span>
                  <span className="text-[9px] font-bold tracking-[0.3em] uppercase text-cyan-500 mt-1">Security Ecosystem</span>
               </div>
             </div>
@@ -44,9 +44,8 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* 2. PREMIUM HERO SECTION (Dark Navy Silhouette & Sleek App UI) */}
+      {/* 2. PREMIUM HERO SECTION */}
       <section className="relative pt-40 pb-20 lg:pt-48 lg:pb-32 overflow-hidden border-b border-white/5">
-        {/* Background Image & Brivo-Style Navy Overlay */}
         <div className="absolute inset-0 z-0">
           <img 
             src="/hero-bg.jpg" 
@@ -60,7 +59,7 @@ export default function Home() {
         <div className="container mx-auto px-6 relative z-10">
           <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
             
-            {/* Left: Content & Messaging (POLISHED) */}
+            {/* Left: Content & Messaging */}
             <div className="flex-1 text-center lg:text-left z-20">
               <div className="inline-flex items-center gap-2 px-4 py-2 mb-8 text-[10px] font-bold tracking-[0.2em] uppercase bg-zinc-900/50 backdrop-blur-md border border-white/10 rounded-full text-cyan-400 shadow-xl">
                 <span className="relative flex h-2 w-2">
@@ -73,15 +72,11 @@ export default function Home() {
                 Intelligent Access. <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Unrivaled Security.</span>
               </h1>
-              
-              {/* Refined Paragraph with Accent Border */}
               <div className="border-l-2 border-cyan-500/50 pl-5 mb-10 max-w-xl mx-auto lg:mx-0 text-left">
                 <p className="text-zinc-400 text-lg lg:text-xl leading-relaxed font-light">
                   We don't just fix gates; we manage them. Enjoy proactive AI monitoring, seamless Brivo access, and our digital visitor callbox for <span className="text-white font-semibold">one nominal price per unit.</span>
                 </p>
               </div>
-
-              {/* Upgraded Dual Buttons */}
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                 <button className="px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-black rounded-full hover:shadow-[0_0_30px_-5px_rgba(6,182,212,0.6)] transition-all transform hover:-translate-y-1 border border-cyan-400/50 tracking-wide text-sm">
                   VIEW THE PLAN
@@ -92,43 +87,36 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Right: The Overlapping App Experiences (Ultra-Sleek) */}
+            {/* Right: The Overlapping App Experiences */}
             <div className="flex-1 w-full max-w-2xl relative mt-12 lg:mt-0 h-[550px]">
               
-              {/* --- 1. VISITOR EXPERIENCE (GateGuard App) --- */}
+              {/* VISITOR EXPERIENCE */}
               <div className="absolute left-4 lg:left-0 top-0 w-56 sm:w-64 z-30 animate-float">
-                {/* Frosted Glass Experience Label */}
                 <div className="absolute -left-6 sm:-left-12 top-16 bg-black/40 backdrop-blur-2xl border border-white/10 p-3 sm:p-4 rounded-2xl shadow-[0_20px_40px_rgba(0,0,0,0.5)] z-40">
                   <p className="text-cyan-400 text-[8px] font-black uppercase tracking-[0.3em] mb-1">Visitor Experience</p>
                   <p className="text-white text-xs sm:text-sm font-bold">Interactive Callbox</p>
                 </div>
-                {/* Sleek Phone Frame */}
                 <div className="bg-gradient-to-b from-zinc-700 to-black p-[2px] rounded-[2.5rem] shadow-[0_30px_60px_rgba(0,0,0,0.8)]">
                   <div className="bg-black p-1.5 rounded-[2.4rem]">
                     <div className="aspect-[9/19] rounded-[2rem] overflow-hidden relative border border-white/10 bg-[#050505]">
-                      <img src="/app-callbox.png" alt="GateGuard Visitor Experience" className="w-full h-full object-cover" />
+                      <img src="/app-callbox.png" alt="Gate Guard Visitor Experience" className="w-full h-full object-cover" />
                       <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-tr from-transparent via-white/5 to-transparent pointer-events-none"></div>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* --- 2. RESIDENT EXPERIENCE (Brivo App) --- */}
+              {/* RESIDENT EXPERIENCE */}
               <div className="absolute right-4 lg:right-0 bottom-10 w-48 sm:w-56 z-20 animate-float-reverse">
-                
-                {/* NEW POSITION: Eagle Eye Pill perfectly centered above the Brivo phone */}
                 <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-black/80 backdrop-blur-xl border border-white/10 px-4 py-2 rounded-full z-40 flex items-center gap-2 shadow-[0_0_30px_rgba(6,182,212,0.2)] whitespace-nowrap">
                   <div className="w-2 h-2 bg-cyan-400 rounded-full animate-ping absolute"></div>
                   <div className="w-2 h-2 bg-cyan-400 rounded-full relative"></div>
                   <span className="text-white text-[9px] font-bold tracking-widest uppercase">Eagle Eye Monitored</span>
                 </div>
-
-                {/* Frosted Glass Experience Label */}
                 <div className="absolute -right-4 sm:-right-10 bottom-20 bg-black/40 backdrop-blur-2xl border border-white/10 p-3 sm:p-4 rounded-2xl shadow-[0_20px_40px_rgba(0,0,0,0.5)] z-40 text-right">
                   <p className="text-blue-500 text-[8px] font-black uppercase tracking-[0.3em] mb-1">Resident Experience</p>
                   <p className="text-white text-xs sm:text-sm font-bold">Brivo Mobile Pass</p>
                 </div>
-                 {/* Sleek Phone Frame */}
                  <div className="bg-gradient-to-b from-zinc-800 to-black p-[2px] rounded-[2.5rem] shadow-[0_30px_60px_rgba(0,0,0,0.6)]">
                   <div className="bg-black p-1.5 rounded-[2.4rem]">
                     <div className="aspect-[9/19] rounded-[2rem] overflow-hidden relative border border-white/10 bg-[#0f1423]">
@@ -158,11 +146,10 @@ export default function Home() {
         </div>
       </section>
 
-{/* 4. THE 5 PILLARS OF GATE GUARD */}
+      {/* 4. THE 5 PILLARS OF GATE GUARD */}
       <section id="services" className="py-32 bg-[#050505] relative">
         <div className="container mx-auto px-6">
           <div className="text-center mb-20">
-            {/* The &nbsp; forces an unbreakable space so they will never connect again */}
             <h2 className="text-4xl md:text-5xl font-bold mb-6 tracking-tighter">
               The Complete <span className="text-cyan-400 italic">Gate Guard</span>&nbsp;Ecosystem.
             </h2>
@@ -173,16 +160,13 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             
-            {/* 1. Proactive Plans (Spans 2 columns) */}
+            {/* 1. Proactive Plans */}
             <div className="lg:col-span-2 relative border border-white/10 rounded-[2rem] hover:border-cyan-500/50 transition-colors group overflow-hidden shadow-lg">
-               {/* Background Image & Navy Overlay */}
                <div className="absolute inset-0 z-0 overflow-hidden">
                  <img src="/hero-bg.jpg" alt="Property Background" className="w-full h-full object-cover grayscale opacity-40 group-hover:scale-105 transition-transform duration-1000 ease-out" />
                  <div className="absolute inset-0 bg-[#0A192F] opacity-90 mix-blend-multiply"></div>
                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent"></div>
                </div>
-               
-               {/* Card Content */}
                <div className="relative z-10 p-10 h-full flex flex-col justify-end">
                  <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 blur-[100px] rounded-full group-hover:bg-cyan-500/20 transition-all duration-700 pointer-events-none"></div>
                  <h3 className="text-cyan-400 font-bold mb-3 uppercase text-xs tracking-widest">Core Service</h3>
@@ -228,7 +212,39 @@ export default function Home() {
             {/* 4. Call Box App */}
             <div className="relative border border-white/10 rounded-[2rem] hover:border-blue-500/50 transition-colors group overflow-hidden">
                <div className="absolute inset-0 z-0 overflow-hidden">
-                 <img src="/hero-bg.jpg" alt="Property Background" className="w-full h-full object-cover grayscale opacity-30 group-hover:scale-105 transition-transform duration-100
+                 <img src="/hero-bg.jpg" alt="Property Background" className="w-full h-full object-cover grayscale opacity-30 group-hover:scale-105 transition-transform duration-1000 ease-out" />
+                 <div className="absolute inset-0 bg-[#0A192F] opacity-90 mix-blend-multiply"></div>
+                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-[#0A192F]/50"></div>
+               </div>
+               <div className="relative z-10 p-10 h-full flex flex-col justify-end">
+                 <h3 className="text-blue-500 font-bold mb-3 uppercase text-xs tracking-widest group-hover:text-blue-400 transition-colors">Resident App</h3>
+                 <h4 className="text-2xl font-bold mb-4 text-white">Digital Call Box</h4>
+                 <p className="text-zinc-400 text-sm leading-relaxed font-light">
+                   Remove expensive, dated physical telephone entry boxes. Our digital app lets residents grant visitor access directly from their smartphones.
+                 </p>
+               </div>
+            </div>
+
+            {/* 5. Live Concierge */}
+            <div className="relative border border-white/10 rounded-[2rem] hover:border-cyan-500/50 transition-colors group overflow-hidden">
+               <div className="absolute inset-0 z-0 overflow-hidden">
+                 <img src="/hero-bg.jpg" alt="Property Background" className="w-full h-full object-cover grayscale opacity-30 group-hover:scale-105 transition-transform duration-1000 ease-out" />
+                 <div className="absolute inset-0 bg-[#0A192F] opacity-90 mix-blend-multiply"></div>
+                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-[#0A192F]/50"></div>
+               </div>
+               <div className="relative z-10 p-10 h-full flex flex-col justify-end">
+                 <h3 className="text-cyan-400 font-bold mb-3 uppercase text-xs tracking-widest group-hover:text-cyan-300 transition-colors">Verification</h3>
+                 <h4 className="text-2xl font-bold mb-4 text-white">2-Way Video Concierge</h4>
+                 <p className="text-zinc-400 text-sm leading-relaxed font-light">
+                   Virtual concierge service to check in visitors, document license plates, and verify IDs over real-time, 2-way video calling.
+                 </p>
+               </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
       {/* 5. THE ROI & COMPARISON SECTION */}
       <section id="roi" className="py-32 bg-black border-y border-white/5 relative overflow-hidden">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-[500px] bg-cyan-900/10 blur-[150px] rounded-full pointer-events-none"></div>
@@ -236,7 +252,7 @@ export default function Home() {
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold mb-6 tracking-tighter">Stop Paying for <span className="text-red-400 italic">Vulnerability.</span></h2>
             <p className="text-zinc-400 max-w-2xl mx-auto text-lg">
-              Compare the traditional break-fix and physical guard model against GateGuard’s proactive, flat-rate ecosystem.
+              Compare the traditional break-fix and physical guard model against Gate Guard’s proactive, flat-rate ecosystem.
             </p>
           </div>
 
@@ -267,11 +283,11 @@ export default function Home() {
               </ul>
             </div>
 
-            {/* The GateGuard Way */}
+            {/* The Gate Guard Way */}
             <div className="flex-1 bg-gradient-to-br from-zinc-900 to-[#0A192F] border border-cyan-500/30 rounded-[2rem] p-8 md:p-12 relative shadow-[0_0_40px_rgba(6,182,212,0.1)] transform lg:-translate-y-4">
               <div className="absolute top-0 left-0 w-full h-1 bg-cyan-400 shadow-[0_0_10px_#22d3ee]"></div>
               <h3 className="text-cyan-400 font-bold mb-8 uppercase tracking-widest text-sm flex items-center gap-2">
-                <span className="text-xl">✓</span> The GateGuard Advantage
+                <span className="text-xl">✓</span> The Gate Guard Advantage
               </h3>
               <ul className="space-y-8">
                 <li>
@@ -309,7 +325,7 @@ export default function Home() {
               Secure Your <span className="text-cyan-400 italic">Estate Today.</span>
             </h2>
             <p className="text-zinc-400 text-lg mb-12 max-w-xl mx-auto">
-              Join the elite Multi-Family and HOA communities already utilizing the GateGuard SaaS ecosystem.
+              Join the elite Multi-Family and HOA communities already utilizing the Gate Guard SaaS ecosystem.
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
               <a href="mailto:sales@gateguard.pro" className="px-12 py-5 bg-cyan-500 text-black font-black rounded-full hover:bg-cyan-400 transition-all shadow-[0_0_30px_rgba(6,182,212,0.4)] transform hover:-translate-y-1 text-center">
@@ -329,8 +345,8 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-20">
             <div className="col-span-1 md:col-span-2">
                <div className="flex items-center gap-3 mb-6">
-                  <img src="/logo.png" alt="GateGuard" className="w-8 h-8 object-contain" />
-                  <span className="text-xl font-black tracking-tighter italic uppercase">GateGuard</span>
+                  <img src="/logo.png" alt="Gate Guard" className="w-8 h-8 object-contain" />
+                  <span className="text-xl font-black tracking-tighter italic uppercase">Gate Guard</span>
                </div>
                <p className="text-zinc-500 max-w-sm text-sm leading-relaxed">
                   Redefining multi-family access control through edge-computing, proactive monitoring, and intelligent integration.
@@ -355,7 +371,7 @@ export default function Home() {
           </div>
           <div className="pt-8 border-t border-white/5 text-center flex flex-col items-center">
             <p className="text-zinc-700 text-[10px] font-bold uppercase tracking-[0.5em]">
-              &copy; {new Date().getFullYear()} GateGuard Security Ecosystem. All Rights Reserved.
+              &copy; {new Date().getFullYear()} Gate Guard Security Ecosystem. All Rights Reserved.
             </p>
           </div>
         </div>

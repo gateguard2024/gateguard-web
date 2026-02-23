@@ -193,7 +193,7 @@ export default function Home() {
                </div>
             </div>
 
-            {/* 3. Brivo Access Control */}
+            {/* 3. PMS Smart Sync (Updated Brivo Card) */}
             <div className="relative border border-white/10 rounded-[2rem] hover:border-cyan-500/50 transition-colors group overflow-hidden">
                <div className="absolute inset-0 z-0 overflow-hidden">
                  <img src="/hero-bg.jpg" alt="Property Background" className="w-full h-full object-cover grayscale opacity-30 group-hover:scale-105 transition-transform duration-1000 ease-out" />
@@ -201,10 +201,10 @@ export default function Home() {
                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-[#0A192F]/50"></div>
                </div>
                <div className="relative z-10 p-10 h-full flex flex-col justify-end">
-                 <h3 className="text-cyan-400 font-bold mb-3 uppercase text-xs tracking-widest group-hover:text-cyan-300 transition-colors">Access</h3>
-                 <h4 className="text-2xl font-bold mb-4 text-white">Brivo Property Sync</h4>
+                 <h3 className="text-cyan-400 font-bold mb-3 uppercase text-xs tracking-widest group-hover:text-cyan-300 transition-colors">Access & Automation</h3>
+                 <h4 className="text-2xl font-bold mb-4 text-white">Brivo & PMS Sync</h4>
                  <p className="text-zinc-400 text-sm leading-relaxed font-light">
-                   Property-wide access control using Brivo. Manage credentials, track entry logs, and secure amenities effortlessly from a single cloud dashboard.
+                   Native API integrations with Yardi, Entrata, and RealPage. When a resident moves in, they automatically receive a pass. When they move out, access is instantly revoked. Zero double data entry.
                  </p>
                </div>
             </div>
@@ -271,6 +271,10 @@ export default function Home() {
                   <p className="text-zinc-500 text-sm">Juggling a separate gate repair company, camera installer, and access control provider.</p>
                 </li>
                 <li>
+                  <h4 className="text-xl font-bold text-white mb-2">Manual Data Entry</h4>
+                  <p className="text-zinc-500 text-sm">Property managers wasting hours manually adding and deleting residents from the gate directory.</p>
+                </li>
+                <li>
                   <h4 className="text-xl font-bold text-white mb-2">Reactive Maintenance</h4>
                   <p className="text-zinc-500 text-sm">You only know the gate is broken when a resident calls to complain they are locked out.</p>
                 </li>
@@ -297,6 +301,10 @@ export default function Home() {
                   <p className="text-zinc-300 text-sm">One partner for gate maintenance, camera monitoring, and property-wide access control.</p>
                 </li>
                 <li>
+                  <h4 className="text-xl font-bold text-white mb-2">Automated PMS Sync</h4>
+                  <p className="text-zinc-300 text-sm">Direct API links to Yardi, Entrata, and RealPage. Move-ins get instant access; move-outs are instantly revoked.</p>
+                </li>
+                <li>
                   <h4 className="text-xl font-bold text-white mb-2">Proactive Zero-Downtime</h4>
                   <p className="text-zinc-300 text-sm">Our Eagle Eye cameras monitor operator health. We fix it *before* the residents even notice.</p>
                 </li>
@@ -321,7 +329,6 @@ export default function Home() {
 
       {/* 6. CALL TO ACTION (LEAD CAPTURE) */}
       <section id="contact" className="py-32 bg-gradient-to-b from-[#050505] to-[#0A192F] relative overflow-hidden">
-        {/* Subtle background building overlay to match the rest of the site */}
         <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
           <img src="/hero-bg.jpg" alt="Property Background" className="w-full h-full object-cover grayscale opacity-10" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#0A192F] via-[#050505]/80 to-[#050505]"></div>

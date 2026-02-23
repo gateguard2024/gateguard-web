@@ -55,11 +55,11 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Dashboard Visual Mockup */}
+            {/* Dashboard Visual Placeholder */}
             <div className="flex-1 w-full max-w-2xl relative group">
               <div className="absolute -inset-1 bg-blue-500 rounded-[2.5rem] blur opacity-10 transition duration-1000"></div>
-              <div className="relative bg-[#0A0A0A] border border-white/10 rounded-[2.5rem] p-4 shadow-2xl">
-                <div className="aspect-video bg-zinc-900 rounded-2xl flex items-center justify-center border border-white/5 relative overflow-hidden">
+              <div className="relative bg-[#0A0A0A] border border-white/10 rounded-[2.5rem] p-4 shadow-2xl overflow-hidden">
+                <div className="aspect-video bg-zinc-900 rounded-2xl flex items-center justify-center border border-white/5 relative">
                    <div className="text-center">
                       <div className="text-6xl mb-4 grayscale opacity-40">🔒</div>
                       <p className="text-[10px] font-mono tracking-[0.3em] text-blue-500">GATE_GUARD_SYSTEM_ACTIVE</p>
@@ -76,15 +76,59 @@ export default function Home() {
         <div className="container mx-auto px-6 text-center">
           <p className="text-zinc-500 text-[10px] font-bold uppercase tracking-[0.4em] mb-12">Protecting Premier Properties</p>
           <div className="flex flex-wrap justify-center items-center gap-12 md:gap-24 grayscale opacity-40">
-            {['HOA MANAGERS', 'MULTI-FAMILY', 'GATED ESTATES', 'COMMERCIAL HUB'].map(t => (
+            {['HOA MANAGERS', 'MULTI-FAMILY', 'GATED ESTATES', 'COMMERCIAL HUB'].map((t) => (
               <span key={t} className="text-sm font-black tracking-tighter text-white">{t}</span>
             ))}
           </div>
         </div>
       </section>
 
-      {/* 4. ECOSYSTEM SECTION */}
+      {/* 4. ECOSYSTEM: GateGuard + Brivo */}
       <section className="py-32 bg-[#080808] relative">
         <div className="container mx-auto px-6">
           <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-5
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">One Gate. <span className="text-blue-500 font-black tracking-tighter uppercase italic">Two Powerhouse Apps.</span></h2>
+            <p className="text-zinc-500 max-w-2xl mx-auto italic italic">
+              "Residents use Brivo for access; Managers use GateGuard for intelligence."
+            </p>
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="bg-zinc-900/30 border border-white/5 p-10 rounded-[2.5rem] hover:border-blue-500/30 transition-all">
+               <h3 className="text-blue-500 font-bold mb-2 uppercase text-xs tracking-widest">Resident Access</h3>
+               <h4 className="text-2xl font-bold mb-4">Brivo Mobile Pass</h4>
+               <p className="text-zinc-400 italic">"Bluetooth & NFC entry for residents. Secure and seamless."</p>
+            </div>
+            <div className="bg-zinc-900/30 border border-white/5 p-10 rounded-[2.5rem] hover:border-blue-400/30 transition-all">
+               <h3 className="text-blue-400 font-bold mb-2 uppercase text-xs tracking-widest">Admin Intelligence</h3>
+               <h4 className="text-2xl font-bold mb-4 text-white">GateGuard Interactive</h4>
+               <p className="text-zinc-400 italic">"Real-time AI video feeds and remote gate override."</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 5. HARDWARE: The AI Edge Controller */}
+      <section className="py-32 bg-black relative">
+        <div className="container mx-auto px-6 text-white font-bold">
+          <div className="flex flex-col lg:flex-row items-center gap-20">
+            <div className="flex-1 relative">
+              <div className="absolute -inset-4 bg-blue-500/20 blur-3xl rounded-full opacity-30"></div>
+              <div className="relative aspect-square bg-zinc-900 border border-white/10 rounded-3xl flex items-center justify-center overflow-hidden">
+                <div className="text-center">
+                  <div className="w-48 h-64 bg-zinc-800 rounded-lg border-2 border-blue-500/50 shadow-[0_0_50px_-10px_rgba(59,130,246,0.5)] mb-6 mx-auto relative overflow-hidden">
+                    <div className="absolute top-4 left-1/2 -translate-x-1/2 w-4 h-4 bg-red-500 rounded-full animate-pulse shadow-[0_0_10px_red]"></div>
+                    <div className="mt-20 px-4 space-y-2">
+                      <div className="h-1 w-full bg-blue-500/20"></div>
+                      <div className="h-1 w-2/3 bg-blue-500/20"></div>
+                      <div className="h-1 w-full bg-blue-500/20"></div>
+                    </div>
+                  </div>
+                  <p className="text-blue-400 font-mono text-[10px] tracking-widest uppercase">Edge Controller v2.0</p>
+                </div>
+              </div>
+            </div>
+            <div className="flex-1">
+              <h2 className="text-4xl font-bold mb-10 leading-tight">Proprietary AI <br/><span className="text-blue-500 tracking-tighter uppercase italic">Hardware Integration</span></h2>
+              <div className="space-y-10">
+                <div className="flex gap-6 group">
+                  <div className="text-2xl text-blue-500 font-black">01</div>

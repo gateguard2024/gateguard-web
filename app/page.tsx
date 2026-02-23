@@ -8,13 +8,12 @@ export default function Home() {
       <nav className="fixed top-0 w-full z-50 border-b border-white/5 bg-black/50 backdrop-blur-xl">
         <div className="container mx-auto px-6 h-20 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            {/* Logo Branding Colors from Logo copy2.jpg */}
             <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-blue-400 rounded-lg flex items-center justify-center shadow-[0_0_15px_-3px_rgba(37,99,235,0.4)]">
-              <span className="text-white font-black text-xs tracking-tighter">GG</span>
+              <span className="text-white font-black text-xs tracking-tighter uppercase">GG</span>
             </div>
             <span className="text-xl font-bold tracking-tighter uppercase italic">GateGuard</span>
           </div>
-          <div className="hidden md:flex items-center gap-8 text-xs font-bold uppercase tracking-widest text-zinc-400">
+          <div className="hidden md:flex items-center gap-8 text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400">
             <a href="#" className="hover:text-blue-400 transition-colors">Solutions</a>
             <a href="#" className="hover:text-blue-400 transition-colors">Hardware</a>
             <a href="#" className="hover:text-blue-400 transition-colors">Contact</a>
@@ -33,4 +32,59 @@ export default function Home() {
             <div className="flex-1 text-center lg:text-left">
               <div className="inline-flex items-center gap-2 px-3 py-1 mb-8 text-[10px] font-bold tracking-[0.2em] uppercase bg-white/5 border border-white/10 rounded-full text-blue-400">
                 <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-40
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                </span>
+                Intelligence at the Edge
+              </div>
+              <h1 className="text-6xl lg:text-8xl font-extrabold tracking-tight mb-8 leading-[0.9]">
+                The Gate is Old. <br />
+                <span className="text-zinc-500 font-bold">The Solution is </span>
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">Intelligent.</span>
+              </h1>
+              <p className="text-zinc-400 text-lg lg:text-xl mb-12 max-w-xl leading-relaxed italic">
+                "Replace outdated fobs and expensive guards with an AI-driven ecosystem."
+              </p>
+              <div className="flex flex-col sm:flex-row gap-6 justify-center lg:justify-start">
+                <button className="px-10 py-5 bg-blue-600 text-white font-black rounded-xl hover:shadow-[0_0_30px_-5px_rgba(37,99,235,0.4)] transition-all transform hover:-translate-y-1">
+                  BOOK A LIVE DEMO
+                </button>
+                <button className="px-10 py-5 bg-zinc-900/50 border border-white/10 text-white font-bold rounded-xl hover:bg-white/5 transition-all backdrop-blur-sm">
+                  ROI CALCULATOR
+                </button>
+              </div>
+            </div>
+
+            {/* Dashboard Visual Mockup */}
+            <div className="flex-1 w-full max-w-2xl relative group">
+              <div className="absolute -inset-1 bg-blue-500 rounded-[2.5rem] blur opacity-10 transition duration-1000"></div>
+              <div className="relative bg-[#0A0A0A] border border-white/10 rounded-[2.5rem] p-4 shadow-2xl">
+                <div className="aspect-video bg-zinc-900 rounded-2xl flex items-center justify-center border border-white/5 relative overflow-hidden">
+                   <div className="text-center">
+                      <div className="text-6xl mb-4 grayscale opacity-40">🔒</div>
+                      <p className="text-[10px] font-mono tracking-[0.3em] text-blue-500">GATE_GUARD_SYSTEM_ACTIVE</p>
+                   </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 3. INDUSTRY TRUST BAR */}
+      <section className="py-16 bg-zinc-950/50 border-y border-white/5">
+        <div className="container mx-auto px-6 text-center">
+          <p className="text-zinc-500 text-[10px] font-bold uppercase tracking-[0.4em] mb-12">Protecting Premier Properties</p>
+          <div className="flex flex-wrap justify-center items-center gap-12 md:gap-24 grayscale opacity-40">
+            {['HOA MANAGERS', 'MULTI-FAMILY', 'GATED ESTATES', 'COMMERCIAL HUB'].map(t => (
+              <span key={t} className="text-sm font-black tracking-tighter text-white">{t}</span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 4. ECOSYSTEM SECTION */}
+      <section className="py-32 bg-[#080808] relative">
+        <div className="container mx-auto px-6">
+          <div className="text-center mb-20">
+            <h2 className="text-4xl md:text-5

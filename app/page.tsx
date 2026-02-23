@@ -4,33 +4,26 @@ export default function Home() {
   return (
     <main className="bg-[#050505] text-white min-h-screen selection:bg-blue-600/30 font-sans">
       
-     {/* 1. NAVIGATION BAR */}
-      <nav className="fixed top-0 w-full z-50 border-b border-white/5 bg-black/60 backdrop-blur-2xl font-bold">
+      {/* 1. NAVIGATION BAR */}
+      <nav className="fixed top-0 w-full z-50 border-b border-white/5 bg-black/60 backdrop-blur-2xl">
         <div className="container mx-auto px-6 h-24 flex items-center justify-between">
-          
-          {/* LOGO AREA - Optimized for your actual logo2.png */}
-          <div className="flex items-center gap-6">
-            <div className="relative w-20 h-20 md:w-24 md:h-24 flex items-center justify-center">
+          <div className="flex items-center gap-4">
+            <div className="relative w-14 h-14 flex items-center justify-center">
               <img 
                 src="/logo.png" 
                 alt="GateGuard Logo" 
-                className="w-full h-full object-contain filter drop-shadow-[0_0_8px_rgba(59,130,246,0.3)]"
+                className="w-full h-full object-contain"
               />
             </div>
-            <div className="hidden sm:flex flex-col">
-              <span className="text-xl md:text-3xl font-black tracking-tighter uppercase italic leading-none text-white">
-                GateGuard
-              </span>
-              <span className="text-[10px] font-bold tracking-[0.4em] uppercase text-blue-500 mt-2">
-                Security Ecosystem
-              </span>
+            <div className="flex flex-col">
+              <span className="text-xl md:text-2xl font-black tracking-tighter uppercase italic leading-none text-white">GateGuard</span>
+              <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-blue-500 mt-1">Security Ecosystem</span>
             </div>
           </div>
-
           <div className="hidden md:flex items-center gap-10 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">
             <a href="#solutions" className="hover:text-blue-400 transition-colors">Solutions</a>
             <a href="#hardware" className="hover:text-blue-400 transition-colors">Hardware</a>
-            <button className="px-8 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-full font-black transition-all shadow-xl shadow-blue-900/40">
+            <button className="px-8 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-full font-black transition-all shadow-xl shadow-blue-900/40 transform hover:scale-105">
               GET A QUOTE
             </button>
           </div>
@@ -52,13 +45,19 @@ export default function Home() {
               </div>
               <h1 className="text-6xl lg:text-8xl font-extrabold tracking-tight mb-8 leading-[0.9]">
                 The Gate is Old. <br />
-                <span className="text-zinc-500 font-bold tracking-tighter">The Solution is </span>
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400 italic">Intelligent.</span>
+                <span className="text-zinc-500 font-bold tracking-tighter italic">The Solution is </span>
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">Intelligent.</span>
               </h1>
-              <p className="text-zinc-400 text-lg lg:text-xl mb-12 max-w-xl leading-relaxed italic">"Replace outdated fobs and expensive guards with an AI-driven ecosystem."</p>
+              <p className="text-zinc-400 text-lg lg:text-xl mb-12 max-w-xl leading-relaxed italic">
+                "Replace outdated fobs and expensive guards with an AI-driven ecosystem."
+              </p>
               <div className="flex flex-col sm:flex-row gap-6 justify-center lg:justify-start">
-                <button className="px-10 py-5 bg-blue-600 text-white font-black rounded-xl hover:shadow-[0_0_30px_-5px_rgba(37,99,235,0.4)] transition-all transform hover:-translate-y-1">BOOK A LIVE DEMO</button>
-                <button className="px-10 py-5 bg-zinc-900/50 border border-white/10 text-white font-bold rounded-xl hover:bg-white/5 transition-all backdrop-blur-sm">ROI CALCULATOR</button>
+                <button className="px-10 py-5 bg-blue-600 text-white font-black rounded-xl hover:shadow-[0_0_30px_-5px_rgba(37,99,235,0.4)] transition-all transform hover:-translate-y-1">
+                  BOOK A LIVE DEMO
+                </button>
+                <button className="px-10 py-5 bg-zinc-900/50 border border-white/10 text-white font-bold rounded-xl hover:bg-white/5 transition-all backdrop-blur-sm">
+                  ROI CALCULATOR
+                </button>
               </div>
             </div>
             <div className="flex-1 w-full max-w-2xl relative group">
@@ -66,7 +65,7 @@ export default function Home() {
               <div className="relative bg-[#0A0A0A] border border-white/10 rounded-[2.5rem] p-4 shadow-2xl overflow-hidden">
                 <div className="aspect-video bg-zinc-900 rounded-2xl flex items-center justify-center border border-white/5 relative">
                    <div className="text-center">
-                      <div className="text-6xl mb-4 opacity-40">🔒</div>
+                      <div className="text-6xl mb-4 opacity-40 grayscale">🔒</div>
                       <p className="text-[10px] font-mono tracking-[0.3em] text-blue-500 uppercase">Gate Guard System Active</p>
                    </div>
                 </div>
@@ -78,11 +77,11 @@ export default function Home() {
 
       {/* 3. INDUSTRY TRUST BAR */}
       <section className="py-16 bg-zinc-950/50 border-y border-white/5">
-        <div className="container mx-auto px-6 text-center">
-          <p className="text-zinc-500 text-[10px] font-bold uppercase tracking-[0.4em] mb-12 italic">Protecting Premier Properties</p>
+        <div className="container mx-auto px-6 text-center text-white font-bold italic uppercase tracking-tighter">
+          <p className="text-zinc-500 text-[10px] font-bold uppercase tracking-[0.4em] mb-12 italic font-normal normal-case">Protecting Premier Properties</p>
           <div className="flex flex-wrap justify-center items-center gap-12 md:gap-24 grayscale opacity-40">
             {['HOA MANAGERS', 'MULTI-FAMILY', 'GATED ESTATES', 'COMMERCIAL HUB'].map((t) => (
-              <span key={t} className="text-sm font-black tracking-tighter text-white uppercase italic">{t}</span>
+              <span key={t} className="text-sm font-black tracking-tighter text-white italic">{t}</span>
             ))}
           </div>
         </div>
@@ -90,21 +89,21 @@ export default function Home() {
 
       {/* 4. ECOSYSTEM SECTION */}
       <section className="py-32 bg-[#080808]">
-        <div className="container mx-auto px-6 text-white font-bold italic uppercase tracking-tighter">
+        <div className="container mx-auto px-6">
           <div className="text-center mb-20">
             <h2 className="text-4xl md:text-5xl font-bold mb-6 italic uppercase tracking-tighter">One Gate. <span className="text-blue-500">Two Powerhouse Apps.</span></h2>
-            <p className="text-zinc-500 max-w-2xl mx-auto italic font-normal normal-case tracking-normal text-sm">"Residents use Brivo for access; Managers use GateGuard for intelligence."</p>
+            <p className="text-zinc-500 max-w-2xl mx-auto italic">"Residents use Brivo for access; Managers use GateGuard for intelligence."</p>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div className="bg-zinc-900/30 border border-white/5 p-10 rounded-[2.5rem] hover:border-blue-500/20 transition-all">
+            <div className="bg-zinc-900/30 border border-white/5 p-10 rounded-[2.5rem] hover:border-blue-500/30 transition-all group">
                <h3 className="text-blue-500 font-bold mb-2 uppercase text-xs tracking-widest">Resident Access</h3>
                <h4 className="text-2xl font-bold mb-4">Brivo Mobile Pass</h4>
-               <p className="text-zinc-400 italic font-normal normal-case tracking-normal">"Bluetooth & NFC entry for residents. Secure and seamless."</p>
+               <p className="text-zinc-400 italic">"Frictionless Bluetooth & NFC entry for residents. Secure and seamless."</p>
             </div>
-            <div className="bg-zinc-900/30 border border-white/5 p-10 rounded-[2.5rem] hover:border-blue-400/20 transition-all">
+            <div className="bg-zinc-900/30 border border-white/5 p-10 rounded-[2.5rem] hover:border-blue-400/30 transition-all">
                <h3 className="text-blue-400 font-bold mb-2 uppercase text-xs tracking-widest">Admin Intelligence</h3>
-               <h4 className="text-2xl font-bold mb-4">GateGuard Interactive</h4>
-               <p className="text-zinc-400 italic font-normal normal-case tracking-normal">"Real-time AI video feeds and remote gate override."</p>
+               <h4 className="text-2xl font-bold mb-4 text-white">GateGuard Interactive</h4>
+               <p className="text-zinc-400 italic">"Real-time AI video feeds and remote gate override."</p>
             </div>
           </div>
         </div>
@@ -112,20 +111,21 @@ export default function Home() {
 
       {/* 5. HARDWARE SECTION */}
       <section id="hardware" className="py-32 bg-black">
-        <div className="container mx-auto px-6 text-white font-bold italic uppercase tracking-tighter">
+        <div className="container mx-auto px-6">
           <div className="flex flex-col lg:flex-row items-center gap-20">
             <div className="flex-1 relative">
               <div className="absolute -inset-4 bg-blue-500/20 blur-3xl rounded-full opacity-30"></div>
               <div className="relative aspect-square bg-zinc-900 border border-white/10 rounded-3xl flex items-center justify-center overflow-hidden">
                 <div className="text-center">
-                  <div className="w-48 h-64 bg-zinc-800 rounded-lg border-2 border-blue-500/50 shadow-[0_0_50px_-10px_rgba(37,99,235,0.5)] mb-6 mx-auto relative overflow-hidden">
+                  <div className="w-48 h-64 bg-zinc-800 rounded-lg border-2 border-blue-500/50 shadow-[0_0_50px_-10px_rgba(59,130,246,0.5)] mb-6 mx-auto relative overflow-hidden">
                     <div className="absolute top-4 left-1/2 -translate-x-1/2 w-4 h-4 bg-red-500 rounded-full animate-pulse shadow-[0_0_10px_red]"></div>
                     <div className="mt-20 px-4 space-y-2">
                       <div className="h-1 w-full bg-blue-500/20"></div>
                       <div className="h-1 w-2/3 bg-blue-500/20"></div>
+                      <div className="h-1 w-full bg-blue-500/20"></div>
                     </div>
                   </div>
-                  <p className="text-blue-400 font-mono text-[10px] tracking-widest uppercase italic font-normal tracking-normal">Edge Controller v2.0</p>
+                  <p className="text-blue-400 font-mono text-[10px] tracking-widest uppercase italic">Edge Controller v2.0</p>
                 </div>
               </div>
             </div>
@@ -136,14 +136,14 @@ export default function Home() {
                   <div className="text-2xl text-blue-500 font-black italic tracking-tighter">01</div>
                   <div>
                     <h4 className="text-xl font-bold mb-2 italic uppercase tracking-tighter">AI Plate Recognition</h4>
-                    <p className="text-zinc-500 leading-relaxed italic text-sm font-normal normal-case tracking-normal">"Edge-processing cameras identify authorized plates in under 400ms."</p>
+                    <p className="text-zinc-500 leading-relaxed italic text-sm">"Edge-processing cameras identify authorized plates in under 400ms."</p>
                   </div>
                 </div>
                 <div className="flex gap-6 group">
                   <div className="text-2xl text-blue-500 font-black italic tracking-tighter">02</div>
                   <div>
                     <h4 className="text-xl font-bold mb-2 text-white italic uppercase tracking-tighter">Brivo Cloud Sync</h4>
-                    <p className="text-zinc-500 leading-relaxed italic text-sm font-normal normal-case tracking-normal">"Seamlessly links your existing Brivo credentials with our AI brain."</p>
+                    <p className="text-zinc-500 leading-relaxed italic text-sm">"Seamlessly links your existing Brivo credentials with our AI brain."</p>
                   </div>
                 </div>
               </div>
@@ -152,70 +152,8 @@ export default function Home() {
         </div>
       </section>
 
-     {/* 6. FINAL CALL TO ACTION: Lead Capture */}
+      {/* 6. FINAL CALL TO ACTION */}
       <section id="contact" className="py-32 bg-gradient-to-b from-black to-blue-900/20">
         <div className="container mx-auto px-6 text-center">
           <div className="max-w-4xl mx-auto bg-zinc-900/50 border border-white/10 p-12 md:p-20 rounded-[3rem] backdrop-blur-xl">
-            <h2 className="text-4xl md:text-6xl font-black mb-8 italic uppercase tracking-tighter">
-              Secure Your <span className="text-blue-500 font-bold">Estate Today.</span>
-            </h2>
-            <p className="text-zinc-400 text-lg mb-12 max-w-xl mx-auto italic">
-              "Join the elite communities already utilizing GateGuard's AI-driven ecosystem."
-            </p>
-            <div className="flex flex-col sm:flex-row gap-6 justify-center">
-              <a 
-                href="mailto:sales@gateguard.pro" 
-                className="px-12 py-5 bg-blue-600 text-white font-black rounded-2xl hover:bg-blue-500 transition-all shadow-2xl shadow-blue-900/50 transform hover:-translate-y-1 text-center"
-              >
-                REQUEST A PROPOSAL
-              </a>
-              <a 
-                href="tel:+15551234567" 
-                className="px-12 py-5 bg-white/5 border border-white/10 text-white font-bold rounded-2xl hover:bg-white/10 transition-all text-center"
-              >
-                SPEAK WITH AN EXPERT
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 7. ENHANCED FOOTER */}
-      <footer className="py-20 bg-black border-t border-white/5">
-        <div className="container mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-20">
-            <div className="col-span-1 md:col-span-2">
-               <div className="flex items-center gap-3 mb-6">
-                  <img src="/logo.png" alt="Logo" className="w-10 h-10 object-contain" />
-                  <span className="text-2xl font-black tracking-tighter italic uppercase">GateGuard</span>
-               </div>
-               <p className="text-zinc-500 max-w-sm text-sm leading-relaxed">
-                  Redefining access control through edge-computing and intelligent AI integration. Built for the next 100 years of security.
-               </p>
-            </div>
-            <div>
-               <h4 className="text-white font-bold mb-6 uppercase text-xs tracking-widest">Platform</h4>
-               <ul className="space-y-4 text-sm text-zinc-500">
-                  <li><a href="#solutions" className="hover:text-blue-400 transition-colors">AI Intelligence</a></li>
-                  <li><a href="#hardware" className="hover:text-blue-400 transition-colors">Hardware Sync</a></li>
-                  <li><a href="#" className="hover:text-blue-400 transition-colors">Brivo Integration</a></li>
-               </ul>
-            </div>
-            <div>
-               <h4 className="text-white font-bold mb-6 uppercase text-xs tracking-widest">Support</h4>
-               <ul className="space-y-4 text-sm text-zinc-500">
-                  <li><a href="mailto:support@gateguard.pro" className="hover:text-blue-400 transition-colors">Tech Support</a></li>
-                  <li><a href="#" className="hover:text-blue-400 transition-colors">System Status</a></li>
-                  <li><a href="#" className="hover:text-blue-400 transition-colors">Privacy Policy</a></li>
-               </ul>
-            </div>
-          </div>
-          <div className="pt-8 border-t border-white/5 text-center">
-            <p className="text-zinc-700 text-[10px] font-bold uppercase tracking-[0.5em] italic">
-              &copy; {new Date().getFullYear()} GateGuard Technology Ecosystem. All Rights Reserved.
-            </p>
-          </div>
-        </div>
-      </footer>
-  );
-}
+            <h2 className="text-4xl md:text-

@@ -586,7 +586,7 @@ export default function Home() {
               </div>
 
               <button type="submit" className="w-full mt-2 px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-black rounded-full hover:shadow-[0_0_30px_-5px_rgba(6,182,212,0.6)] transition-all tracking-wide">
-                SUBMIT TO SALESFORCE
+                SUBMIT TO TEAM
               </button>
             </form>
           </div>

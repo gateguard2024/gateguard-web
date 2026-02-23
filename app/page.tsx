@@ -60,25 +60,34 @@ export default function Home() {
         <div className="container mx-auto px-6 relative z-10">
           <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
             
-            {/* Left: Content & Messaging */}
+            {/* Left: Content & Messaging (POLISHED) */}
             <div className="flex-1 text-center lg:text-left z-20">
-              <div className="inline-flex items-center gap-2 px-3 py-1 mb-6 text-[10px] font-bold tracking-[0.2em] uppercase bg-white/5 border border-white/10 rounded-full text-cyan-400">
+              <div className="inline-flex items-center gap-2 px-4 py-2 mb-8 text-[10px] font-bold tracking-[0.2em] uppercase bg-zinc-900/50 backdrop-blur-md border border-white/10 rounded-full text-cyan-400 shadow-xl">
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
                 </span>
                 Proactive Multi-Family Security
               </div>
-              <h1 className="text-5xl lg:text-7xl font-extrabold tracking-tight mb-6 leading-[1.05]">
-                GateGuard: Intelligent Access. <br />
+              <h1 className="text-5xl lg:text-7xl font-extrabold tracking-tight mb-6 leading-[1.05] drop-shadow-2xl">
+                Intelligent Access. <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Unrivaled Security.</span>
               </h1>
-              <p className="text-zinc-300 text-lg lg:text-xl mb-10 max-w-xl leading-relaxed mx-auto lg:mx-0 font-medium drop-shadow-lg">
-                We don't just fix gates; we manage them. Enjoy proactive AI monitoring, seamless Brivo access, and our digital visitor callbox for one nominal price per unit.
-              </p>
+              
+              {/* Refined Paragraph with Accent Border */}
+              <div className="border-l-2 border-cyan-500/50 pl-5 mb-10 max-w-xl mx-auto lg:mx-0 text-left">
+                <p className="text-zinc-400 text-lg lg:text-xl leading-relaxed font-light">
+                  We don't just fix gates; we manage them. Enjoy proactive AI monitoring, seamless Brivo access, and our digital visitor callbox for <span className="text-white font-semibold">one nominal price per unit.</span>
+                </p>
+              </div>
+
+              {/* Upgraded Dual Buttons */}
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                <button className="px-10 py-4 bg-cyan-500 text-black font-black rounded-full hover:shadow-[0_0_30px_-5px_rgba(6,182,212,0.5)] transition-all transform hover:-translate-y-1">
-                  VIEW "YOUR GATE GUARD" PLAN
+                <button className="px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-black rounded-full hover:shadow-[0_0_30px_-5px_rgba(6,182,212,0.6)] transition-all transform hover:-translate-y-1 border border-cyan-400/50 tracking-wide text-sm">
+                  VIEW THE PLAN
+                </button>
+                <button className="px-8 py-4 bg-white/5 backdrop-blur-md border border-white/10 text-white font-bold rounded-full hover:bg-white/10 transition-all text-sm tracking-wide">
+                  CALCULATE ROI
                 </button>
               </div>
             </div>
@@ -106,6 +115,14 @@ export default function Home() {
 
               {/* --- 2. RESIDENT EXPERIENCE (Brivo App) --- */}
               <div className="absolute right-4 lg:right-0 bottom-10 w-48 sm:w-56 z-20 animate-float-reverse">
+                
+                {/* NEW POSITION: Eagle Eye Pill perfectly centered above the Brivo phone */}
+                <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-black/80 backdrop-blur-xl border border-white/10 px-4 py-2 rounded-full z-40 flex items-center gap-2 shadow-[0_0_30px_rgba(6,182,212,0.2)] whitespace-nowrap">
+                  <div className="w-2 h-2 bg-cyan-400 rounded-full animate-ping absolute"></div>
+                  <div className="w-2 h-2 bg-cyan-400 rounded-full relative"></div>
+                  <span className="text-white text-[9px] font-bold tracking-widest uppercase">Eagle Eye Monitored</span>
+                </div>
+
                 {/* Frosted Glass Experience Label */}
                 <div className="absolute -right-4 sm:-right-10 bottom-20 bg-black/40 backdrop-blur-2xl border border-white/10 p-3 sm:p-4 rounded-2xl shadow-[0_20px_40px_rgba(0,0,0,0.5)] z-40 text-right">
                   <p className="text-blue-500 text-[8px] font-black uppercase tracking-[0.3em] mb-1">Resident Experience</p>
@@ -121,19 +138,11 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-              
-              {/* Global AI Monitoring Pill */}
-              <div className="absolute top-0 right-10 bg-black/80 backdrop-blur-xl border border-white/10 px-4 py-2 rounded-full z-40 flex items-center gap-2 shadow-[0_0_30px_rgba(6,182,212,0.2)]">
-                <div className="w-2 h-2 bg-cyan-400 rounded-full animate-ping absolute"></div>
-                <div className="w-2 h-2 bg-cyan-400 rounded-full relative"></div>
-                <span className="text-white text-[9px] font-bold tracking-widest uppercase">Eagle Eye Monitored</span>
-              </div>
-            </div>
 
+            </div>
           </div>
         </div>
       </section>
-
       {/* 3. TARGET AUDIENCE TRUST BAR */}
       <section className="py-12 bg-[#050505] border-y border-white/5 relative z-20">
         <div className="container mx-auto px-6 text-center">

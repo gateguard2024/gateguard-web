@@ -152,14 +152,70 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 6. FOOTER */}
-      <footer className="py-20 border-t border-white/5 bg-black">
-        <div className="container mx-auto px-6 text-center text-zinc-600 font-bold italic uppercase">
-          <p className="text-[10px] tracking-[0.5em]">
-            &copy; {new Date().getFullYear()} GateGuard Tech Ecosystem. All Security Protocols Active.
-          </p>
+     {/* 6. FINAL CALL TO ACTION: Lead Capture */}
+      <section id="contact" className="py-32 bg-gradient-to-b from-black to-blue-900/20">
+        <div className="container mx-auto px-6 text-center">
+          <div className="max-w-4xl mx-auto bg-zinc-900/50 border border-white/10 p-12 md:p-20 rounded-[3rem] backdrop-blur-xl">
+            <h2 className="text-4xl md:text-6xl font-black mb-8 italic uppercase tracking-tighter">
+              Secure Your <span className="text-blue-500 font-bold">Estate Today.</span>
+            </h2>
+            <p className="text-zinc-400 text-lg mb-12 max-w-xl mx-auto italic">
+              "Join the elite communities already utilizing GateGuard's AI-driven ecosystem."
+            </p>
+            <div className="flex flex-col sm:flex-row gap-6 justify-center">
+              <a 
+                href="mailto:sales@gateguard.pro" 
+                className="px-12 py-5 bg-blue-600 text-white font-black rounded-2xl hover:bg-blue-500 transition-all shadow-2xl shadow-blue-900/50 transform hover:-translate-y-1 text-center"
+              >
+                REQUEST A PROPOSAL
+              </a>
+              <a 
+                href="tel:+15551234567" 
+                className="px-12 py-5 bg-white/5 border border-white/10 text-white font-bold rounded-2xl hover:bg-white/10 transition-all text-center"
+              >
+                SPEAK WITH AN EXPERT
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 7. ENHANCED FOOTER */}
+      <footer className="py-20 bg-black border-t border-white/5">
+        <div className="container mx-auto px-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-20">
+            <div className="col-span-1 md:col-span-2">
+               <div className="flex items-center gap-3 mb-6">
+                  <img src="/logo.png" alt="Logo" className="w-10 h-10 object-contain" />
+                  <span className="text-2xl font-black tracking-tighter italic uppercase">GateGuard</span>
+               </div>
+               <p className="text-zinc-500 max-w-sm text-sm leading-relaxed">
+                  Redefining access control through edge-computing and intelligent AI integration. Built for the next 100 years of security.
+               </p>
+            </div>
+            <div>
+               <h4 className="text-white font-bold mb-6 uppercase text-xs tracking-widest">Platform</h4>
+               <ul className="space-y-4 text-sm text-zinc-500">
+                  <li><a href="#solutions" className="hover:text-blue-400 transition-colors">AI Intelligence</a></li>
+                  <li><a href="#hardware" className="hover:text-blue-400 transition-colors">Hardware Sync</a></li>
+                  <li><a href="#" className="hover:text-blue-400 transition-colors">Brivo Integration</a></li>
+               </ul>
+            </div>
+            <div>
+               <h4 className="text-white font-bold mb-6 uppercase text-xs tracking-widest">Support</h4>
+               <ul className="space-y-4 text-sm text-zinc-500">
+                  <li><a href="mailto:support@gateguard.pro" className="hover:text-blue-400 transition-colors">Tech Support</a></li>
+                  <li><a href="#" className="hover:text-blue-400 transition-colors">System Status</a></li>
+                  <li><a href="#" className="hover:text-blue-400 transition-colors">Privacy Policy</a></li>
+               </ul>
+            </div>
+          </div>
+          <div className="pt-8 border-t border-white/5 text-center">
+            <p className="text-zinc-700 text-[10px] font-bold uppercase tracking-[0.5em] italic">
+              &copy; {new Date().getFullYear()} GateGuard Technology Ecosystem. All Rights Reserved.
+            </p>
+          </div>
         </div>
       </footer>
-    </main>
   );
 }

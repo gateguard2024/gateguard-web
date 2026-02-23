@@ -1,6 +1,21 @@
-import React from 'react';
+"use client";
+import React, { useState } from 'react';
 
 export default function Home() {
+  // ROI Calculator State
+  const [units, setUnits] = useState(250);
+  const [vehicleGates, setVehicleGates] = useState(2);
+  const [pedGates, setPedGates] = useState(2);
+  const [cameras, setCameras] = useState(4);
+  const [concierge, setConcierge] = useState(0);
+
+  // Math Logic
+  const gatesCost = vehicleGates * 150;
+  const pedCost = pedGates * 125;
+  const cameraCost = cameras * 85;
+  const totalMonthly = gatesCost + pedCost + cameraCost + concierge;
+  const perUnitMonthly = (totalMonthly / units).toFixed(2);
+
   return (
     <main className="bg-[#050505] text-white min-h-screen selection:bg-cyan-500/30 font-sans overflow-x-hidden">
       
@@ -18,6 +33,7 @@ export default function Home() {
         .animate-float-reverse { animation: float-reverse 8s ease-in-out infinite; }
       `}} />
 
+      {/* 1. NAVIGATION BAR */}
       {/* 1. NAVIGATION BAR */}
       <nav className="fixed top-0 w-full z-50 border-b border-white/5 bg-[#050505]/80 backdrop-blur-2xl">
         <div className="container mx-auto px-6 h-24 flex items-center justify-between">
@@ -326,7 +342,120 @@ export default function Home() {
           </div>
         </div>
       </section>
+{/* 6. INTERACTIVE ROI CALCULATOR */}
+      <section id="pricing" className="py-32 bg-[#050505] relative border-t border-white/5">
+        <div className="container mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 tracking-tight">
+              Calculate Your <span className="text-cyan-400 italic mr-2 md:mr-3">Gate Guard</span> Savings.
+            </h2>
+            <p className="text-zinc-400 max-w-2xl mx-auto text-lg">
+              Move from a reactive "Run-to-Fail" cycle to a proactive "Asset Management" model. 
+              Input your property details below to see your predictable per-unit operating expense.
+            </p>
+          </div>
 
+          <div className="max-w-5xl mx-auto bg-zinc-900/50 border border-white/10 rounded-[2rem] p-8 md:p-12 backdrop-blur-xl shadow-2xl flex flex-col lg:flex-row gap-12">
+            
+            {/* Left: Interactive Controls */}
+            <div className="flex-1 space-y-8">
+              
+              {/* Units Slider */}
+              <div>
+                <div className="flex justify-between mb-2">
+                  <label className="text-white font-bold text-sm tracking-wide uppercase">Total Units / Apartments</label>
+                  <span className="text-cyan-400 font-black">{units}</span>
+                </div>
+                <input 
+                  type="range" min="50" max="1000" step="10" 
+                  value={units} onChange={(e) => setUnits(Number(e.target.value))}
+                  className="w-full h-2 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-cyan-500"
+                />
+              </div>
+
+              {/* Hardware Inputs */}
+              <div className="grid grid-cols-2 gap-6">
+                <div>
+                  <label className="text-zinc-400 font-bold text-xs tracking-widest uppercase block mb-2">Vehicle Gates</label>
+                  <p className="text-[10px] text-zinc-500 mb-2 leading-tight">Includes cameras & maintenance ($150/ea)</p>
+                  <input 
+                    type="number" min="0" value={vehicleGates} onChange={(e) => setVehicleGates(Number(e.target.value))}
+                    className="w-full bg-black border border-white/10 rounded-lg p-3 text-white font-bold focus:border-cyan-500 outline-none transition-colors"
+                  />
+                </div>
+                <div>
+                  <label className="text-zinc-400 font-bold text-xs tracking-widest uppercase block mb-2">Pedestrian Doors</label>
+                  <p className="text-[10px] text-zinc-500 mb-2 leading-tight">Amenities & walk-ins ($125/ea)</p>
+                  <input 
+                    type="number" min="0" value={pedGates} onChange={(e) => setPedGates(Number(e.target.value))}
+                    className="w-full bg-black border border-white/10 rounded-lg p-3 text-white font-bold focus:border-cyan-500 outline-none transition-colors"
+                  />
+                </div>
+              </div>
+
+              {/* Extra Cameras */}
+              <div>
+                <label className="text-zinc-400 font-bold text-xs tracking-widest uppercase block mb-2">Additional Video Monitoring</label>
+                <p className="text-[10px] text-zinc-500 mb-2 leading-tight">Property-wide Eagle Eye cameras ($85/ea)</p>
+                <input 
+                  type="number" min="0" value={cameras} onChange={(e) => setCameras(Number(e.target.value))}
+                  className="w-full bg-black border border-white/10 rounded-lg p-3 text-white font-bold focus:border-cyan-500 outline-none transition-colors"
+                />
+              </div>
+
+              {/* Virtual Concierge Dropdown */}
+              <div>
+                <label className="text-zinc-400 font-bold text-xs tracking-widest uppercase block mb-2">2-Way Video Concierge</label>
+                <p className="text-[10px] text-zinc-500 mb-2 leading-tight">Live operators checking IDs and logging plates</p>
+                <select 
+                  value={concierge} onChange={(e) => setConcierge(Number(e.target.value))}
+                  className="w-full bg-black border border-white/10 rounded-lg p-3 text-white font-bold focus:border-cyan-500 outline-none transition-colors appearance-none"
+                >
+                  <option value="0">None (Self-Managed via App)</option>
+                  <option value="900">Night Shift (11pm - 7am)</option>
+                  <option value="1100">Morning Shift (7am - 3pm)</option>
+                  <option value="1100">Evening Shift (3pm - 11pm)</option>
+                  <option value="2900">24/7 Full Coverage</option>
+                </select>
+              </div>
+
+            </div>
+
+            {/* Right: The Live Results */}
+            <div className="flex-1 bg-black border border-cyan-500/30 rounded-3xl p-8 relative overflow-hidden flex flex-col justify-center">
+              <div className="absolute top-0 left-0 w-full h-1 bg-cyan-400 shadow-[0_0_15px_#22d3ee]"></div>
+              <div className="absolute -right-20 -bottom-20 w-64 h-64 bg-cyan-500/10 blur-[100px] rounded-full pointer-events-none"></div>
+              
+              <h3 className="text-center text-zinc-400 text-sm font-bold uppercase tracking-widest mb-2">Estimated Predictable OpEx</h3>
+              
+              <div className="text-center mb-8">
+                <span className="text-6xl font-black text-white">${perUnitMonthly}</span>
+                <span className="text-zinc-500 font-bold"> / unit / mo</span>
+              </div>
+
+              <div className="space-y-4 border-t border-white/10 pt-6">
+                <div className="flex justify-between text-sm">
+                  <span className="text-zinc-400">Total Monthly Subscription</span>
+                  <span className="text-white font-bold">${totalMonthly.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-zinc-400">One-Time Setup Fee (Avg)</span>
+                  <span className="text-white font-bold">${((vehicleGates + pedGates) * 500).toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between text-sm mt-4 p-4 bg-red-500/10 border border-red-500/20 rounded-xl">
+                  <span className="text-red-400 font-bold">Cost of 24/7 Physical Guards</span>
+                  <span className="text-red-400 font-bold line-through">$12,500 / mo</span>
+                </div>
+              </div>
+
+              <button className="w-full mt-8 px-8 py-4 bg-cyan-500 text-black font-black rounded-full hover:shadow-[0_0_30px_-5px_rgba(6,182,212,0.5)] transition-all transform hover:-translate-y-1">
+                LOCK IN THIS RATE
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </section>
       {/* 6. CALL TO ACTION (LEAD CAPTURE) */}
       <section id="contact" className="py-32 bg-gradient-to-b from-[#050505] to-[#0A192F] relative overflow-hidden">
         <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">

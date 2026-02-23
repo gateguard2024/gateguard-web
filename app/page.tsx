@@ -33,12 +33,22 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* 2. PREMIUM HERO SECTION (Matching the Mockup Image) */}
-      <section className="relative pt-40 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
-        {/* Ambient Background Tech Glow */}
-        <div className="absolute top-1/4 left-0 w-full h-[500px] bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5 pointer-events-none"></div>
-        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-cyan-500/10 blur-[150px] rounded-full" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-600/10 blur-[150px] rounded-full" />
+      {/* 2. PREMIUM HERO SECTION (Dark Navy Silhouette) */}
+      <section className="relative pt-40 pb-20 lg:pt-48 lg:pb-32 overflow-hidden border-b border-white/5">
+        
+        {/* Background Image & Brivo-Style Navy Overlay */}
+        <div className="absolute inset-0 z-0">
+          {/* Your Base Building Image */}
+          <img 
+            src="/hero-bg.jpg" 
+            alt="Multi-Family Building" 
+            className="w-full h-full object-cover grayscale"
+          />
+          {/* The Deep Navy Silhouette Filter (85% opaque blue = 15% visible building) */}
+          <div className="absolute inset-0 bg-[#0A192F] opacity-85 mix-blend-multiply"></div>
+          {/* Bottom fade to seamlessly blend into the next black section */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/50 to-transparent"></div>
+        </div>
 
         <div className="container mx-auto px-6 relative z-10">
           <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
@@ -56,7 +66,7 @@ export default function Home() {
                 GateGuard: Intelligent Access. <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Unrivaled Security.</span>
               </h1>
-              <p className="text-zinc-400 text-lg lg:text-xl mb-10 max-w-xl leading-relaxed mx-auto lg:mx-0">
+              <p className="text-zinc-300 text-lg lg:text-xl mb-10 max-w-xl leading-relaxed mx-auto lg:mx-0 font-medium drop-shadow-lg">
                 We don't just fix gates; we manage them. Enjoy proactive AI monitoring, seamless Brivo access, and 2-way video concierge for one nominal price per unit.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
@@ -68,17 +78,7 @@ export default function Home() {
 
             {/* Right: The Overlapping "Composite" Image Setup */}
             <div className="flex-1 w-full max-w-2xl relative mt-12 lg:mt-0">
-              {/* Main Background Gate Image */}
-              <div className="relative aspect-[4/3] rounded-3xl overflow-hidden border border-white/10 shadow-2xl z-10">
-                <img 
-                  src="https://images.unsplash.com/photo-1605663737568-154dfc572b83?q=80&w=2000&auto=format&fit=crop" 
-                  alt="Modern Automated Gate" 
-                  className="w-full h-full object-cover opacity-80"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent"></div>
-              </div>
-
-              {/* Floating Element 1: Video Concierge App (Matches the smiling woman card) */}
+              {/* Floating Element 1: Video Concierge App */}
               <div className="absolute -left-4 lg:-left-12 top-1/4 w-48 sm:w-56 bg-zinc-900/80 backdrop-blur-xl border border-white/10 rounded-3xl p-3 shadow-2xl z-30 transform hover:scale-105 transition-transform duration-500">
                 <div className="aspect-[9/16] rounded-2xl overflow-hidden relative border border-white/5">
                   <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=800&auto=format&fit=crop" alt="Video Concierge" className="w-full h-full object-cover" />
@@ -106,12 +106,12 @@ export default function Home() {
                 <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
                 <span className="text-white text-[10px] font-bold tracking-widest uppercase">Eagle Eye Active</span>
               </div>
-
             </div>
+
           </div>
         </div>
       </section>
-
+      
       {/* 3. TARGET AUDIENCE TRUST BAR */}
       <section className="py-12 bg-[#050505] border-y border-white/5 relative z-20">
         <div className="container mx-auto px-6 text-center">

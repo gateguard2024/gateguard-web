@@ -55,14 +55,13 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Dashboard Visual Placeholder */}
             <div className="flex-1 w-full max-w-2xl relative group">
               <div className="absolute -inset-1 bg-blue-500 rounded-[2.5rem] blur opacity-10 transition duration-1000"></div>
               <div className="relative bg-[#0A0A0A] border border-white/10 rounded-[2.5rem] p-4 shadow-2xl overflow-hidden">
                 <div className="aspect-video bg-zinc-900 rounded-2xl flex items-center justify-center border border-white/5 relative">
                    <div className="text-center">
                       <div className="text-6xl mb-4 grayscale opacity-40">🔒</div>
-                      <p className="text-[10px] font-mono tracking-[0.3em] text-blue-500">GATE_GUARD_SYSTEM_ACTIVE</p>
+                      <p className="text-[10px] font-mono tracking-[0.3em] text-blue-500 uppercase">Gate Guard System Active</p>
                    </div>
                 </div>
               </div>
@@ -74,7 +73,7 @@ export default function Home() {
       {/* 3. INDUSTRY TRUST BAR */}
       <section className="py-16 bg-zinc-950/50 border-y border-white/5">
         <div className="container mx-auto px-6 text-center">
-          <p className="text-zinc-500 text-[10px] font-bold uppercase tracking-[0.4em] mb-12">Protecting Premier Properties</p>
+          <p className="text-zinc-500 text-[10px] font-bold uppercase tracking-[0.4em] mb-12 italic">Protecting Premier Properties</p>
           <div className="flex flex-wrap justify-center items-center gap-12 md:gap-24 grayscale opacity-40">
             {['HOA MANAGERS', 'MULTI-FAMILY', 'GATED ESTATES', 'COMMERCIAL HUB'].map((t) => (
               <span key={t} className="text-sm font-black tracking-tighter text-white">{t}</span>
@@ -83,22 +82,20 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 4. ECOSYSTEM: GateGuard + Brivo */}
+      {/* 4. ECOSYSTEM SECTION */}
       <section className="py-32 bg-[#080808] relative">
         <div className="container mx-auto px-6">
           <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">One Gate. <span className="text-blue-500 font-black tracking-tighter uppercase italic">Two Powerhouse Apps.</span></h2>
-            <p className="text-zinc-500 max-w-2xl mx-auto italic italic">
-              "Residents use Brivo for access; Managers use GateGuard for intelligence."
-            </p>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 italic uppercase tracking-tighter">One Gate. <span className="text-blue-500">Two Powerhouse Apps.</span></h2>
+            <p className="text-zinc-500 max-w-2xl mx-auto italic">"Residents use Brivo for access; Managers use GateGuard for intelligence."</p>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div className="bg-zinc-900/30 border border-white/5 p-10 rounded-[2.5rem] hover:border-blue-500/30 transition-all">
+            <div className="bg-zinc-900/30 border border-white/5 p-10 rounded-[2.5rem] hover:border-blue-500/20 transition-all">
                <h3 className="text-blue-500 font-bold mb-2 uppercase text-xs tracking-widest">Resident Access</h3>
                <h4 className="text-2xl font-bold mb-4">Brivo Mobile Pass</h4>
                <p className="text-zinc-400 italic">"Bluetooth & NFC entry for residents. Secure and seamless."</p>
             </div>
-            <div className="bg-zinc-900/30 border border-white/5 p-10 rounded-[2.5rem] hover:border-blue-400/30 transition-all">
+            <div className="bg-zinc-900/30 border border-white/5 p-10 rounded-[2.5rem] hover:border-blue-400/20 transition-all">
                <h3 className="text-blue-400 font-bold mb-2 uppercase text-xs tracking-widest">Admin Intelligence</h3>
                <h4 className="text-2xl font-bold mb-4 text-white">GateGuard Interactive</h4>
                <p className="text-zinc-400 italic">"Real-time AI video feeds and remote gate override."</p>
@@ -107,9 +104,9 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 5. HARDWARE: The AI Edge Controller */}
+      {/* 5. HARDWARE SECTION */}
       <section className="py-32 bg-black relative">
-        <div className="container mx-auto px-6 text-white font-bold">
+        <div className="container mx-auto px-6">
           <div className="flex flex-col lg:flex-row items-center gap-20">
             <div className="flex-1 relative">
               <div className="absolute -inset-4 bg-blue-500/20 blur-3xl rounded-full opacity-30"></div>
@@ -123,12 +120,42 @@ export default function Home() {
                       <div className="h-1 w-full bg-blue-500/20"></div>
                     </div>
                   </div>
-                  <p className="text-blue-400 font-mono text-[10px] tracking-widest uppercase">Edge Controller v2.0</p>
+                  <p className="text-blue-400 font-mono text-[10px] tracking-widest uppercase italic">Edge Controller v2.0</p>
                 </div>
               </div>
             </div>
             <div className="flex-1">
-              <h2 className="text-4xl font-bold mb-10 leading-tight">Proprietary AI <br/><span className="text-blue-500 tracking-tighter uppercase italic">Hardware Integration</span></h2>
+              <h2 className="text-4xl font-bold mb-10 leading-tight italic uppercase tracking-tighter">Proprietary AI <br/><span className="text-blue-500 italic">Hardware Integration</span></h2>
               <div className="space-y-10">
                 <div className="flex gap-6 group">
-                  <div className="text-2xl text-blue-500 font-black">01</div>
+                  <div className="text-2xl text-blue-500 font-black italic tracking-tighter">01</div>
+                  <div>
+                    <h4 className="text-xl font-bold mb-2">AI Plate Recognition</h4>
+                    <p className="text-zinc-500 leading-relaxed italic text-sm">"Edge-processing cameras identify authorized plates in under 400ms."</p>
+                  </div>
+                </div>
+                <div className="flex gap-6 group">
+                  <div className="text-2xl text-blue-500 font-black italic tracking-tighter">02</div>
+                  <div>
+                    <h4 className="text-xl font-bold mb-2 text-white">Brivo Cloud Sync</h4>
+                    <p className="text-zinc-500 leading-relaxed italic text-sm">"Seamlessly links your existing Brivo credentials with our AI brain."</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 6. FOOTER */}
+      <footer className="py-20 border-t border-white/5 bg-black">
+        <div className="container mx-auto px-6 text-center">
+          <p className="text-zinc-600 text-[10px] font-bold uppercase tracking-[0.5em] italic">
+            &copy; {new Date().getFullYear()} GateGuard Tech Ecosystem. All Security Protocols Active.
+          </p>
+        </div>
+      </footer>
+
+    </main>
+  );
+}

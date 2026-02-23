@@ -146,12 +146,13 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 4. THE 5 PILLARS OF GATE GUARD */}
+{/* 4. THE 5 PILLARS OF GATE GUARD */}
       <section id="services" className="py-32 bg-[#050505] relative">
         <div className="container mx-auto px-6">
           <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 tracking-tighter">
-              The Complete <span className="text-cyan-400 italic">Gate Guard</span>&nbsp;Ecosystem.
+            {/* Fix: Relaxed the tracking slightly and added mr-3 (margin-right) to the span to force a gap */}
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 tracking-tight">
+              The Complete <span className="text-cyan-400 italic mr-2 md:mr-3">Gate Guard</span> Ecosystem.
             </h2>
             <p className="text-zinc-400 max-w-2xl mx-auto text-lg">
               Unlike traditional break-fix companies, we put community gates first. Get proactive service, hardware, and software rolled into one nominal per-unit operating expense.
@@ -244,7 +245,7 @@ export default function Home() {
           </div>
         </div>
       </section>
-
+      
       {/* 5. THE ROI & COMPARISON SECTION */}
       <section id="roi" className="py-32 bg-black border-y border-white/5 relative overflow-hidden">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-[500px] bg-cyan-900/10 blur-[150px] rounded-full pointer-events-none"></div>

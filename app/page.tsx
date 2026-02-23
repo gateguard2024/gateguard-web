@@ -524,7 +524,7 @@ export default function Home() {
           </div>
         </div>
       </footer>
-      {/* SALESFORCE LEAD CAPTURE MODAL (POP-UP) */}
+     {/* SALESFORCE LEAD CAPTURE MODAL (POP-UP) */}
       {isModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           {/* Dark Blurred Backdrop */}
@@ -555,7 +555,8 @@ export default function Home() {
               <input type="hidden" name="oid" value="00Dam00001a4k0S" />
               <input type="hidden" name="retURL" value="https://gateguard.co" />
               
-              {/* HIDDEN MAGIC: Passing the Calculator Data to Salesforce Notes */}
+              {/* HIDDEN MAGIC: Lead Source & Calculator Data */}
+              <input type="hidden" name="lead_source" value="ROI Calculator" />
               <input type="hidden" name="description" value={`Calculated Quote: ${units} Units | ${vehicleGates} Vehicle Gates | ${pedGates} Ped Gates | ${cameras} Cameras | Concierge Shift: $${concierge} | Estimated Total: $${totalMonthly.toLocaleString()}/mo ($${perUnitMonthly}/unit)`} />
 
               {/* Form Fields */}
@@ -570,9 +571,16 @@ export default function Home() {
                 </div>
               </div>
 
-              <div>
-                <label htmlFor="company" className="block text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1.5">Property / HOA Name</label>
-                <input id="company" maxLength={40} name="company" type="text" required className="w-full bg-zinc-900 border border-white/10 rounded-xl p-3 text-white focus:border-cyan-500 outline-none transition-colors" />
+              {/* NEW: Property & Job Title in a nice 2-column grid */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="company" className="block text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1.5">Property / HOA</label>
+                  <input id="company" maxLength={40} name="company" type="text" required className="w-full bg-zinc-900 border border-white/10 rounded-xl p-3 text-white focus:border-cyan-500 outline-none transition-colors" />
+                </div>
+                <div>
+                  <label htmlFor="title" className="block text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1.5">Job Title</label>
+                  <input id="title" maxLength={40} name="title" type="text" required className="w-full bg-zinc-900 border border-white/10 rounded-xl p-3 text-white focus:border-cyan-500 outline-none transition-colors" />
+                </div>
               </div>
 
               <div>

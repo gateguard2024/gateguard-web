@@ -114,6 +114,76 @@ export default function Home() {
         </div>
       </section>
 
+      {/* 4. THE ECOSYSTEM: GateGuard + Brivo */}
+<section className="py-32 bg-[#080808] relative overflow-hidden">
+  <div className="container mx-auto px-6">
+    <div className="text-center mb-20">
+      <h2 className="text-4xl md:text-5xl font-bold mb-6">One Gate. <span className="text-cyan-400">Two Powerhouse Apps.</span></h2>
+      <p className="text-zinc-500 max-w-2xl mx-auto italic">
+        "We’ve streamlined the experience. Residents use Brivo for access; Managers use GateGuard for intelligence."
+      </p>
+    </div>
+
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      
+      {/* Resident Side: Brivo */}
+      <div className="relative group p-1 bg-gradient-to-b from-blue-500/20 to-transparent rounded-[2.5rem]">
+        <div className="bg-zinc-950 rounded-[2.4rem] p-10 h-full border border-white/5">
+          <div className="flex items-center gap-4 mb-8">
+            <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center font-black text-white">B</div>
+            <div>
+              <h4 className="text-blue-400 font-bold text-sm uppercase tracking-widest">Resident Access</h4>
+              <h3 className="text-2xl font-bold">Brivo Mobile Pass</h3>
+            </div>
+          </div>
+          <ul className="space-y-4 text-zinc-400">
+            <li className="flex items-start gap-3">
+              <span className="text-blue-500 mt-1">✓</span>
+              <span>Frictionless Bluetooth & NFC entry for residents.</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="text-blue-500 mt-1">✓</span>
+              <span>Military-grade credential encryption.</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="text-blue-500 mt-1">✓</span>
+              <span>Eliminates the need for physical fobs.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      {/* Admin Side: GateGuard */}
+      <div className="relative group p-1 bg-gradient-to-b from-cyan-500/20 to-transparent rounded-[2.5rem]">
+        <div className="bg-zinc-950 rounded-[2.4rem] p-10 h-full border border-white/5">
+          <div className="flex items-center gap-4 mb-8">
+            <div className="w-12 h-12 bg-cyan-500 rounded-xl flex items-center justify-center text-black font-black">GG</div>
+            <div>
+              <h4 className="text-cyan-400 font-bold text-sm uppercase tracking-widest">Admin Intelligence</h4>
+              <h3 className="text-2xl font-bold">GateGuard Interactive</h3>
+            </div>
+          </div>
+          <ul className="space-y-4 text-zinc-400">
+            <li className="flex items-start gap-3">
+              <span className="text-cyan-500 mt-1">✓</span>
+              <span>Real-time AI video feeds and plate recognition.</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="text-cyan-500 mt-1">✓</span>
+              <span>Remote gate override from any mobile device.</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="text-cyan-500 mt-1">✓</span>
+              <span>Automated guest pass generation and auditing.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
       {/* 4. FOOTER */}
       <footer className="py-20 border-t border-white/5 bg-black">
         <div className="container mx-auto px-6 text-center">

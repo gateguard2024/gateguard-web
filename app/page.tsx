@@ -33,20 +33,17 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* 2. PREMIUM HERO SECTION (Dark Navy Silhouette) */}
+     {/* 2. PREMIUM HERO SECTION (Dark Navy Silhouette & App UI) */}
       <section className="relative pt-40 pb-20 lg:pt-48 lg:pb-32 overflow-hidden border-b border-white/5">
         
         {/* Background Image & Brivo-Style Navy Overlay */}
         <div className="absolute inset-0 z-0">
-          {/* Your Base Building Image */}
           <img 
             src="/hero-bg.jpg" 
             alt="Multi-Family Building" 
             className="w-full h-full object-cover grayscale"
           />
-          {/* The Deep Navy Silhouette Filter (85% opaque blue = 15% visible building) */}
           <div className="absolute inset-0 bg-[#0A192F] opacity-85 mix-blend-multiply"></div>
-          {/* Bottom fade to seamlessly blend into the next black section */}
           <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/50 to-transparent"></div>
         </div>
 
@@ -67,7 +64,7 @@ export default function Home() {
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Unrivaled Security.</span>
               </h1>
               <p className="text-zinc-300 text-lg lg:text-xl mb-10 max-w-xl leading-relaxed mx-auto lg:mx-0 font-medium drop-shadow-lg">
-                We don't just fix gates; we manage them. Enjoy proactive AI monitoring, seamless Brivo access, and 2-way video concierge for one nominal price per unit.
+                We don't just fix gates; we manage them. Enjoy proactive AI monitoring, seamless Brivo access, and our digital visitor callbox for one nominal price per unit.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                 <button className="px-10 py-4 bg-cyan-500 text-black font-black rounded-full hover:shadow-[0_0_30px_-5px_rgba(6,182,212,0.5)] transition-all transform hover:-translate-y-1">
@@ -76,42 +73,74 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Right: The Overlapping "Composite" Image Setup */}
-            <div className="flex-1 w-full max-w-2xl relative mt-12 lg:mt-0">
-              {/* Floating Element 1: Video Concierge App */}
-              <div className="absolute -left-4 lg:-left-12 top-1/4 w-48 sm:w-56 bg-zinc-900/80 backdrop-blur-xl border border-white/10 rounded-3xl p-3 shadow-2xl z-30 transform hover:scale-105 transition-transform duration-500">
-                <div className="aspect-[9/16] rounded-2xl overflow-hidden relative border border-white/5">
-                  <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=800&auto=format&fit=crop" alt="Video Concierge" className="w-full h-full object-cover" />
-                  <div className="absolute bottom-4 left-0 w-full text-center">
-                    <span className="px-4 py-1.5 bg-green-500/90 backdrop-blur-md text-white text-[10px] font-black uppercase tracking-widest rounded-full">
-                      LIVE CONCIERGE
-                    </span>
+            {/* Right: The Overlapping App Interfaces */}
+            <div className="flex-1 w-full max-w-2xl relative mt-12 lg:mt-0 h-[450px]">
+              
+              {/* Floating Element 1: GateGuard Visitor Callbox App */}
+              <div className="absolute left-0 lg:left-4 top-0 w-48 sm:w-56 bg-[#0a0a0a]/90 backdrop-blur-2xl border border-white/10 rounded-[2rem] p-3 shadow-[0_20px_50px_rgba(0,0,0,0.5)] z-30 transform hover:-translate-y-2 transition-transform duration-500">
+                <div className="aspect-[9/16] rounded-2xl overflow-hidden relative border border-white/5 bg-[#111] flex flex-col p-3">
+                  {/* Mock Video Feed */}
+                  <div className="w-full h-3/5 bg-zinc-800 rounded-xl mb-4 overflow-hidden relative border border-white/10">
+                    <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=800&auto=format&fit=crop" className="w-full h-full object-cover opacity-60" alt="Gate Camera View"/>
+                    <div className="absolute top-2 left-2 flex items-center gap-1.5 bg-black/50 px-2 py-1 rounded-md backdrop-blur-md">
+                      <div className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></div>
+                      <span className="text-[8px] text-white font-bold tracking-widest uppercase">Live</span>
+                    </div>
                   </div>
+                  {/* Mock UI Text */}
+                  <div className="text-center mb-4">
+                    <p className="text-white text-sm font-bold">Visitor at Gate</p>
+                    <p className="text-zinc-500 text-[10px] uppercase tracking-widest">Delivery Driver</p>
+                  </div>
+                  {/* Mock Answer/Decline Buttons */}
+                  <div className="flex gap-4 w-full justify-center mt-auto pb-2">
+                     <div className="w-12 h-12 rounded-full bg-red-500/20 border border-red-500/50 flex items-center justify-center shadow-[0_0_15px_rgba(239,68,68,0.2)]">
+                       <span className="text-red-500 text-lg">✕</span>
+                     </div>
+                     <div className="w-12 h-12 rounded-full bg-green-500/20 border border-green-500/50 flex items-center justify-center shadow-[0_0_15px_rgba(34,197,94,0.2)]">
+                       <span className="text-green-500 text-lg">✓</span>
+                     </div>
+                  </div>
+                </div>
+                {/* Floating Label */}
+                <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-[90%] text-center">
+                  <span className="px-4 py-2 bg-blue-600 border border-blue-400/50 text-white text-[9px] font-black uppercase tracking-widest rounded-full shadow-lg whitespace-nowrap">
+                    Digital Callbox App
+                  </span>
                 </div>
               </div>
 
-              {/* Floating Element 2: Access Hardware / Callbox App */}
-              <div className="absolute -right-4 lg:-right-8 bottom-10 w-40 sm:w-48 bg-zinc-900/90 backdrop-blur-xl border border-white/10 rounded-3xl p-4 shadow-2xl z-20 transform hover:scale-105 transition-transform duration-500 flex flex-col items-center">
-                <div className="w-20 h-32 bg-black border border-white/20 rounded-xl mb-4 relative overflow-hidden flex flex-col items-center justify-center shadow-inner">
-                   <div className="w-12 h-12 rounded-full border border-cyan-500/50 flex items-center justify-center mb-2">
-                     <span className="text-cyan-400 text-xs font-bold">RFID</span>
+              {/* Floating Element 2: Brivo Resident App */}
+              <div className="absolute right-0 lg:right-4 bottom-0 w-48 sm:w-56 bg-[#0a0a0a]/90 backdrop-blur-2xl border border-white/10 rounded-[2rem] p-4 shadow-[0_20px_50px_rgba(0,0,0,0.5)] z-20 transform hover:-translate-y-2 transition-transform duration-500 flex flex-col items-center">
+                <div className="w-full aspect-square bg-[#111] border border-white/5 rounded-2xl mb-6 relative overflow-hidden flex flex-col items-center justify-center group shadow-inner">
+                   {/* Mock Brivo Unlock Button */}
+                   <div className="w-28 h-28 rounded-full border border-cyan-500/20 flex items-center justify-center group-hover:border-cyan-400/50 transition-colors bg-gradient-to-b from-cyan-500/5 to-transparent relative">
+                     <div className="absolute inset-0 rounded-full border-t border-cyan-400 opacity-50"></div>
+                     <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-cyan-600 to-cyan-400 flex items-center justify-center shadow-[0_0_25px_rgba(6,182,212,0.4)] cursor-pointer">
+                       <span className="text-white text-3xl font-black mb-1">🔓</span>
+                     </div>
                    </div>
-                   <div className="w-10 h-1 bg-zinc-800 rounded-full"></div>
+                   <p className="mt-6 text-[10px] font-bold text-zinc-300 tracking-[0.2em] uppercase">Tap to Unlock</p>
                 </div>
-                <p className="text-[10px] text-zinc-400 uppercase tracking-widest font-bold text-center">Brivo Hardware Sync</p>
+                {/* Floating Label */}
+                <div className="w-full text-center">
+                  <span className="px-4 py-2 bg-zinc-800 border border-white/10 text-cyan-400 text-[9px] font-black uppercase tracking-widest rounded-full shadow-lg block">
+                    Brivo Mobile Pass
+                  </span>
+                </div>
               </div>
               
               {/* Floating Status Pill */}
-              <div className="absolute top-6 right-6 bg-black/60 backdrop-blur-md border border-white/10 px-4 py-2 rounded-full z-20 flex items-center gap-2">
-                <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
-                <span className="text-white text-[10px] font-bold tracking-widest uppercase">Eagle Eye Active</span>
+              <div className="absolute top-10 right-10 bg-black/80 backdrop-blur-md border border-white/10 px-4 py-2 rounded-full z-40 flex items-center gap-2 shadow-xl">
+                <div className="w-2 h-2 bg-blue-500 rounded-full animate-ping absolute"></div>
+                <div className="w-2 h-2 bg-blue-500 rounded-full relative"></div>
+                <span className="text-white text-[9px] font-bold tracking-widest uppercase">Eagle Eye Active</span>
               </div>
             </div>
 
           </div>
         </div>
-      </section>
-      
+      </section>      
       {/* 3. TARGET AUDIENCE TRUST BAR */}
       <section className="py-12 bg-[#050505] border-y border-white/5 relative z-20">
         <div className="container mx-auto px-6 text-center">

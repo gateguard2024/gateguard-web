@@ -4,24 +4,35 @@ export default function Home() {
   return (
     <main className="bg-[#050505] text-white min-h-screen selection:bg-cyan-500/30 font-sans overflow-x-hidden">
       
+      {/* Custom CSS for the floating phone animations */}
+      <style dangerouslySetInnerHTML={{__html: `
+        @keyframes float {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-15px); }
+        }
+        @keyframes float-reverse {
+          0%, 100% { transform: translateY(-15px); }
+          50% { transform: translateY(0px); }
+        }
+        .animate-float { animation: float 6s ease-in-out infinite; }
+        .animate-float-reverse { animation: float-reverse 8s ease-in-out infinite; }
+      `}} />
+
       {/* 1. NAVIGATION BAR */}
       <nav className="fixed top-0 w-full z-50 border-b border-white/5 bg-[#050505]/80 backdrop-blur-2xl">
         <div className="container mx-auto px-6 h-24 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="relative w-40 sm:w-48 h-12 flex items-center">
-               {/* Using the text-based logo matching your uploaded Screenshot 2026-02-23 at 8.20.19 AM.png */}
-               <div className="flex items-center gap-3">
-                 <img src="/logo.png" alt="GateGuard" className="h-10 w-10 object-contain" />
-                 <div className="flex flex-col">
-                    <span className="text-xl md:text-2xl font-black tracking-tighter uppercase italic leading-none text-white">GateGuard</span>
-                    <span className="text-[9px] font-bold tracking-[0.3em] uppercase text-blue-500 mt-1">Security Ecosystem</span>
-                 </div>
-               </div>
+            <div className="flex items-center gap-3">
+              <img src="/logo.png" alt="GateGuard" className="h-10 w-10 object-contain" />
+              <div className="flex flex-col">
+                 <span className="text-xl md:text-2xl font-black tracking-tighter uppercase italic leading-none text-white">GateGuard</span>
+                 <span className="text-[9px] font-bold tracking-[0.3em] uppercase text-cyan-500 mt-1">Security Ecosystem</span>
+              </div>
             </div>
           </div>
           <div className="hidden md:flex items-center gap-8 text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400">
             <a href="#services" className="hover:text-cyan-400 transition-colors">Services</a>
-            <a href="#app" className="hover:text-cyan-400 transition-colors">App</a>
+            <a href="#roi" className="hover:text-cyan-400 transition-colors">Compare</a>
             <a href="#contact" className="hover:text-cyan-400 transition-colors">Contact</a>
             <button className="px-8 py-3 bg-transparent border border-white/20 hover:border-cyan-400 text-white rounded-full transition-all">
               Login
@@ -33,9 +44,8 @@ export default function Home() {
         </div>
       </nav>
 
-     {/* 2. PREMIUM HERO SECTION (Dark Navy Silhouette & App UI) */}
+      {/* 2. PREMIUM HERO SECTION (Dark Navy Silhouette & Sleek App UI) */}
       <section className="relative pt-40 pb-20 lg:pt-48 lg:pb-32 overflow-hidden border-b border-white/5">
-        
         {/* Background Image & Brivo-Style Navy Overlay */}
         <div className="absolute inset-0 z-0">
           <img 
@@ -73,90 +83,36 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Right: The Overlapping App Interfaces */}
-            <div className="flex-1 w-full max-w-2xl relative mt-12 lg:mt-0 h-[450px]">
+            {/* Right: The Overlapping App Experiences (Ultra-Sleek) */}
+            <div className="flex-1 w-full max-w-2xl relative mt-12 lg:mt-0 h-[550px]">
               
-              {/* Floating Element 1: GateGuard Visitor Callbox App */}
-              <div className="absolute left-0 lg:left-4 top-0 w-48 sm:w-56 bg-[#0a0a0a]/90 backdrop-blur-2xl border border-white/10 rounded-[2rem] p-3 shadow-[0_20px_50px_rgba(0,0,0,0.5)] z-30 transform hover:-translate-y-2 transition-transform duration-500">
-                <div className="aspect-[9/16] rounded-2xl overflow-hidden relative border border-white/5 bg-[#111] flex flex-col p-3">
-                  {/* Mock Video Feed */}
-                  <div className="w-full h-3/5 bg-zinc-800 rounded-xl mb-4 overflow-hidden relative border border-white/10">
-                    <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=800&auto=format&fit=crop" className="w-full h-full object-cover opacity-60" alt="Gate Camera View"/>
-                    <div className="absolute top-2 left-2 flex items-center gap-1.5 bg-black/50 px-2 py-1 rounded-md backdrop-blur-md">
-                      <div className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></div>
-                      <span className="text-[8px] text-white font-bold tracking-widest uppercase">Live</span>
+              {/* --- 1. VISITOR EXPERIENCE (GateGuard App) --- */}
+              <div className="absolute left-4 lg:left-0 top-0 w-56 sm:w-64 z-30 animate-float">
+                {/* Frosted Glass Experience Label */}
+                <div className="absolute -left-6 sm:-left-12 top-16 bg-black/40 backdrop-blur-2xl border border-white/10 p-3 sm:p-4 rounded-2xl shadow-[0_20px_40px_rgba(0,0,0,0.5)] z-40">
+                  <p className="text-cyan-400 text-[8px] font-black uppercase tracking-[0.3em] mb-1">Visitor Experience</p>
+                  <p className="text-white text-xs sm:text-sm font-bold">Interactive Callbox</p>
+                </div>
+                {/* Sleek Phone Frame */}
+                <div className="bg-gradient-to-b from-zinc-700 to-black p-[2px] rounded-[2.5rem] shadow-[0_30px_60px_rgba(0,0,0,0.8)]">
+                  <div className="bg-black p-1.5 rounded-[2.4rem]">
+                    <div className="aspect-[9/19] rounded-[2rem] overflow-hidden relative border border-white/10 bg-[#050505]">
+                      <img src="/app-callbox.png" alt="GateGuard Visitor Experience" className="w-full h-full object-cover" />
+                      <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-tr from-transparent via-white/5 to-transparent pointer-events-none"></div>
                     </div>
                   </div>
-                  {/* Mock UI Text */}
-                  <div className="text-center mb-4">
-                    <p className="text-white text-sm font-bold">Visitor at Gate</p>
-                    <p className="text-zinc-500 text-[10px] uppercase tracking-widest">Delivery Driver</p>
-                  </div>
-                  {/* Mock Answer/Decline Buttons */}
-                  <div className="flex gap-4 w-full justify-center mt-auto pb-2">
-                     <div className="w-12 h-12 rounded-full bg-red-500/20 border border-red-500/50 flex items-center justify-center shadow-[0_0_15px_rgba(239,68,68,0.2)]">
-                       <span className="text-red-500 text-lg">✕</span>
-                     </div>
-                     <div className="w-12 h-12 rounded-full bg-green-500/20 border border-green-500/50 flex items-center justify-center shadow-[0_0_15px_rgba(34,197,94,0.2)]">
-                       <span className="text-green-500 text-lg">✓</span>
-                     </div>
-                  </div>
-                </div>
-                {/* Floating Label */}
-                <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-[90%] text-center">
-                  <span className="px-4 py-2 bg-blue-600 border border-blue-400/50 text-white text-[9px] font-black uppercase tracking-widest rounded-full shadow-lg whitespace-nowrap">
-                    Digital Callbox App
-                  </span>
                 </div>
               </div>
 
-              {/* Floating Element 2: Brivo Resident App */}
-              <div className="absolute right-0 lg:right-4 bottom-0 w-48 sm:w-56 bg-[#0a0a0a]/90 backdrop-blur-2xl border border-white/10 rounded-[2rem] p-4 shadow-[0_20px_50px_rgba(0,0,0,0.5)] z-20 transform hover:-translate-y-2 transition-transform duration-500 flex flex-col items-center">
-                <div className="w-full aspect-square bg-[#111] border border-white/5 rounded-2xl mb-6 relative overflow-hidden flex flex-col items-center justify-center group shadow-inner">
-                   {/* Mock Brivo Unlock Button */}
-                   <div className="w-28 h-28 rounded-full border border-cyan-500/20 flex items-center justify-center group-hover:border-cyan-400/50 transition-colors bg-gradient-to-b from-cyan-500/5 to-transparent relative">
-                     <div className="absolute inset-0 rounded-full border-t border-cyan-400 opacity-50"></div>
-                     <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-cyan-600 to-cyan-400 flex items-center justify-center shadow-[0_0_25px_rgba(6,182,212,0.4)] cursor-pointer">
-                       <span className="text-white text-3xl font-black mb-1">🔓</span>
-                     </div>
-                   </div>
-                   <p className="mt-6 text-[10px] font-bold text-zinc-300 tracking-[0.2em] uppercase">Tap to Unlock</p>
+              {/* --- 2. RESIDENT EXPERIENCE (Brivo App) --- */}
+              <div className="absolute right-4 lg:right-0 bottom-10 w-48 sm:w-56 z-20 animate-float-reverse">
+                {/* Frosted Glass Experience Label */}
+                <div className="absolute -right-4 sm:-right-10 bottom-20 bg-black/40 backdrop-blur-2xl border border-white/10 p-3 sm:p-4 rounded-2xl shadow-[0_20px_40px_rgba(0,0,0,0.5)] z-40 text-right">
+                  <p className="text-blue-500 text-[8px] font-black uppercase tracking-[0.3em] mb-1">Resident Experience</p>
+                  <p className="text-white text-xs sm:text-sm font-bold">Brivo Mobile Pass</p>
                 </div>
-                {/* Floating Label */}
-                <div className="w-full text-center">
-                  <span className="px-4 py-2 bg-zinc-800 border border-white/10 text-cyan-400 text-[9px] font-black uppercase tracking-widest rounded-full shadow-lg block">
-                    Brivo Mobile Pass
-                  </span>
-                </div>
-              </div>
-              
-              {/* Floating Status Pill */}
-              <div className="absolute top-10 right-10 bg-black/80 backdrop-blur-md border border-white/10 px-4 py-2 rounded-full z-40 flex items-center gap-2 shadow-xl">
-                <div className="w-2 h-2 bg-blue-500 rounded-full animate-ping absolute"></div>
-                <div className="w-2 h-2 bg-blue-500 rounded-full relative"></div>
-                <span className="text-white text-[9px] font-bold tracking-widest uppercase">Eagle Eye Active</span>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </section>      
-      {/* 3. TARGET AUDIENCE TRUST BAR */}
-      <section className="py-12 bg-[#050505] border-y border-white/5 relative z-20">
-        <div className="container mx-auto px-6 text-center">
-          <p className="text-zinc-500 text-[10px] font-bold uppercase tracking-[0.4em] mb-8">Built Exclusively For</p>
-          <div className="flex flex-wrap justify-center items-center gap-10 md:gap-20 opacity-60">
-            {['MULTI-FAMILY APARTMENTS', 'HOA COMMUNITIES', 'COMMERCIAL ESTATES'].map((t) => (
-              <span key={t} className="text-sm md:text-base font-black tracking-tighter text-white">{t}</span>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 4. TEMPORARY FOOTER (To ensure clean build) */}
-      <footer className="py-10 bg-black text-center text-zinc-600">
-         <p className="text-[10px] font-bold uppercase tracking-[0.5em]">GateGuard Tech Ecosystem</p>
-      </footer>
-    </main>
-  );
-}
+                 {/* Sleek Phone Frame */}
+                 <div className="bg-gradient-to-b from-zinc-800 to-black p-[2px] rounded-[2.5rem] shadow-[0_30px_60px_rgba(0,0,0,0.6)]">
+                  <div className="bg-black p-1.5 rounded-[2.4rem]">
+                    <div className="aspect-[9/19] rounded-[2rem] overflow-hidden relative border border-white/10 bg-[#0f1423]">
+                      <img src

@@ -1,3 +1,15 @@
+This is another classic copy-paste ghost!
+
+When you see an error like Expected '</', got 'numeric literal' pointing to a class like border-white/5, it means a single quotation mark " accidentally got deleted somewhere above it during the paste. Because the quote was missing, the computer thought the / was trying to close an HTML tag, and it freaked out when it saw the number 5 next to it!
+
+Since we are literally at the finish line and have perfected every single section, the safest and fastest way to fix this is to do one final, clean overwrite of the entire file. This guarantees every single quote, bracket, and tag is perfectly balanced.
+
+The Final, Complete page.tsx
+This version includes absolutely everything we've built: The sleek Hero, the perfectly spaced "Gate Guard" ecosystem, the zooming navy pillar cards, the new All-In-One ROI section, the polished Lead Capture, and the Footer.
+
+Instructions: Click the "Copy" icon in the top right of this block. Go to page.tsx, select EVERYTHING (Cmd+A on Mac), delete it, and paste this.
+
+TypeScript
 import React from 'react';
 
 export default function Home() {
@@ -146,11 +158,10 @@ export default function Home() {
         </div>
       </section>
 
-{/* 4. THE 5 PILLARS OF GATE GUARD */}
+      {/* 4. THE 5 PILLARS OF GATE GUARD */}
       <section id="services" className="py-32 bg-[#050505] relative">
         <div className="container mx-auto px-6">
           <div className="text-center mb-20">
-            {/* Fix: Relaxed the tracking slightly and added mr-3 (margin-right) to the span to force a gap */}
             <h2 className="text-4xl md:text-5xl font-bold mb-6 tracking-tight">
               The Complete <span className="text-cyan-400 italic mr-2 md:mr-3">Gate Guard</span> Ecosystem.
             </h2>
@@ -245,8 +256,8 @@ export default function Home() {
           </div>
         </div>
       </section>
-      
-{/* 5. THE ALL-IN-ONE COMPARISON SECTION */}
+
+      {/* 5. THE ALL-IN-ONE COMPARISON SECTION */}
       <section id="roi" className="py-32 bg-black border-y border-white/5 relative overflow-hidden">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-[500px] bg-cyan-900/10 blur-[150px] rounded-full pointer-events-none"></div>
         <div className="container mx-auto px-6 relative z-10">
@@ -294,7 +305,59 @@ export default function Home() {
               </h3>
               <ul className="space-y-8">
                 <li>
-                  <h4 className="text-xl font-bold text-white mb
+                  <h4 className="text-xl font-bold text-white mb-2">The All-In-One Solution</h4>
+                  <p className="text-zinc-300 text-sm">One partner for gate maintenance, camera monitoring, and property-wide access control.</p>
+                </li>
+                <li>
+                  <h4 className="text-xl font-bold text-white mb-2">Proactive Zero-Downtime</h4>
+                  <p className="text-zinc-300 text-sm">Our Eagle Eye cameras monitor operator health. We fix it *before* the residents even notice.</p>
+                </li>
+                <li>
+                  <h4 className="text-xl font-bold text-white mb-2">Predictable Per-Unit OpEx</h4>
+                  <p className="text-zinc-300 text-sm">One nominal monthly fee covers tech, operators, parts, and labor. Budgeting becomes effortless.</p>
+                </li>
+                <li>
+                  <h4 className="text-xl font-bold text-white mb-2">24/7 AI & Video Concierge</h4>
+                  <p className="text-zinc-300 text-sm">Flawless, unblinking oversight. Verify IDs and log every plate for a fraction of a guard's salary.</p>
+                </li>
+              </ul>
+              <div className="mt-10 pt-8 border-t border-white/10">
+                <p className="text-center text-sm font-bold text-cyan-400 uppercase tracking-widest">
+                  Maximize Safety & System Uptime
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 6. CALL TO ACTION (LEAD CAPTURE) */}
+      <section id="contact" className="py-32 bg-gradient-to-b from-[#050505] to-[#0A192F] relative overflow-hidden">
+        {/* Subtle background building overlay to match the rest of the site */}
+        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+          <img src="/hero-bg.jpg" alt="Property Background" className="w-full h-full object-cover grayscale opacity-10" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0A192F] via-[#050505]/80 to-[#050505]"></div>
+        </div>
+        
+        <div className="container mx-auto px-6 text-center relative z-10">
+          <div className="max-w-4xl mx-auto bg-zinc-900/60 border border-white/10 p-12 md:p-20 rounded-[3rem] backdrop-blur-2xl shadow-2xl">
+            <h2 className="text-4xl md:text-5xl font-extrabold mb-6 tracking-tight drop-shadow-lg">
+              Secure Your <span className="text-cyan-400">Community</span> Today.
+            </h2>
+            <p className="text-zinc-300 text-lg mb-10 max-w-xl mx-auto font-light leading-relaxed">
+              Join the elite Multi-Family and HOA communities already utilizing the Gate Guard ecosystem to increase safety and eliminate downtime.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-5 justify-center">
+              <a href="mailto:sales@gateguard.pro" className="px-10 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold rounded-full hover:shadow-[0_0_30px_-5px_rgba(6,182,212,0.6)] transition-all transform hover:-translate-y-1 text-center tracking-wide text-sm border border-cyan-400/50">
+                REQUEST A PROPOSAL
+              </a>
+              <a href="tel:+15551234567" className="px-10 py-4 bg-white/5 backdrop-blur-md border border-white/10 text-white font-bold rounded-full hover:bg-white/10 transition-all text-center tracking-wide text-sm">
+                CALL AN EXPERT
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* 7. ENHANCED FOOTER */}
       <footer className="py-20 bg-black border-t border-white/5">

@@ -93,13 +93,13 @@ export default function Home() {
                   We don't just fix gates; we manage them. Enjoy proactive AI monitoring, seamless Brivo access, and our digital visitor callbox for <span className="text-white font-semibold">one nominal price per unit.</span>
                 </p>
               </div>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                <button className="px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-black rounded-full hover:shadow-[0_0_30px_-5px_rgba(6,182,212,0.6)] transition-all transform hover:-translate-y-1 border border-cyan-400/50 tracking-wide text-sm">
+                <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                <a href="#services" className="px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-black rounded-full hover:shadow-[0_0_30px_-5px_rgba(6,182,212,0.6)] transition-all transform hover:-translate-y-1 border border-cyan-400/50 tracking-wide text-sm text-center inline-block">
                   VIEW THE PLAN
-                </button>
-                <button className="px-8 py-4 bg-white/5 backdrop-blur-md border border-white/10 text-white font-bold rounded-full hover:bg-white/10 transition-all text-sm tracking-wide">
+                </a>
+                <a href="#pricing" className="px-8 py-4 bg-white/5 backdrop-blur-md border border-white/10 text-white font-bold rounded-full hover:bg-white/10 transition-all text-sm tracking-wide text-center inline-block">
                   CALCULATE ROI
-                </button>
+                </a>
               </div>
             </div>
 

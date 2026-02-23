@@ -246,25 +246,35 @@ export default function Home() {
         </div>
       </section>
       
-      {/* 5. THE ROI & COMPARISON SECTION */}
+{/* 5. THE ALL-IN-ONE COMPARISON SECTION */}
       <section id="roi" className="py-32 bg-black border-y border-white/5 relative overflow-hidden">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-[500px] bg-cyan-900/10 blur-[150px] rounded-full pointer-events-none"></div>
         <div className="container mx-auto px-6 relative z-10">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 tracking-tighter">Stop Paying for <span className="text-red-400 italic">Vulnerability.</span></h2>
-            <p className="text-zinc-400 max-w-2xl mx-auto text-lg">
-              Compare the traditional break-fix and physical guard model against Gate Guard’s proactive, flat-rate ecosystem.
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 tracking-tight">
+              The All-In-One <span className="text-cyan-400 italic">Revolution.</span>
+            </h2>
+            <p className="text-zinc-400 max-w-3xl mx-auto text-lg leading-relaxed">
+              Other companies offer one-off services—they only fix your gate, install cameras, or manage access control. We are a unified solution revolutionizing community security and maintenance to maximize property safety and system uptime.
             </p>
           </div>
 
           <div className="flex flex-col lg:flex-row gap-8 max-w-6xl mx-auto">
             {/* The Old Way */}
-            <div className="flex-1 bg-zinc-950 border border-red-900/30 rounded-[2rem] p-8 md:p-12 relative overflow-hidden group">
+            <div className="flex-1 bg-zinc-950 border border-red-900/30 rounded-[2rem] p-8 md:p-12 relative overflow-hidden group shadow-2xl">
               <div className="absolute top-0 left-0 w-full h-1 bg-red-900/50"></div>
               <h3 className="text-red-400 font-bold mb-8 uppercase tracking-widest text-sm flex items-center gap-2">
                 <span className="text-xl">✕</span> The Old Way
               </h3>
               <ul className="space-y-8">
+                <li>
+                  <h4 className="text-xl font-bold text-white mb-2">Vendor Fragmentation</h4>
+                  <p className="text-zinc-500 text-sm">Juggling a separate gate repair company, camera installer, and access control provider.</p>
+                </li>
+                <li>
+                  <h4 className="text-xl font-bold text-white mb-2">Reactive Maintenance</h4>
+                  <p className="text-zinc-500 text-sm">You only know the gate is broken when a resident calls to complain they are locked out.</p>
+                </li>
                 <li>
                   <h4 className="text-xl font-bold text-white mb-2">Unpredictable CapEx</h4>
                   <p className="text-zinc-500 text-sm">Surprise $5,000+ repair bills when gate operators fail, requiring emergency board approvals.</p>
@@ -272,14 +282,6 @@ export default function Home() {
                 <li>
                   <h4 className="text-xl font-bold text-white mb-2">Expensive Physical Guards</h4>
                   <p className="text-zinc-500 text-sm">$150,000+ annual salaries for guards prone to human error, fatigue, and turnover.</p>
-                </li>
-                <li>
-                  <h4 className="text-xl font-bold text-white mb-2">Fragmented Systems</h4>
-                  <p className="text-zinc-500 text-sm">Residents juggling 3 different apps and fobs for the gate, the lobby, and the gym.</p>
-                </li>
-                <li>
-                  <h4 className="text-xl font-bold text-white mb-2">Reactive Maintenance</h4>
-                  <p className="text-zinc-500 text-sm">You only know the gate is broken when a resident calls to complain they are locked out.</p>
                 </li>
               </ul>
             </div>
@@ -292,53 +294,7 @@ export default function Home() {
               </h3>
               <ul className="space-y-8">
                 <li>
-                  <h4 className="text-xl font-bold text-white mb-2">Predictable Per-Unit OpEx</h4>
-                  <p className="text-zinc-300 text-sm">One nominal monthly fee covers tech, operators, parts, and labor. Budgeting becomes effortless.</p>
-                </li>
-                <li>
-                  <h4 className="text-xl font-bold text-white mb-2">24/7 AI & Video Concierge</h4>
-                  <p className="text-zinc-300 text-sm">Flawless, unblinking oversight. Verify IDs and log every plate for a fraction of a guard's salary.</p>
-                </li>
-                <li>
-                  <h4 className="text-xl font-bold text-white mb-2">Unified Brivo Ecosystem</h4>
-                  <p className="text-zinc-300 text-sm">One app for everything. Cloud-based property sync makes resident management seamless.</p>
-                </li>
-                <li>
-                  <h4 className="text-xl font-bold text-white mb-2">Proactive Zero-Downtime</h4>
-                  <p className="text-zinc-300 text-sm">Our Eagle Eye cameras monitor operator health. We fix it *before* the residents even notice.</p>
-                </li>
-              </ul>
-              <div className="mt-10 pt-8 border-t border-white/10">
-                <p className="text-center text-sm font-bold text-cyan-400 uppercase tracking-widest">
-                  Average Client Savings: 40-60% Annually
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 6. CALL TO ACTION (LEAD CAPTURE) */}
-      <section id="contact" className="py-32 bg-gradient-to-b from-[#050505] to-[#0A192F]">
-        <div className="container mx-auto px-6 text-center">
-          <div className="max-w-4xl mx-auto bg-zinc-900/50 border border-white/10 p-12 md:p-20 rounded-[3rem] backdrop-blur-xl shadow-2xl">
-            <h2 className="text-4xl md:text-6xl font-black mb-8 tracking-tighter">
-              Secure Your <span className="text-cyan-400 italic">Estate Today.</span>
-            </h2>
-            <p className="text-zinc-400 text-lg mb-12 max-w-xl mx-auto">
-              Join the elite Multi-Family and HOA communities already utilizing the Gate Guard SaaS ecosystem.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-6 justify-center">
-              <a href="mailto:sales@gateguard.pro" className="px-12 py-5 bg-cyan-500 text-black font-black rounded-full hover:bg-cyan-400 transition-all shadow-[0_0_30px_rgba(6,182,212,0.4)] transform hover:-translate-y-1 text-center">
-                REQUEST A PROPOSAL
-              </a>
-              <a href="tel:+15551234567" className="px-12 py-5 bg-transparent border border-white/20 text-white font-bold rounded-full hover:border-cyan-400 hover:text-cyan-400 transition-all text-center">
-                CALL AN EXPERT
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
+                  <h4 className="text-xl font-bold text-white mb
 
       {/* 7. ENHANCED FOOTER */}
       <footer className="py-20 bg-black border-t border-white/5">

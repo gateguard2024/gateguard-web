@@ -1,119 +1,126 @@
 import React from 'react';
 
-/**
- * GateGuard Main Landing Page
- * Clean, modular structure for Next.js 15+
- */
 export default function Home() {
   return (
-    <main className="bg-zinc-950 text-white min-h-screen selection:bg-cyan-500/30">
+    <main className="bg-[#050505] text-white min-h-screen selection:bg-cyan-500/30 font-sans">
       
-      {/* 1. HERO SECTION: The "Hook" */}
-      <section className="relative pt-20 pb-32 flex items-center overflow-hidden">
-        {/* Ambient Background Glow */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-cyan-500/10 blur-[120px] rounded-full" />
+      {/* 1. NAVIGATION BAR */}
+      <nav className="fixed top-0 w-full z-50 border-b border-white/5 bg-black/50 backdrop-blur-xl">
+        <div className="container mx-auto px-6 h-20 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-gradient-to-br from-cyan-400 to-emerald-400 rounded-lg flex items-center justify-center">
+              <span className="text-black font-black text-xs">GG</span>
+            </div>
+            <span className="text-xl font-bold tracking-tighter">GateGuard</span>
+          </div>
+          <div className="hidden md:flex items-center gap-8 text-sm font-medium text-zinc-400">
+            <a href="#" className="hover:text-cyan-400 transition-colors">Solutions</a>
+            <a href="#" className="hover:text-cyan-400 transition-colors">App</a>
+            <a href="#" className="hover:text-cyan-400 transition-colors">Contact</a>
+            <button className="px-5 py-2 bg-white text-black rounded-full font-bold hover:bg-cyan-400 transition-all">
+              Login
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      {/* 2. PREMIUM HERO SECTION */}
+      <section className="relative pt-44 pb-32 overflow-hidden">
+        {/* Advanced Glow Backgrounds */}
+        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-cyan-500/10 blur-[120px] rounded-full" />
+        <div className="absolute bottom-[10%] right-[-10%] w-[40%] h-[40%] bg-emerald-500/10 blur-[120px] rounded-full" />
         
         <div className="container mx-auto px-6 relative z-10">
           <div className="flex flex-col lg:flex-row items-center gap-16">
             
-            {/* Left: Value Proposition */}
+            {/* Left: Content */}
             <div className="flex-1 text-center lg:text-left">
-              <div className="inline-block px-4 py-1.5 mb-6 text-sm font-medium tracking-wider uppercase bg-cyan-500/10 border border-cyan-500/20 rounded-full text-cyan-400">
-                The New Standard in Access Control
-              </div>
-              <h1 className="text-5xl lg:text-7xl font-bold tracking-tight mb-6 leading-[1.1]">
-                The Gate is Old. <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-emerald-400">
-                  The Solution is Intelligent.
+              <div className="inline-flex items-center gap-2 px-3 py-1 mb-8 text-[10px] font-bold tracking-[0.2em] uppercase bg-white/5 border border-white/10 rounded-full text-cyan-400">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
                 </span>
+                Next-Gen Security
+              </div>
+              <h1 className="text-6xl lg:text-8xl font-extrabold tracking-tight mb-8 leading-[0.9]">
+                Intelligent <br />
+                Access. <span className="text-zinc-500">Unrivaled Security.</span>
               </h1>
-              <p className="text-zinc-400 text-lg lg:text-xl mb-10 max-w-2xl">
-                Replace outdated fobs and expensive guards with an AI-driven ecosystem. 
-                Sub-second latency. Total community autonomy.
+              <p className="text-zinc-400 text-lg lg:text-xl mb-12 max-w-xl leading-relaxed">
+                The world’s first AI-integrated gate ecosystem designed for high-end residential and commercial estates.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                <button className="px-8 py-4 bg-cyan-500 hover:bg-cyan-400 text-black font-bold rounded-lg transition-all transform hover:scale-105">
-                  Book a Live Demo
+              <div className="flex flex-col sm:flex-row gap-6 justify-center lg:justify-start">
+                <button className="px-10 py-5 bg-gradient-to-r from-cyan-500 to-emerald-500 text-black font-black rounded-xl hover:shadow-[0_0_30px_-5px_rgba(34,211,238,0.4)] transition-all transform hover:-translate-y-1">
+                  REQUEST ACCESS
                 </button>
-                <button className="px-8 py-4 bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 text-white font-bold rounded-lg transition-all">
-                  View ROI Calculator
+                <button className="px-10 py-5 bg-zinc-900/50 border border-white/10 text-white font-bold rounded-xl hover:bg-white/5 transition-all backdrop-blur-sm">
+                  SYSTEM OVERVIEW
                 </button>
               </div>
             </div>
 
-            {/* Right: Visual Placeholder */}
-            <div className="flex-1 relative w-full max-w-xl lg:max-w-none">
-               <div className="w-full aspect-square bg-zinc-900/50 border border-zinc-800 rounded-3xl flex items-center justify-center backdrop-blur-3xl shadow-2xl relative">
-                  {/* Internal Glow */}
-                  <div className="absolute inset-0 bg-cyan-500/5 rounded-3xl" />
-                  <div className="text-center relative z-10">
-                     <div className="text-7xl mb-4 drop-shadow-2xl">🔒</div>
-                     <p className="text-zinc-500 italic font-mono tracking-widest text-sm">GateGuard Systems Active</p>
+            {/* Right: The "Dashboard" Mockup */}
+            <div className="flex-1 w-full max-w-2xl relative group">
+              <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500 to-emerald-500 rounded-[2.5rem] blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
+              <div className="relative bg-[#0A0A0A] border border-white/10 rounded-[2.5rem] p-4 shadow-2xl overflow-hidden">
+                {/* Simulated App Header */}
+                <div className="flex items-center justify-between px-6 py-4 border-b border-white/5">
+                  <div className="flex gap-1.5">
+                    <div className="w-2.5 h-2.5 rounded-full bg-red-500/20 border border-red-500/50"></div>
+                    <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/20 border border-yellow-500/50"></div>
+                    <div className="w-2.5 h-2.5 rounded-full bg-green-500/20 border border-green-500/50"></div>
                   </div>
-               </div>
+                  <div className="text-[10px] text-zinc-500 font-mono">ENCRYPTED_FEED_01.LIVE</div>
+                </div>
+                {/* Simulated Hero Image (Dark Gate Area) */}
+                <div className="aspect-video bg-zinc-900 rounded-2xl m-2 overflow-hidden relative">
+                   <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1558036117-15d82a90b9b1?auto=format&fit=crop&q=80')] bg-cover bg-center opacity-40 grayscale" />
+                   <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
+                   <div className="absolute bottom-6 left-6">
+                      <p className="text-[10px] font-bold text-cyan-400 mb-1">MAIN ENTRANCE</p>
+                      <p className="text-2xl font-black">Gate 01 Locked</p>
+                   </div>
+                   <div className="absolute top-6 right-6 px-3 py-1 bg-cyan-500 text-[10px] font-black text-black rounded uppercase">Live Feed</div>
+                </div>
+                {/* Stats Bar */}
+                <div className="grid grid-cols-3 gap-2 p-2">
+                   {[
+                    { label: 'Uptime', val: '99.9%' },
+                    { label: 'Latency', val: '0.4ms' },
+                    { label: 'Auth', val: 'AI-Bio' }
+                   ].map(stat => (
+                     <div key={stat.label} className="bg-white/5 p-4 rounded-xl border border-white/5 text-center">
+                        <p className="text-[9px] text-zinc-500 font-bold uppercase mb-1">{stat.label}</p>
+                        <p className="text-sm font-bold text-white">{stat.val}</p>
+                     </div>
+                   ))}
+                </div>
+              </div>
             </div>
 
           </div>
         </div>
       </section>
 
-      {/* 2. TRUST BAR: Authority Building */}
-      <section className="py-12 border-y border-zinc-900 bg-zinc-950/50 backdrop-blur-sm">
+      {/* 3. INDUSTRY SECTORS (TRUST) */}
+      <section className="py-20 bg-zinc-950 border-t border-white/5">
         <div className="container mx-auto px-6">
-          <p className="text-center text-zinc-500 text-xs font-bold uppercase tracking-[0.3em] mb-10">
-            Trusted by Modern Communities
+          <div className="flex flex-wrap justify-between items-center gap-12 text-zinc-600 font-black text-xs tracking-[0.4em]">
+            <span className="hover:text-zinc-400 transition-colors cursor-default">HOA MANAGERS</span>
+            <span className="hover:text-zinc-400 transition-colors cursor-default">MULTI-FAMILY</span>
+            <span className="hover:text-zinc-400 transition-colors cursor-default">GATED ESTATES</span>
+            <span className="hover:text-zinc-400 transition-colors cursor-default">COMMERCIAL HUB</span>
+          </div>
+        </div>
+      </section>
+
+      {/* 4. FOOTER */}
+      <footer className="py-20 border-t border-white/5 bg-black">
+        <div className="container mx-auto px-6 text-center">
+          <p className="text-zinc-500 text-sm font-medium italic">
+            &copy; {new Date().getFullYear()} GateGuard Tech Ecosystem. All Security Protocols Active.
           </p>
-          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-40 hover:opacity-100 transition-opacity duration-700">
-            {['HOA MANAGERS', 'MULTI-FAMILY', 'GATED ESTATES', 'COMMERCIAL HUB', 'STORAGE DEPOT'].map((industry) => (
-              <span key={industry} className="text-sm md:text-lg font-black text-white tracking-tighter">
-                {industry}
-              </span>
-            ))}
-          </div>
         </div>
-      </section>
-
-      {/* 3. FEATURE GRID: How it Works */}
-      <section className="py-32 relative">
-        <div className="container mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            
-            {/* AI Recognition */}
-            <div className="group p-10 rounded-3xl bg-zinc-900/30 border border-zinc-800 hover:border-cyan-500/30 transition-all duration-500">
-              <div className="w-12 h-12 bg-cyan-500/10 rounded-xl flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform">🤖</div>
-              <h3 className="text-xl font-bold mb-4">AI Plate Recognition</h3>
-              <p className="text-zinc-400 leading-relaxed italic">
-                "Our edge-AI identifies residents and authorized guests instantly. No fobs required."
-              </p>
-            </div>
-
-            {/* Mobile Control */}
-            <div className="group p-10 rounded-3xl bg-zinc-900/30 border border-zinc-800 hover:border-emerald-500/30 transition-all duration-500">
-              <div className="w-12 h-12 bg-emerald-500/10 rounded-xl flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform">📱</div>
-              <h3 className="text-xl font-bold mb-4">Mobile Command</h3>
-              <p className="text-zinc-400 leading-relaxed italic">
-                "Manage access from anywhere in the world. Grant temporary passes from your iPhone."
-              </p>
-            </div>
-
-            {/* Cloud Logs */}
-            <div className="group p-10 rounded-3xl bg-zinc-900/30 border border-zinc-800 hover:border-purple-500/30 transition-all duration-500">
-              <div className="w-12 h-12 bg-purple-500/10 rounded-xl flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform">📊</div>
-              <h3 className="text-xl font-bold mb-4">Immutable Logs</h3>
-              <p className="text-zinc-400 leading-relaxed italic">
-                "Every entry is recorded with high-res imagery. Secure, searchable cloud logs."
-              </p>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-      {/* FOOTER: Basic Branding */}
-      <footer className="py-12 border-t border-zinc-900 text-center">
-        <p className="text-zinc-600 text-sm italic">
-          &copy; {new Date().getFullYear()} GateGuard Technology. Built for the next 100 years.
-        </p>
       </footer>
     </main>
   );

@@ -8,9 +8,9 @@ export default function Home() {
       <nav className="fixed top-0 w-full z-50 border-b border-white/5 bg-black/60 backdrop-blur-2xl">
         <div className="container mx-auto px-6 h-24 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="relative w-12 h-12 md:w-16 md:h-16 flex items-center justify-center">
+            <div className="relative w-14 h-14 flex items-center justify-center">
               <img 
-                src="/logo.png" 
+                src="/logo.svg" 
                 alt="GateGuard Logo" 
                 className="w-full h-full object-contain"
               />
@@ -21,8 +21,8 @@ export default function Home() {
             </div>
           </div>
           <div className="hidden md:flex items-center gap-10 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">
-            <a href="#solutions" className="hover:text-blue-400 transition-colors">Solutions</a>
-            <a href="#hardware" className="hover:text-blue-400 transition-colors">Hardware</a>
+            <a href="#solutions" className="hover:text-blue-400 transition-colors uppercase">Solutions</a>
+            <a href="#hardware" className="hover:text-blue-400 transition-colors uppercase">Hardware</a>
             <button className="px-8 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-full font-black transition-all shadow-xl shadow-blue-900/40">GET A QUOTE</button>
           </div>
         </div>
@@ -43,8 +43,8 @@ export default function Home() {
               </div>
               <h1 className="text-6xl lg:text-8xl font-extrabold tracking-tight mb-8 leading-[0.9]">
                 The Gate is Old. <br />
-                <span className="text-zinc-500 font-bold">The Solution is </span>
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">Intelligent.</span>
+                <span className="text-zinc-500 font-bold tracking-tighter">The Solution is </span>
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400 italic">Intelligent.</span>
               </h1>
               <p className="text-zinc-400 text-lg lg:text-xl mb-12 max-w-xl leading-relaxed italic">"Replace outdated fobs and expensive guards with an AI-driven ecosystem."</p>
               <div className="flex flex-col sm:flex-row gap-6 justify-center lg:justify-start">
@@ -57,7 +57,7 @@ export default function Home() {
               <div className="relative bg-[#0A0A0A] border border-white/10 rounded-[2.5rem] p-4 shadow-2xl overflow-hidden">
                 <div className="aspect-video bg-zinc-900 rounded-2xl flex items-center justify-center border border-white/5 relative">
                    <div className="text-center">
-                      <div className="text-6xl mb-4 grayscale opacity-40">🔒</div>
+                      <div className="text-6xl mb-4 opacity-40">🔒</div>
                       <p className="text-[10px] font-mono tracking-[0.3em] text-blue-500 uppercase">Gate Guard System Active</p>
                    </div>
                 </div>
@@ -69,18 +69,18 @@ export default function Home() {
 
       {/* 3. INDUSTRY TRUST BAR */}
       <section className="py-16 bg-zinc-950/50 border-y border-white/5">
-        <div className="container mx-auto px-6 text-center text-white font-bold italic uppercase tracking-tighter">
-          <p className="text-zinc-500 text-[10px] font-bold uppercase tracking-[0.4em] mb-12 italic font-normal">Protecting Premier Properties</p>
+        <div className="container mx-auto px-6 text-center">
+          <p className="text-zinc-500 text-[10px] font-bold uppercase tracking-[0.4em] mb-12 italic">Protecting Premier Properties</p>
           <div className="flex flex-wrap justify-center items-center gap-12 md:gap-24 grayscale opacity-40">
             {['HOA MANAGERS', 'MULTI-FAMILY', 'GATED ESTATES', 'COMMERCIAL HUB'].map((t) => (
-              <span key={t} className="text-sm font-black tracking-tighter text-white">{t}</span>
+              <span key={t} className="text-sm font-black tracking-tighter text-white uppercase italic">{t}</span>
             ))}
           </div>
         </div>
       </section>
 
       {/* 4. ECOSYSTEM SECTION */}
-      <section className="py-32 bg-[#080808] relative">
+      <section className="py-32 bg-[#080808]">
         <div className="container mx-auto px-6 text-white font-bold italic uppercase tracking-tighter">
           <div className="text-center mb-20">
             <h2 className="text-4xl md:text-5xl font-bold mb-6 italic uppercase tracking-tighter">One Gate. <span className="text-blue-500">Two Powerhouse Apps.</span></h2>
@@ -94,7 +94,7 @@ export default function Home() {
             </div>
             <div className="bg-zinc-900/30 border border-white/5 p-10 rounded-[2.5rem] hover:border-blue-400/20 transition-all">
                <h3 className="text-blue-400 font-bold mb-2 uppercase text-xs tracking-widest">Admin Intelligence</h3>
-               <h4 className="text-2xl font-bold mb-4 text-white">GateGuard Interactive</h4>
+               <h4 className="text-2xl font-bold mb-4">GateGuard Interactive</h4>
                <p className="text-zinc-400 italic font-normal normal-case tracking-normal">"Real-time AI video feeds and remote gate override."</p>
             </div>
           </div>
@@ -102,7 +102,7 @@ export default function Home() {
       </section>
 
       {/* 5. HARDWARE SECTION */}
-      <section id="hardware" className="py-32 bg-black relative">
+      <section id="hardware" className="py-32 bg-black">
         <div className="container mx-auto px-6 text-white font-bold italic uppercase tracking-tighter">
           <div className="flex flex-col lg:flex-row items-center gap-20">
             <div className="flex-1 relative">
@@ -114,7 +114,6 @@ export default function Home() {
                     <div className="mt-20 px-4 space-y-2">
                       <div className="h-1 w-full bg-blue-500/20"></div>
                       <div className="h-1 w-2/3 bg-blue-500/20"></div>
-                      <div className="h-1 w-full bg-blue-500/20"></div>
                     </div>
                   </div>
                   <p className="text-blue-400 font-mono text-[10px] tracking-widest uppercase italic font-normal tracking-normal">Edge Controller v2.0</p>
@@ -122,7 +121,7 @@ export default function Home() {
               </div>
             </div>
             <div className="flex-1">
-              <h2 className="text-4xl font-bold mb-10 leading-tight italic uppercase tracking-tighter font-bold">Proprietary AI <br/><span className="text-blue-500 italic">Hardware Integration</span></h2>
+              <h2 className="text-4xl font-bold mb-10 leading-tight italic uppercase tracking-tighter">Proprietary AI <br/><span className="text-blue-500 italic">Hardware Integration</span></h2>
               <div className="space-y-10">
                 <div className="flex gap-6 group">
                   <div className="text-2xl text-blue-500 font-black italic tracking-tighter">01</div>
@@ -146,8 +145,8 @@ export default function Home() {
 
       {/* 6. FOOTER */}
       <footer className="py-20 border-t border-white/5 bg-black">
-        <div className="container mx-auto px-6 text-center">
-          <p className="text-zinc-600 text-[10px] font-bold uppercase tracking-[0.5em] italic">
+        <div className="container mx-auto px-6 text-center text-zinc-600 font-bold italic uppercase">
+          <p className="text-[10px] tracking-[0.5em]">
             &copy; {new Date().getFullYear()} GateGuard Tech Ecosystem. All Security Protocols Active.
           </p>
         </div>

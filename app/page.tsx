@@ -158,11 +158,14 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 4. THE 5 PILLARS OF GATE GUARD */}
+{/* 4. THE 5 PILLARS OF GATE GUARD */}
       <section id="services" className="py-32 bg-[#050505] relative">
         <div className="container mx-auto px-6">
           <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 tracking-tighter">The Complete <span className="text-cyan-400 italic">Gate Guard</span> Ecosystem.</h2>
+            {/* The {" "} forces React to respect the space between the span and Ecosystem */}
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 tracking-tighter">
+              The Complete <span className="text-cyan-400 italic">Gate Guard</span>{" "}Ecosystem.
+            </h2>
             <p className="text-zinc-400 max-w-2xl mx-auto text-lg">
               Hardware, software, and proactive maintenance seamlessly integrated into a single, predictable operating expense.
             </p>
@@ -171,49 +174,87 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             
             {/* 1. Proactive Plans (Spans 2 columns) */}
-            <div className="lg:col-span-2 bg-gradient-to-br from-zinc-900 to-black border border-white/10 p-10 rounded-[2rem] hover:border-cyan-500/30 transition-all group relative overflow-hidden shadow-lg">
-               <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/5 blur-[100px] rounded-full group-hover:bg-cyan-500/10 transition-all duration-700"></div>
-               <h3 className="text-cyan-400 font-bold mb-3 uppercase text-xs tracking-widest">Core Service</h3>
-               <h4 className="text-3xl font-bold mb-4 text-white">"Your Gate Guard" Proactive Plans</h4>
-               <p className="text-zinc-400 leading-relaxed max-w-xl text-lg">
-                 We cover parts, labor, and the tech operators. By proactively monitoring entry cameras, we dispatch technicians before your residents even realize the gate is malfunctioning. 
-               </p>
+            <div className="lg:col-span-2 relative border border-white/10 rounded-[2rem] hover:border-cyan-500/50 transition-colors group overflow-hidden shadow-lg">
+               {/* Background Image & Navy Overlay */}
+               <div className="absolute inset-0 z-0 overflow-hidden">
+                 <img src="/hero-bg.jpg" alt="Property Background" className="w-full h-full object-cover grayscale opacity-40 group-hover:scale-105 transition-transform duration-1000 ease-out" />
+                 <div className="absolute inset-0 bg-[#0A192F] opacity-90 mix-blend-multiply"></div>
+                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent"></div>
+               </div>
+               
+               {/* Card Content */}
+               <div className="relative z-10 p-10 h-full flex flex-col justify-end">
+                 <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 blur-[100px] rounded-full group-hover:bg-cyan-500/20 transition-all duration-700 pointer-events-none"></div>
+                 <h3 className="text-cyan-400 font-bold mb-3 uppercase text-xs tracking-widest">Core Service</h3>
+                 <h4 className="text-3xl font-bold mb-4 text-white">"Your Gate Guard" Proactive Plans</h4>
+                 <p className="text-zinc-300 leading-relaxed max-w-xl text-lg font-light">
+                   We cover parts, labor, and the tech operators. By proactively monitoring entry cameras, we dispatch technicians before your residents even realize the gate is malfunctioning. 
+                 </p>
+               </div>
             </div>
 
             {/* 2. Eagle Eye Networks */}
-            <div className="bg-zinc-900/50 border border-white/10 p-10 rounded-[2rem] hover:border-blue-500/30 transition-all group">
-               <h3 className="text-blue-500 font-bold mb-3 uppercase text-xs tracking-widest group-hover:text-blue-400 transition-colors">Surveillance</h3>
-               <h4 className="text-2xl font-bold mb-4 text-white">Eagle Eye Monitoring</h4>
-               <p className="text-zinc-400 text-sm leading-relaxed">
-                 Cloud-based camera systems at every entry point. We install new hardware or take over your existing infrastructure for seamless oversight.
-               </p>
+            <div className="relative border border-white/10 rounded-[2rem] hover:border-blue-500/50 transition-colors group overflow-hidden">
+               <div className="absolute inset-0 z-0 overflow-hidden">
+                 <img src="/hero-bg.jpg" alt="Property Background" className="w-full h-full object-cover grayscale opacity-30 group-hover:scale-105 transition-transform duration-1000 ease-out" />
+                 <div className="absolute inset-0 bg-[#0A192F] opacity-90 mix-blend-multiply"></div>
+                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-[#0A192F]/50"></div>
+               </div>
+               <div className="relative z-10 p-10 h-full flex flex-col justify-end">
+                 <h3 className="text-blue-500 font-bold mb-3 uppercase text-xs tracking-widest group-hover:text-blue-400 transition-colors">Surveillance</h3>
+                 <h4 className="text-2xl font-bold mb-4 text-white">Eagle Eye Monitoring</h4>
+                 <p className="text-zinc-400 text-sm leading-relaxed font-light">
+                   Cloud-based camera systems at every entry point. We install new hardware or take over your existing infrastructure for seamless oversight.
+                 </p>
+               </div>
             </div>
 
             {/* 3. Brivo Access Control */}
-            <div className="bg-zinc-900/50 border border-white/10 p-10 rounded-[2rem] hover:border-cyan-500/30 transition-all group">
-               <h3 className="text-cyan-400 font-bold mb-3 uppercase text-xs tracking-widest group-hover:text-cyan-300 transition-colors">Access</h3>
-               <h4 className="text-2xl font-bold mb-4 text-white">Brivo Property Sync</h4>
-               <p className="text-zinc-400 text-sm leading-relaxed">
-                 Manage property-wide access from a single dashboard. Issue mobile credentials, track entry logs, and secure amenities effortlessly.
-               </p>
+            <div className="relative border border-white/10 rounded-[2rem] hover:border-cyan-500/50 transition-colors group overflow-hidden">
+               <div className="absolute inset-0 z-0 overflow-hidden">
+                 <img src="/hero-bg.jpg" alt="Property Background" className="w-full h-full object-cover grayscale opacity-30 group-hover:scale-105 transition-transform duration-1000 ease-out" />
+                 <div className="absolute inset-0 bg-[#0A192F] opacity-90 mix-blend-multiply"></div>
+                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-[#0A192F]/50"></div>
+               </div>
+               <div className="relative z-10 p-10 h-full flex flex-col justify-end">
+                 <h3 className="text-cyan-400 font-bold mb-3 uppercase text-xs tracking-widest group-hover:text-cyan-300 transition-colors">Access</h3>
+                 <h4 className="text-2xl font-bold mb-4 text-white">Brivo Property Sync</h4>
+                 <p className="text-zinc-400 text-sm leading-relaxed font-light">
+                   Manage property-wide access from a single dashboard. Issue mobile credentials, track entry logs, and secure amenities effortlessly.
+                 </p>
+               </div>
             </div>
 
             {/* 4. Call Box App */}
-            <div className="bg-zinc-900/50 border border-white/10 p-10 rounded-[2rem] hover:border-blue-500/30 transition-all group">
-               <h3 className="text-blue-500 font-bold mb-3 uppercase text-xs tracking-widest group-hover:text-blue-400 transition-colors">Resident App</h3>
-               <h4 className="text-2xl font-bold mb-4 text-white">Digital Call Box</h4>
-               <p className="text-zinc-400 text-sm leading-relaxed">
-                 Eliminate expensive, dated telephone entry systems. Residents grant access directly from their smartphones via a sleek, intuitive app.
-               </p>
+            <div className="relative border border-white/10 rounded-[2rem] hover:border-blue-500/50 transition-colors group overflow-hidden">
+               <div className="absolute inset-0 z-0 overflow-hidden">
+                 <img src="/hero-bg.jpg" alt="Property Background" className="w-full h-full object-cover grayscale opacity-30 group-hover:scale-105 transition-transform duration-1000 ease-out" />
+                 <div className="absolute inset-0 bg-[#0A192F] opacity-90 mix-blend-multiply"></div>
+                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-[#0A192F]/50"></div>
+               </div>
+               <div className="relative z-10 p-10 h-full flex flex-col justify-end">
+                 <h3 className="text-blue-500 font-bold mb-3 uppercase text-xs tracking-widest group-hover:text-blue-400 transition-colors">Resident App</h3>
+                 <h4 className="text-2xl font-bold mb-4 text-white">Digital Call Box</h4>
+                 <p className="text-zinc-400 text-sm leading-relaxed font-light">
+                   Eliminate expensive, dated telephone entry systems. Residents grant access directly from their smartphones via a sleek, intuitive app.
+                 </p>
+               </div>
             </div>
 
             {/* 5. Live Concierge */}
-            <div className="bg-zinc-900/50 border border-white/10 p-10 rounded-[2rem] hover:border-cyan-500/30 transition-all group">
-               <h3 className="text-cyan-400 font-bold mb-3 uppercase text-xs tracking-widest group-hover:text-cyan-300 transition-colors">Verification</h3>
-               <h4 className="text-2xl font-bold mb-4 text-white">2-Way Video Concierge</h4>
-               <p className="text-zinc-400 text-sm leading-relaxed">
-                 Virtual guards check in visitors, document license plates, and verify ID through real-time, 2-way video communication.
-               </p>
+            <div className="relative border border-white/10 rounded-[2rem] hover:border-cyan-500/50 transition-colors group overflow-hidden">
+               <div className="absolute inset-0 z-0 overflow-hidden">
+                 <img src="/hero-bg.jpg" alt="Property Background" className="w-full h-full object-cover grayscale opacity-30 group-hover:scale-105 transition-transform duration-1000 ease-out" />
+                 <div className="absolute inset-0 bg-[#0A192F] opacity-90 mix-blend-multiply"></div>
+                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-[#0A192F]/50"></div>
+               </div>
+               <div className="relative z-10 p-10 h-full flex flex-col justify-end">
+                 <h3 className="text-cyan-400 font-bold mb-3 uppercase text-xs tracking-widest group-hover:text-cyan-300 transition-colors">Verification</h3>
+                 <h4 className="text-2xl font-bold mb-4 text-white">2-Way Video Concierge</h4>
+                 <p className="text-zinc-400 text-sm leading-relaxed font-light">
+                   Virtual guards check in visitors, document license plates, and verify ID through real-time, 2-way video communication.
+                 </p>
+               </div>
             </div>
 
           </div>

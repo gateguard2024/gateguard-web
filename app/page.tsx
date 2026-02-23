@@ -8,6 +8,7 @@ export default function Home() {
   const [pedGates, setPedGates] = useState(2);
   const [cameras, setCameras] = useState(4);
   const [concierge, setConcierge] = useState(0);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Math Logic
   const gatesCost = vehicleGates * 150;
@@ -448,7 +449,10 @@ export default function Home() {
                 </div>
               </div>
 
-              <button className="w-full mt-8 px-8 py-4 bg-cyan-500 text-black font-black rounded-full hover:shadow-[0_0_30px_-5px_rgba(6,182,212,0.5)] transition-all transform hover:-translate-y-1">
+               <button 
+                onClick={() => setIsModalOpen(true)}
+                className="w-full mt-8 px-8 py-4 bg-cyan-500 text-black font-black rounded-full hover:shadow-[0_0_30px_-5px_rgba(6,182,212,0.5)] transition-all transform hover:-translate-y-1"
+              >
                 LOCK IN THIS RATE
               </button>
             </div>
@@ -520,6 +524,74 @@ export default function Home() {
           </div>
         </div>
       </footer>
+      {/* SALESFORCE LEAD CAPTURE MODAL (POP-UP) */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          {/* Dark Blurred Backdrop */}
+          <div 
+            className="absolute inset-0 bg-black/80 backdrop-blur-sm cursor-pointer"
+            onClick={() => setIsModalOpen(false)}
+          ></div>
+          
+          {/* The Sleek Form Container */}
+          <div className="relative w-full max-w-lg bg-[#0a0a0a] border border-white/10 rounded-[2rem] p-8 shadow-[0_0_50px_rgba(0,0,0,0.8)] z-10 animate-[float_0.3s_ease-out]">
+            {/* Close Button */}
+            <button 
+              onClick={() => setIsModalOpen(false)}
+              className="absolute top-6 right-6 text-zinc-500 hover:text-white transition-colors text-xl"
+            >
+              ✕
+            </button>
+            
+            <h3 className="text-3xl font-bold mb-2 text-white tracking-tight">Lock In Your Rate.</h3>
+            <p className="text-zinc-400 text-sm mb-8 leading-relaxed">
+              Your estimate is <strong className="text-cyan-400">${perUnitMonthly} / unit</strong>. Enter your details and our team will securely log this build in our system.
+            </p>
+
+            {/* Salesforce Web-to-Lead Form */}
+            <form action="https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8" method="POST" className="space-y-5">
+              
+              {/* HIDDEN SALESFORCE ROUTING DATA */}
+              <input type="hidden" name="oid" value="00Dam00001a4k0S" />
+              <input type="hidden" name="retURL" value="https://gateguard.co" />
+              
+              {/* HIDDEN MAGIC: Passing the Calculator Data to Salesforce Notes */}
+              <input type="hidden" name="description" value={`Calculated Quote: ${units} Units | ${vehicleGates} Vehicle Gates | ${pedGates} Ped Gates | ${cameras} Cameras | Concierge Shift: $${concierge} | Estimated Total: $${totalMonthly.toLocaleString()}/mo ($${perUnitMonthly}/unit)`} />
+
+              {/* Form Fields */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="first_name" className="block text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1.5">First Name</label>
+                  <input id="first_name" maxLength={40} name="first_name" type="text" required className="w-full bg-zinc-900 border border-white/10 rounded-xl p-3 text-white focus:border-cyan-500 outline-none transition-colors" />
+                </div>
+                <div>
+                  <label htmlFor="last_name" className="block text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1.5">Last Name</label>
+                  <input id="last_name" maxLength={40} name="last_name" type="text" required className="w-full bg-zinc-900 border border-white/10 rounded-xl p-3 text-white focus:border-cyan-500 outline-none transition-colors" />
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="company" className="block text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1.5">Property / HOA Name</label>
+                <input id="company" maxLength={40} name="company" type="text" required className="w-full bg-zinc-900 border border-white/10 rounded-xl p-3 text-white focus:border-cyan-500 outline-none transition-colors" />
+              </div>
+
+              <div>
+                <label htmlFor="email" className="block text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1.5">Email</label>
+                <input id="email" maxLength={80} name="email" type="email" required className="w-full bg-zinc-900 border border-white/10 rounded-xl p-3 text-white focus:border-cyan-500 outline-none transition-colors" />
+              </div>
+
+              <div>
+                <label htmlFor="phone" className="block text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1.5">Phone</label>
+                <input id="phone" maxLength={40} name="phone" type="tel" className="w-full bg-zinc-900 border border-white/10 rounded-xl p-3 text-white focus:border-cyan-500 outline-none transition-colors" />
+              </div>
+
+              <button type="submit" className="w-full mt-2 px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-black rounded-full hover:shadow-[0_0_30px_-5px_rgba(6,182,212,0.6)] transition-all tracking-wide">
+                SUBMIT TO SALESFORCE
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

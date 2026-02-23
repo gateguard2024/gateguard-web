@@ -40,22 +40,26 @@ export default function Home() {
         <div className="container mx-auto px-6 h-24 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-3">
-              <img src="/logo.png" alt="Gate Guard" className="h-10 w-10 object-contain" />
+              <img src="/logo.png" alt="Gate Guard" className="h-20 w-20 object-contain" />
               <div className="flex flex-col">
                  <span className="text-xl md:text-2xl font-black tracking-tighter uppercase italic leading-none text-white">Gate Guard</span>
                  <span className="text-[9px] font-bold tracking-[0.3em] uppercase text-cyan-500 mt-1">Security Ecosystem</span>
               </div>
             </div>
           </div>
-          <div className="hidden md:flex items-center gap-8 text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400">
+<div className="hidden md:flex items-center gap-8 text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400">
             <a href="#services" className="hover:text-cyan-400 transition-colors">Services</a>
             <a href="#roi" className="hover:text-cyan-400 transition-colors">Compare</a>
-            <a href="#contact" className="hover:text-cyan-400 transition-colors">Contact</a>
+            
             <button className="px-8 py-3 bg-transparent border border-white/20 hover:border-cyan-400 text-white rounded-full transition-all">
               Login
             </button>
-            <button className="px-8 py-3 bg-cyan-500 hover:bg-cyan-400 text-black rounded-full font-black transition-all shadow-[0_0_20px_rgba(6,182,212,0.4)]">
-              GET A QUOTE
+            
+            <button 
+              onClick={() => setIsModalOpen(true)}
+              className="px-8 py-3 bg-cyan-500 hover:bg-cyan-400 text-black rounded-full font-black transition-all shadow-[0_0_20px_rgba(6,182,212,0.4)] transform hover:-translate-y-0.5"
+            >
+              CONTACT
             </button>
           </div>
         </div>
@@ -475,11 +479,14 @@ export default function Home() {
             <p className="text-zinc-300 text-lg mb-10 max-w-xl mx-auto font-light leading-relaxed">
               Join the elite Multi-Family and HOA communities already utilizing the Gate Guard ecosystem to increase safety and eliminate downtime.
             </p>
-            <div className="flex flex-col sm:flex-row gap-5 justify-center">
-              <a href="mailto:sales@gateguard.pro" className="px-10 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold rounded-full hover:shadow-[0_0_30px_-5px_rgba(6,182,212,0.6)] transition-all transform hover:-translate-y-1 text-center tracking-wide text-sm border border-cyan-400/50">
+          <div className="flex flex-col sm:flex-row gap-5 justify-center">
+              <button 
+                onClick={() => setIsModalOpen(true)} 
+                className="px-10 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold rounded-full hover:shadow-[0_0_30px_-5px_rgba(6,182,212,0.6)] transition-all transform hover:-translate-y-1 text-center tracking-wide text-sm border border-cyan-400/50"
+              >
                 REQUEST A PROPOSAL
-              </a>
-              <a href="tel:+15551234567" className="px-10 py-4 bg-white/5 backdrop-blur-md border border-white/10 text-white font-bold rounded-full hover:bg-white/10 transition-all text-center tracking-wide text-sm">
+              </button>
+              <a href="tel:+14048425072" className="px-10 py-4 bg-white/5 backdrop-blur-md border border-white/10 text-white font-bold rounded-full hover:bg-white/10 transition-all text-center tracking-wide text-sm">
                 CALL AN EXPERT
               </a>
             </div>

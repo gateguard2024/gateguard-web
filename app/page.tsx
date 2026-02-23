@@ -4,26 +4,35 @@ export default function Home() {
   return (
     <main className="bg-[#050505] text-white min-h-screen selection:bg-blue-600/30 font-sans">
       
-      {/* 1. NAVIGATION BAR */}
-      <nav className="fixed top-0 w-full z-50 border-b border-white/5 bg-black/60 backdrop-blur-2xl">
+     {/* 1. NAVIGATION BAR */}
+      <nav className="fixed top-0 w-full z-50 border-b border-white/5 bg-black/60 backdrop-blur-2xl font-bold">
         <div className="container mx-auto px-6 h-24 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="relative w-14 h-14 flex items-center justify-center">
+          
+          {/* LOGO AREA - Optimized for your actual logo2.png */}
+          <div className="flex items-center gap-6">
+            <div className="relative w-20 h-20 md:w-24 md:h-24 flex items-center justify-center">
               <img 
-                src="/logo.svg" 
+                src="/logo.png" 
                 alt="GateGuard Logo" 
-                className="w-full h-full object-contain"
+                className="w-full h-full object-contain filter drop-shadow-[0_0_8px_rgba(59,130,246,0.3)]"
               />
             </div>
-            <div className="flex flex-col">
-              <span className="text-xl md:text-2xl font-black tracking-tighter uppercase italic leading-none text-white">GateGuard</span>
-              <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-blue-500 mt-1">Security Ecosystem</span>
+            <div className="hidden sm:flex flex-col">
+              <span className="text-xl md:text-3xl font-black tracking-tighter uppercase italic leading-none text-white">
+                GateGuard
+              </span>
+              <span className="text-[10px] font-bold tracking-[0.4em] uppercase text-blue-500 mt-2">
+                Security Ecosystem
+              </span>
             </div>
           </div>
+
           <div className="hidden md:flex items-center gap-10 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">
-            <a href="#solutions" className="hover:text-blue-400 transition-colors uppercase">Solutions</a>
-            <a href="#hardware" className="hover:text-blue-400 transition-colors uppercase">Hardware</a>
-            <button className="px-8 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-full font-black transition-all shadow-xl shadow-blue-900/40">GET A QUOTE</button>
+            <a href="#solutions" className="hover:text-blue-400 transition-colors">Solutions</a>
+            <a href="#hardware" className="hover:text-blue-400 transition-colors">Hardware</a>
+            <button className="px-8 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-full font-black transition-all shadow-xl shadow-blue-900/40">
+              GET A QUOTE
+            </button>
           </div>
         </div>
       </nav>

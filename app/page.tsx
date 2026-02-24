@@ -451,7 +451,6 @@ export default function Home() {
                   <option value="3">24/7 Full Coverage</option>
                 </select>
               </div>
-
             </div>
 
             {/* Right: The Live Results */}
@@ -529,10 +528,11 @@ export default function Home() {
           </div>
         </div>
       </section>
-      {/* 7. CALL TO ACTION (LEAD CAPTURE) */}
+
+      {/* 6. CALL TO ACTION (LEAD CAPTURE) */}
       <section id="contact" className="py-32 bg-gradient-to-b from-[#050505] to-[#0A192F] relative overflow-hidden">
         <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-          <Image src="/hero-bg.jpg" alt="ecure Multi-Family Community with Gate Guard Protection" fill className="w-full h-full object-cover grayscale opacity-10" />
+          <img src="/hero-bg.jpg" alt="Secure Multi-Family Community" className="w-full h-full object-cover grayscale opacity-10" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#0A192F] via-[#050505]/80 to-[#050505]"></div>
         </div>
         
@@ -559,24 +559,24 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 8. ENHANCED FOOTER */}
+      {/* 7. ENHANCED FOOTER */}
       <footer className="py-20 bg-black border-t border-white/5">
         <div className="container mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-20">
             <div className="col-span-1 md:col-span-2">
                <div className="flex items-center gap-3 mb-6">
-                  <Image src="/logo.png" alt="Gate Guard Security Ecosystem Footer Logo" className="w-8 h-8 object-contain" />
+                  <img src="/logo.png" alt="Gate Guard Footer Logo" className="w-8 h-8 object-contain" />
                   <span className="text-xl font-black tracking-tighter italic uppercase">Gate Guard</span>
                </div>
                <p className="text-zinc-500 max-w-sm text-sm leading-relaxed">
-                  Redefining multi-family access control through edge-computing, proactive monitoring, and intelligent integration.
+                 Redefining multi-family access control through edge-computing, proactive monitoring, and intelligent integration.
                </p>
             </div>
             <div>
                <h4 className="text-white font-bold mb-6 uppercase text-xs tracking-widest">Platform</h4>
                <ul className="space-y-4 text-sm text-zinc-500">
                   <li><a href="#services" className="hover:text-cyan-400 transition-colors">Core Services</a></li>
-                  <li><a href="#roi" className="hover:text-cyan-400 transition-colors">ROI Comparison</a></li>
+                  <li><a href="#pricing" className="hover:text-cyan-400 transition-colors">ROI Comparison</a></li>
                   <li><a href="#" className="hover:text-cyan-400 transition-colors">Brivo Integration</a></li>
                </ul>
             </div>
@@ -596,18 +596,16 @@ export default function Home() {
           </div>
         </div>
       </footer>
-     {/* SALESFORCE LEAD CAPTURE MODAL (POP-UP) */}
+
+      {/* SALESFORCE LEAD CAPTURE MODAL (POP-UP) */}
       {isModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          {/* Dark Blurred Backdrop */}
           <div 
             className="absolute inset-0 bg-black/80 backdrop-blur-sm cursor-pointer"
             onClick={() => setIsModalOpen(false)}
           ></div>
           
-          {/* The Sleek Form Container */}
           <div className="relative w-full max-w-lg bg-[#0a0a0a] border border-white/10 rounded-[2rem] p-8 shadow-[0_0_50px_rgba(0,0,0,0.8)] z-10 animate-[float_0.3s_ease-out]">
-            {/* Close Button */}
             <button 
               onClick={() => setIsModalOpen(false)}
               className="absolute top-6 right-6 text-zinc-500 hover:text-white transition-colors text-xl"
@@ -620,18 +618,13 @@ export default function Home() {
               Your estimate is <strong className="text-cyan-400">${perUnitMonthly} / unit</strong>. Enter your details and our team will securely log this build in our system.
             </p>
 
-            {/* Salesforce Web-to-Lead Form */}
             <form action="https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8" method="POST" className="space-y-5">
               
-              {/* HIDDEN SALESFORCE ROUTING DATA */}
               <input type="hidden" name="oid" value="00Dam00001a4k0S" />
               <input type="hidden" name="retURL" value="https://gateguard.co" />
-              
-              {/* HIDDEN MAGIC: Lead Source & Calculator Data */}
               <input type="hidden" name="lead_source" value="ROI Calculator" />
-              <input type="hidden" name="description" value={`Calculated Quote: ${units} Units | ${vehicleGates} Vehicle Gates | ${pedGates} Ped Gates | ${cameras} Cameras | Concierge Shifts: ${conciergeShifts} ($${conciergeMonthly}/m0) | Estimated Total: $${totalMonthly.toLocaleString()}/mo ($${perUnitMonthly}/unit)`} />
+              <input type="hidden" name="description" value={`Calculated Quote: ${units} Units | ${vehicleGates} Vehicle Gates | ${pedGates} Ped Gates | ${cameras} Cameras | Concierge Shifts: ${conciergeShifts} ($${conciergeMonthly}/mo) | Estimated Total: $${totalMonthly.toLocaleString()}/mo ($${perUnitMonthly}/unit)`} />
 
-              {/* Form Fields */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="first_name" className="block text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1.5">First Name</label>
@@ -643,7 +636,6 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* NEW: Property & Job Title in a nice 2-column grid */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="company" className="block text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1.5">Property / HOA</label>

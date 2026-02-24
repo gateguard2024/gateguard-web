@@ -192,9 +192,15 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 4. THE 5 PILLARS OF GATE GUARD */}
-      <section id="services" className="py-32 bg-[#050505] relative">
-        <div className="container mx-auto px-6">
+{/* 4. THE 5 PILLARS OF GATE GUARD */}
+      <section id="services" className="py-32 bg-[#050505] relative overflow-hidden">
+        {/* Pure Tailwind Technical Grid */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none"></div>
+        {/* Deep Ambient Glows */}
+        <div className="absolute top-20 left-[-10%] w-[40%] h-[500px] bg-blue-900/10 blur-[120px] rounded-full pointer-events-none"></div>
+        <div className="absolute bottom-20 right-[-10%] w-[40%] h-[500px] bg-cyan-900/10 blur-[120px] rounded-full pointer-events-none"></div>
+        
+        <div className="container mx-auto px-6 relative z-10">
           <div className="text-center mb-20">
             <h2 className="text-4xl md:text-5xl font-bold mb-6 tracking-tight">
               The Complete <span className="text-cyan-400 italic mr-2 md:mr-3">Gate Guard</span> Ecosystem.

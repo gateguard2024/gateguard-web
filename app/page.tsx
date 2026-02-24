@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from 'react';
-import Image from 'next/image':
+import Image from 'next/image';
 
 export default function Home() {
 // ROI Calculator State

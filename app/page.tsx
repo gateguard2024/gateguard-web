@@ -47,7 +47,6 @@ export default function Home() {
       `}} />
 
       {/* 1. NAVIGATION BAR */}
-      {/* 1. NAVIGATION BAR */}
       <nav className="fixed top-0 w-full z-50 border-b border-white/5 bg-[#050505]/80 backdrop-blur-2xl">
         <div className="container mx-auto px-6 h-24 flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -425,13 +424,14 @@ export default function Home() {
                 <label className="text-zinc-400 font-bold text-xs tracking-widest uppercase block mb-2">2-Way Video Concierge</label>
                 <p className="text-[10px] text-zinc-500 mb-2 leading-tight">Live operators checking IDs and logging plates</p>
                 <select 
-                  value={concierge} onChange={(e) => setConcierge(Number(e.target.value))}
+                  value={conciergeShifts} 
+                  onChange={(e) => setConciergeShifts(Number(e.target.value))}
                   className="w-full bg-black border border-white/10 rounded-lg p-3 text-white font-bold focus:border-cyan-500 outline-none transition-colors appearance-none"
                 >
                   <option value="0">None (Self-Managed via App)</option>
-                  <option value="900">Night Shift (11pm - 7am)</option>
-                  <option value="1100">Morning Shift (7am - 3pm)</option>
-                  <option value="1100">Evening Shift (3pm - 11pm)</option>
+                  <option value="1">Night Shift Only (11pm - 7am)</option>
+                  <option value="2">2 Shifts (Night plus 1)</option>
+                  <option value="3">24/7 Full Coverage</option>
                   <option value="2900">24/7 Full Coverage</option>
                 </select>
               </div>
@@ -476,7 +476,7 @@ export default function Home() {
           </div>
         </div>
       </section>
-      {/* 6. CALL TO ACTION (LEAD CAPTURE) */}
+      {/* 7. CALL TO ACTION (LEAD CAPTURE) */}
       <section id="contact" className="py-32 bg-gradient-to-b from-[#050505] to-[#0A192F] relative overflow-hidden">
         <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
           <img src="/hero-bg.jpg" alt="Property Background" className="w-full h-full object-cover grayscale opacity-10" />
@@ -506,7 +506,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 7. ENHANCED FOOTER */}
+      {/* 8. ENHANCED FOOTER */}
       <footer className="py-20 bg-black border-t border-white/5">
         <div className="container mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-20">

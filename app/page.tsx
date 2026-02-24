@@ -432,7 +432,6 @@ export default function Home() {
                   <option value="1">Night Shift Only (11pm - 7am)</option>
                   <option value="2">2 Shifts (Night plus 1)</option>
                   <option value="3">24/7 Full Coverage</option>
-                  <option value="2900">24/7 Full Coverage</option>
                 </select>
               </div>
 

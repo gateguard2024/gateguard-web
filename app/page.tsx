@@ -83,7 +83,7 @@ export default function Home() {
           <Image 
             src="/hero-bg.jpg" 
             alt="Luxury Multi-Family Apartment Complex with Secure Gated Entry" 
-            className="w-full h-full object-cover grayscale"
+            fill className="w-full h-full object-cover grayscale"
           />
           <div className="absolute inset-0 bg-[#0A192F] opacity-85 mix-blend-multiply"></div>
           <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/50 to-transparent"></div>
@@ -132,7 +132,7 @@ export default function Home() {
                 <div className="bg-gradient-to-b from-zinc-700 to-black p-[2px] rounded-[2.5rem] shadow-[0_30px_60px_rgba(0,0,0,0.8)]">
                   <div className="bg-black p-1.5 rounded-[2.4rem]">
                     <div className="aspect-[9/19] rounded-[2rem] overflow-hidden relative border border-white/10 bg-[#050505]">
-                      <Image src="/app-callbox.png" alt="Gate Guard Digital Callbox and Interactive Visitor Access Mobile App" className="w-full h-full object-cover" />
+                      <Image src="/app-callbox.png" alt="Gate Guard Digital Callbox and Interactive Visitor Access Mobile App" fill className="w-full h-full object-cover" />
                       <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-tr from-transparent via-white/5 to-transparent pointer-events-none"></div>
                     </div>
                   </div>
@@ -153,7 +153,7 @@ export default function Home() {
                  <div className="bg-gradient-to-b from-zinc-800 to-black p-[2px] rounded-[2.5rem] shadow-[0_30px_60px_rgba(0,0,0,0.6)]">
                   <div className="bg-black p-1.5 rounded-[2.4rem]">
                     <div className="aspect-[9/19] rounded-[2rem] overflow-hidden relative border border-white/10 bg-[#0f1423]">
-                      <Image src="/app-brivo.png" alt="Brivo Mobile Pass Smart Access Control App for Apartment Residents" className="w-full h-full object-cover" />
+                      <Image src="/app-brivo.png" alt="Brivo Mobile Pass Smart Access Control App for Apartment Residents" fill className="w-full h-full object-cover" />
                       <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-tr from-transparent via-white/5 to-transparent pointer-events-none"></div>
                     </div>
                   </div>
@@ -196,7 +196,7 @@ export default function Home() {
             {/* 1. Proactive Plans */}
             <div className="lg:col-span-2 relative border border-white/10 rounded-[2rem] hover:border-cyan-500/50 transition-colors group overflow-hidden shadow-lg">
                <div className="absolute inset-0 z-0 overflow-hidden">
-                 <Image src="/hero-bg.jpg" alt="Proactive Gate Repair and Maintenance Services for HOA Communities" className="w-full h-full object-cover grayscale opacity-40 group-hover:scale-105 transition-transform duration-1000 ease-out" />
+                 <Image src="/hero-bg.jpg" alt="Proactive Gate Repair and Maintenance Services for HOA Communities" fill className="w-full h-full object-cover grayscale opacity-40 group-hover:scale-105 transition-transform duration-1000 ease-out" />
                  <div className="absolute inset-0 bg-[#0A192F] opacity-90 mix-blend-multiply"></div>
                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent"></div>
                </div>
@@ -213,7 +213,7 @@ export default function Home() {
             {/* 2. Eagle Eye Networks */}
             <div className="relative border border-white/10 rounded-[2rem] hover:border-blue-500/50 transition-colors group overflow-hidden">
                <div className="absolute inset-0 z-0 overflow-hidden">
-                 <Image src="/hero-bg.jpg" alt="Eagle Eye Networks Cloud Video Surveillance at Property Entry Point" className="w-full h-full object-cover grayscale opacity-30 group-hover:scale-105 transition-transform duration-1000 ease-out" />
+                 <Image src="/hero-bg.jpg" alt="Eagle Eye Networks Cloud Video Surveillance at Property Entry Point" fill className="w-full h-full object-cover grayscale opacity-30 group-hover:scale-105 transition-transform duration-1000 ease-out" />
                  <div className="absolute inset-0 bg-[#0A192F] opacity-90 mix-blend-multiply"></div>
                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-[#0A192F]/50"></div>
                </div>
@@ -229,7 +229,7 @@ export default function Home() {
             {/* 3. PMS Smart Sync (Updated Brivo Card) */}
             <div className="relative border border-white/10 rounded-[2rem] hover:border-cyan-500/50 transition-colors group overflow-hidden">
                <div className="absolute inset-0 z-0 overflow-hidden">
-                 <Image src="/hero-bg.jpg" alt="Brivo Property Management System Integration for Automatic Access" className="w-full h-full object-cover grayscale opacity-30 group-hover:scale-105 transition-transform duration-1000 ease-out" />
+                 <Image src="/hero-bg.jpg" alt="Brivo Property Management System Integration for Automatic Access" fill className="w-full h-full object-cover grayscale opacity-30 group-hover:scale-105 transition-transform duration-1000 ease-out" />
                  <div className="absolute inset-0 bg-[#0A192F] opacity-90 mix-blend-multiply"></div>
                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-[#0A192F]/50"></div>
                </div>
@@ -245,7 +245,7 @@ export default function Home() {
             {/* 4. Call Box App */}
             <div className="relative border border-white/10 rounded-[2rem] hover:border-blue-500/50 transition-colors group overflow-hidden">
                <div className="absolute inset-0 z-0 overflow-hidden">
-                 <Image src="/hero-bg.jpg" alt="Resident Smartphone App for Opening Gates and Doors Remotely" className="w-full h-full object-cover grayscale opacity-30 group-hover:scale-105 transition-transform duration-1000 ease-out" />
+                 <Image src="/hero-bg.jpg" alt="Resident Smartphone App for Opening Gates and Doors Remotely" fill className="w-full h-full object-cover grayscale opacity-30 group-hover:scale-105 transition-transform duration-1000 ease-out" />
                  <div className="absolute inset-0 bg-[#0A192F] opacity-90 mix-blend-multiply"></div>
                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-[#0A192F]/50"></div>
                </div>
@@ -261,7 +261,7 @@ export default function Home() {
             {/* 5. Live Concierge */}
             <div className="relative border border-white/10 rounded-[2rem] hover:border-cyan-500/50 transition-colors group overflow-hidden">
                <div className="absolute inset-0 z-0 overflow-hidden">
-                 <Image src="/hero-bg.jpg" alt="24/7 Virtual Concierge Live Video Monitoring and ID Verification" className="w-full h-full object-cover grayscale opacity-30 group-hover:scale-105 transition-transform duration-1000 ease-out" />
+                 <Image src="/hero-bg.jpg" alt="24/7 Virtual Concierge Live Video Monitoring and ID Verification" fill className="w-full h-full object-cover grayscale opacity-30 group-hover:scale-105 transition-transform duration-1000 ease-out" />
                  <div className="absolute inset-0 bg-[#0A192F] opacity-90 mix-blend-multiply"></div>
                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-[#0A192F]/50"></div>
                </div>
@@ -479,7 +479,7 @@ export default function Home() {
       {/* 7. CALL TO ACTION (LEAD CAPTURE) */}
       <section id="contact" className="py-32 bg-gradient-to-b from-[#050505] to-[#0A192F] relative overflow-hidden">
         <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-          <Image src="/hero-bg.jpg" alt="ecure Multi-Family Community with Gate Guard Protection" className="w-full h-full object-cover grayscale opacity-10" />
+          <Image src="/hero-bg.jpg" alt="ecure Multi-Family Community with Gate Guard Protection" fill className="w-full h-full object-cover grayscale opacity-10" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#0A192F] via-[#050505]/80 to-[#050505]"></div>
         </div>
         

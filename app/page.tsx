@@ -476,7 +476,7 @@ export default function Home() {
                   <span className="text-white font-bold">${((vehicleGates + pedGates) * 500).toLocaleString()}</span>
                 </div>
                 
-{/* Dynamic "Old Way" Cost Comparison */}
+                {/* Dynamic "Old Way" Cost Comparison */}
                 {oldTotalMonthly > 0 && (
                   <div className="mt-6 p-4 bg-red-500/5 border border-red-500/20 rounded-xl space-y-3">
                     <p className="text-[10px] font-bold text-red-400 uppercase tracking-widest border-b border-red-500/20 pb-2">Estimated Cost of the "Old Way"</p>
@@ -506,16 +506,6 @@ export default function Home() {
                       <span className="text-red-400">Old Way Total</span>
                       <span className="text-red-400 line-through">${oldTotalMonthly.toLocaleString()} / mo</span>
                     </div>
-
-                    {/* The Hero Metric: Total Savings */}
-                    {monthlySavings > 0 && (
-                      <div className="mt-4 p-3 bg-cyan-500/10 border border-cyan-500/30 rounded-lg flex justify-between items-center transform transition-all hover:scale-105 shadow-[0_0_15px_rgba(6,182,212,0.3)]">
-                        <span className="text-cyan-400 font-bold text-xs uppercase tracking-wider">Your Monthly Savings</span>
-                        <span className="text-cyan-300 font-black text-lg">${monthlySavings.toLocaleString()}</span>
-                      </div>
-                    )}
-                  </div>
-                )}
 
                     {/* The Hero Metric: Total Savings */}
                     {monthlySavings > 0 && (

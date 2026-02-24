@@ -379,8 +379,12 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 6. INTERACTIVE ROI CALCULATOR */}
-      <section id="pricing" className="py-32 bg-[#050505] relative border-t border-white/5">
+{/* 6. INTERACTIVE ROI CALCULATOR */}
+      <section id="pricing" className="py-32 relative border-t border-white/5 overflow-hidden bg-gradient-to-b from-[#050505] via-[#0a0f1a] to-[#050505]">
+        {/* Massive Centered Ambient Underglow for the Calculator */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] bg-cyan-900/10 blur-[150px] rounded-full pointer-events-none"></div>
+        
+        <div className="container mx-auto px-6 relative z-10">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold mb-6 tracking-tight">

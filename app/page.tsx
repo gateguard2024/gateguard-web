@@ -3,18 +3,18 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 
 export default function Home() {
-// ROI Calculator State
+  // ROI Calculator State
   const [units, setUnits] = useState(250);
   const [vehicleGates, setVehicleGates] = useState(2);
   const [pedGates, setPedGates] = useState(2);
   const [cameras, setCameras] = useState(4);
-  const [conciergeShifts, setConciergeShifts] = useState(0); // <-- This changed
+  const [conciergeShifts, setConciergeShifts] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-// Math Logic (With Floor Pricing)
+  // Math Logic (With Floor Pricing)
   const MINIMUM_PRICE_PER_SHIFT = 1000;
   const FIRST_SHIFT_PER_UNIT = 3;
-  const ADDITIONAL_SHIFT_PER_UNIT = 1; // Change this if your 2nd/3rd shift per-unit price is different
+  const ADDITIONAL_SHIFT_PER_UNIT = 1; 
 
   // 1. Calculate Gate Guard Costs
   let conciergeMonthly = 0;
@@ -31,17 +31,17 @@ export default function Home() {
   const totalMonthly = gatesCost + pedCost + cameraCost + conciergeMonthly;
   const perUnitMonthly = (totalMonthly / units).toFixed(2);
 
-// 2. Calculate "The Old Way" Reactive Costs (Based on Market Research)
-  const GUARD_MONTHLY_PER_SHIFT = 7200; // $30/hr * 8hrs * 30 days
+  // 2. Calculate "The Old Way" Reactive Costs
+  const GUARD_MONTHLY_PER_SHIFT = 7200; 
   const oldGuardCost = conciergeShifts > 0 ? (GUARD_MONTHLY_PER_SHIFT * conciergeShifts) : 0;
-  const oldRepairCost = (vehicleGates * 100) + (pedGates * 50); // Reactive break-fix estimates
-  const oldFobCost = units * 2; // Est. $2/mo per unit for replacing physical fobs
-  const oldCameraCost = cameras * 150; // $150/mo per camera for traditional 3rd-party monitoring
+  const oldRepairCost = (vehicleGates * 400) + (pedGates * 150); 
+  const oldFobCost = units * 2; 
+  const oldCameraCost = cameras * 150; 
   
-  // Add oldCameraCost to the total!
   const oldTotalMonthly = oldGuardCost + oldRepairCost + oldFobCost + oldCameraCost;
   const monthlySavings = oldTotalMonthly > totalMonthly ? (oldTotalMonthly - totalMonthly) : 0;
-  
+
+  return (
     <main className="bg-[#050505] text-white min-h-screen selection:bg-cyan-500/30 font-sans overflow-x-hidden">
       
       {/* Custom CSS for the floating phone animations */}
@@ -63,14 +63,14 @@ export default function Home() {
         <div className="container mx-auto px-6 h-24 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-3">
-              <Image src="/logo.png" alt="Gate Guard Security Ecosystem Logo" className="h-20 w-20 object-contain" />
+              <Image src="/logo.png" alt="Gate Guard Security Ecosystem Logo" width={80} height={80} className="object-contain" />
               <div className="flex flex-col">
                  <span className="text-xl md:text-2xl font-black tracking-tighter uppercase italic leading-none text-white">Gate Guard</span>
                  <span className="text-[9px] font-bold tracking-[0.3em] uppercase text-cyan-500 mt-1">Security Ecosystem</span>
               </div>
             </div>
           </div>
-<div className="hidden md:flex items-center gap-8 text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400">
+          <div className="hidden md:flex items-center gap-8 text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400">
             <a href="#services" className="hover:text-cyan-400 transition-colors">Services</a>
             <a href="#roi" className="hover:text-cyan-400 transition-colors">Compare</a>
             
@@ -94,7 +94,9 @@ export default function Home() {
           <Image 
             src="/hero-bg.jpg" 
             alt="Luxury Multi-Family Apartment Complex with Secure Gated Entry" 
-            fill className="w-full h-full object-cover grayscale"
+            fill
+            className="object-cover grayscale"
+            priority
           />
           <div className="absolute inset-0 bg-[#0A192F] opacity-85 mix-blend-multiply"></div>
           <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/50 to-transparent"></div>
@@ -131,21 +133,19 @@ export default function Home() {
               </div>
             </div>
 
-{/* Right: The Overlapping App Experiences (MOBILE OPTIMIZED) */}
+            {/* Right: The Overlapping App Experiences (MOBILE OPTIMIZED) */}
             <div className="flex-1 w-full max-w-2xl relative mt-16 lg:mt-0 h-[400px] sm:h-[500px] lg:h-[550px] mx-auto">
               
               {/* VISITOR EXPERIENCE (Left/Front Phone) */}
               <div className="absolute left-0 sm:left-4 lg:left-0 top-0 w-44 sm:w-56 lg:w-64 z-30 animate-float">
-                {/* Floating Tag */}
                 <div className="absolute -left-2 sm:-left-12 top-10 sm:top-16 bg-black/40 backdrop-blur-2xl border border-white/10 p-2 sm:p-4 rounded-xl sm:rounded-2xl shadow-[0_20px_40px_rgba(0,0,0,0.5)] z-40">
                   <p className="text-cyan-400 text-[6px] sm:text-[8px] font-black uppercase tracking-[0.3em] mb-1">Visitor Experience</p>
                   <p className="text-white text-[10px] sm:text-sm font-bold">Interactive Callbox</p>
                 </div>
-                {/* Phone Body */}
                 <div className="bg-gradient-to-b from-zinc-700 to-black p-[2px] rounded-[2rem] sm:rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.8)]">
                   <div className="bg-black p-1 sm:p-1.5 rounded-[1.9rem] sm:rounded-[2.4rem]">
                     <div className="aspect-[9/19] rounded-[1.7rem] sm:rounded-[2rem] overflow-hidden relative border border-white/10 bg-[#050505]">
-                      <Image src="/app-callbox.png" alt="Gate Guard Digital Callbox" fill className="object-cover" />
+                      <Image src="/app-callbox.png" alt="Gate Guard Digital Callbox and Interactive Visitor Access Mobile App" fill className="object-cover" />
                       <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-tr from-transparent via-white/5 to-transparent pointer-events-none"></div>
                     </div>
                   </div>
@@ -154,22 +154,19 @@ export default function Home() {
 
               {/* RESIDENT EXPERIENCE (Right/Back Phone) */}
               <div className="absolute right-0 sm:right-4 lg:right-0 bottom-0 sm:bottom-10 w-36 sm:w-48 lg:w-56 z-20 animate-float-reverse">
-                {/* Floating Tag Top */}
                 <div className="absolute -top-6 sm:-top-12 left-1/2 -translate-x-1/2 bg-black/80 backdrop-blur-xl border border-white/10 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full z-40 flex items-center gap-1.5 sm:gap-2 shadow-[0_0_30px_rgba(6,182,212,0.2)] whitespace-nowrap">
                   <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-cyan-400 rounded-full animate-ping absolute"></div>
                   <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-cyan-400 rounded-full relative"></div>
                   <span className="text-white text-[7px] sm:text-[9px] font-bold tracking-widest uppercase">Eagle Eye Monitored</span>
                 </div>
-                {/* Floating Tag Side */}
                 <div className="absolute -right-2 sm:-right-10 bottom-12 sm:bottom-20 bg-black/40 backdrop-blur-2xl border border-white/10 p-2 sm:p-4 rounded-xl sm:rounded-2xl shadow-[0_20px_40px_rgba(0,0,0,0.5)] z-40 text-right">
                   <p className="text-blue-500 text-[6px] sm:text-[8px] font-black uppercase tracking-[0.3em] mb-1">Resident Experience</p>
                   <p className="text-white text-[10px] sm:text-sm font-bold">Brivo Mobile Pass</p>
                 </div>
-                {/* Phone Body */}
                  <div className="bg-gradient-to-b from-zinc-800 to-black p-[2px] rounded-[1.8rem] sm:rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.6)]">
                   <div className="bg-black p-1 sm:p-1.5 rounded-[1.7rem] sm:rounded-[2.4rem]">
                     <div className="aspect-[9/19] rounded-[1.5rem] sm:rounded-[2rem] overflow-hidden relative border border-white/10 bg-[#0f1423]">
-                      <Image src="/app-brivo.png" alt="Brivo Resident Experience" fill className="object-cover" />
+                      <Image src="/app-brivo.png" alt="Brivo Mobile Pass Smart Access Control App for Apartment Residents" fill className="object-cover" />
                       <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-tr from-transparent via-white/5 to-transparent pointer-events-none"></div>
                     </div>
                   </div>
@@ -212,7 +209,7 @@ export default function Home() {
             {/* 1. Proactive Plans */}
             <div className="lg:col-span-2 relative border border-white/10 rounded-[2rem] hover:border-cyan-500/50 transition-colors group overflow-hidden shadow-lg">
                <div className="absolute inset-0 z-0 overflow-hidden">
-                 <Image src="/hero-bg.jpg" alt="Proactive Gate Repair and Maintenance Services for HOA Communities" fill className="w-full h-full object-cover grayscale opacity-40 group-hover:scale-105 transition-transform duration-1000 ease-out" />
+                 <Image src="/hero-bg.jpg" alt="Proactive Gate Repair and Maintenance Services for HOA Communities" fill className="object-cover grayscale opacity-40 group-hover:scale-105 transition-transform duration-1000 ease-out" />
                  <div className="absolute inset-0 bg-[#0A192F] opacity-90 mix-blend-multiply"></div>
                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent"></div>
                </div>
@@ -229,7 +226,7 @@ export default function Home() {
             {/* 2. Eagle Eye Networks */}
             <div className="relative border border-white/10 rounded-[2rem] hover:border-blue-500/50 transition-colors group overflow-hidden">
                <div className="absolute inset-0 z-0 overflow-hidden">
-                 <Image src="/hero-bg.jpg" alt="Eagle Eye Networks Cloud Video Surveillance at Property Entry Point" fill className="w-full h-full object-cover grayscale opacity-30 group-hover:scale-105 transition-transform duration-1000 ease-out" />
+                 <Image src="/hero-bg.jpg" alt="Eagle Eye Networks Cloud Video Surveillance at Property Entry Point" fill className="object-cover grayscale opacity-30 group-hover:scale-105 transition-transform duration-1000 ease-out" />
                  <div className="absolute inset-0 bg-[#0A192F] opacity-90 mix-blend-multiply"></div>
                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-[#0A192F]/50"></div>
                </div>
@@ -242,10 +239,10 @@ export default function Home() {
                </div>
             </div>
 
-            {/* 3. PMS Smart Sync (Updated Brivo Card) */}
+            {/* 3. PMS Smart Sync */}
             <div className="relative border border-white/10 rounded-[2rem] hover:border-cyan-500/50 transition-colors group overflow-hidden">
                <div className="absolute inset-0 z-0 overflow-hidden">
-                 <Image src="/hero-bg.jpg" alt="Brivo Property Management System Integration for Automatic Access" fill className="w-full h-full object-cover grayscale opacity-30 group-hover:scale-105 transition-transform duration-1000 ease-out" />
+                 <Image src="/hero-bg.jpg" alt="Brivo Property Management System Integration for Automatic Access" fill className="object-cover grayscale opacity-30 group-hover:scale-105 transition-transform duration-1000 ease-out" />
                  <div className="absolute inset-0 bg-[#0A192F] opacity-90 mix-blend-multiply"></div>
                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-[#0A192F]/50"></div>
                </div>
@@ -261,7 +258,7 @@ export default function Home() {
             {/* 4. Call Box App */}
             <div className="relative border border-white/10 rounded-[2rem] hover:border-blue-500/50 transition-colors group overflow-hidden">
                <div className="absolute inset-0 z-0 overflow-hidden">
-                 <Image src="/hero-bg.jpg" alt="Resident Smartphone App for Opening Gates and Doors Remotely" fill className="w-full h-full object-cover grayscale opacity-30 group-hover:scale-105 transition-transform duration-1000 ease-out" />
+                 <Image src="/hero-bg.jpg" alt="Resident Smartphone App for Opening Gates and Doors Remotely" fill className="object-cover grayscale opacity-30 group-hover:scale-105 transition-transform duration-1000 ease-out" />
                  <div className="absolute inset-0 bg-[#0A192F] opacity-90 mix-blend-multiply"></div>
                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-[#0A192F]/50"></div>
                </div>
@@ -277,7 +274,7 @@ export default function Home() {
             {/* 5. Live Concierge */}
             <div className="relative border border-white/10 rounded-[2rem] hover:border-cyan-500/50 transition-colors group overflow-hidden">
                <div className="absolute inset-0 z-0 overflow-hidden">
-                 <Image src="/hero-bg.jpg" alt="24/7 Virtual Concierge Live Video Monitoring and ID Verification" fill className="w-full h-full object-cover grayscale opacity-30 group-hover:scale-105 transition-transform duration-1000 ease-out" />
+                 <Image src="/hero-bg.jpg" alt="24/7 Virtual Concierge Live Video Monitoring and ID Verification" fill className="object-cover grayscale opacity-30 group-hover:scale-105 transition-transform duration-1000 ease-out" />
                  <div className="absolute inset-0 bg-[#0A192F] opacity-90 mix-blend-multiply"></div>
                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-[#0A192F]/50"></div>
                </div>
@@ -375,7 +372,8 @@ export default function Home() {
           </div>
         </div>
       </section>
-{/* 6. INTERACTIVE ROI CALCULATOR */}
+
+      {/* 6. INTERACTIVE ROI CALCULATOR */}
       <section id="pricing" className="py-32 bg-[#050505] relative border-t border-white/5">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
@@ -529,10 +527,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 6. CALL TO ACTION (LEAD CAPTURE) */}
+      {/* 7. CALL TO ACTION (LEAD CAPTURE) */}
       <section id="contact" className="py-32 bg-gradient-to-b from-[#050505] to-[#0A192F] relative overflow-hidden">
         <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-          <img src="/hero-bg.jpg" alt="Secure Multi-Family Community" className="w-full h-full object-cover grayscale opacity-10" />
+          <Image src="/hero-bg.jpg" alt="Secure Multi-Family Community" fill className="object-cover grayscale opacity-10" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#0A192F] via-[#050505]/80 to-[#050505]"></div>
         </div>
         
@@ -559,13 +557,13 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 7. ENHANCED FOOTER */}
+      {/* 8. ENHANCED FOOTER */}
       <footer className="py-20 bg-black border-t border-white/5">
         <div className="container mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-20">
             <div className="col-span-1 md:col-span-2">
                <div className="flex items-center gap-3 mb-6">
-                  <img src="/logo.png" alt="Gate Guard Footer Logo" className="w-8 h-8 object-contain" />
+                  <Image src="/logo.png" alt="Gate Guard Footer Logo" width={32} height={32} className="object-contain" />
                   <span className="text-xl font-black tracking-tighter italic uppercase">Gate Guard</span>
                </div>
                <p className="text-zinc-500 max-w-sm text-sm leading-relaxed">

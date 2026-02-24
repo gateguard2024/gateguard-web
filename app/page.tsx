@@ -133,41 +133,44 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Right: The Overlapping App Experiences (MOBILE OPTIMIZED) */}
-            <div className="flex-1 w-full max-w-2xl relative mt-16 lg:mt-0 h-[400px] sm:h-[500px] lg:h-[550px] mx-auto">
+{/* Right: The Overlapping App Experiences (FIXED MOBILE OVERLAP) */}
+            <div className="flex-1 w-full max-w-2xl relative mt-32 sm:mt-40 lg:mt-0 h-[450px] sm:h-[500px] lg:h-[550px] mx-auto">
               
-              {/* VISITOR EXPERIENCE (Left/Front Phone) */}
-              <div className="absolute left-0 sm:left-4 lg:left-0 top-0 w-44 sm:w-56 lg:w-64 z-30 animate-float">
-                <div className="absolute -left-2 sm:-left-12 top-10 sm:top-16 bg-black/40 backdrop-blur-2xl border border-white/10 p-2 sm:p-4 rounded-xl sm:rounded-2xl shadow-[0_20px_40px_rgba(0,0,0,0.5)] z-40">
+              {/* VISITOR EXPERIENCE (The "Callbox" Phone - Top/Left) */}
+              <div className="absolute left-[-5%] sm:left-0 top-0 w-[55%] sm:w-56 lg:w-64 z-30 animate-float">
+                {/* Floating Tag */}
+                <div className="absolute -left-4 sm:-left-12 top-10 sm:top-16 bg-black/60 backdrop-blur-2xl border border-white/10 p-2 sm:p-4 rounded-xl sm:rounded-2xl shadow-[0_20px_40px_rgba(0,0,0,0.5)] z-40 whitespace-nowrap">
                   <p className="text-cyan-400 text-[6px] sm:text-[8px] font-black uppercase tracking-[0.3em] mb-1">Visitor Experience</p>
-                  <p className="text-white text-[10px] sm:text-sm font-bold">Interactive Callbox</p>
+                  <p className="text-white text-[10px] sm:text-sm font-bold">Digital Callbox</p>
                 </div>
+                {/* Phone Body */}
                 <div className="bg-gradient-to-b from-zinc-700 to-black p-[2px] rounded-[2rem] sm:rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.8)]">
                   <div className="bg-black p-1 sm:p-1.5 rounded-[1.9rem] sm:rounded-[2.4rem]">
                     <div className="aspect-[9/19] rounded-[1.7rem] sm:rounded-[2rem] overflow-hidden relative border border-white/10 bg-[#050505]">
-                      <Image src="/app-callbox.png" alt="Gate Guard Digital Callbox and Interactive Visitor Access Mobile App" fill className="object-cover" />
-                      <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-tr from-transparent via-white/5 to-transparent pointer-events-none"></div>
+                      <Image src="/app-callbox.png" alt="Visitor Experience" fill className="object-cover" />
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* RESIDENT EXPERIENCE (Right/Back Phone) */}
-              <div className="absolute right-0 sm:right-4 lg:right-0 bottom-0 sm:bottom-10 w-36 sm:w-48 lg:w-56 z-20 animate-float-reverse">
-                <div className="absolute -top-6 sm:-top-12 left-1/2 -translate-x-1/2 bg-black/80 backdrop-blur-xl border border-white/10 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full z-40 flex items-center gap-1.5 sm:gap-2 shadow-[0_0_30px_rgba(6,182,212,0.2)] whitespace-nowrap">
-                  <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-cyan-400 rounded-full animate-ping absolute"></div>
-                  <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-cyan-400 rounded-full relative"></div>
-                  <span className="text-white text-[7px] sm:text-[9px] font-bold tracking-widest uppercase">Eagle Eye Monitored</span>
+              {/* RESIDENT EXPERIENCE (The "Brivo" Phone - Bottom/Right) */}
+              <div className="absolute right-[-5%] sm:right-0 bottom-4 w-[50%] sm:w-48 lg:w-56 z-20 animate-float-reverse">
+                {/* Eagle Eye Monitored Tag */}
+                <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-black/80 backdrop-blur-xl border border-white/10 px-3 py-1.5 rounded-full z-40 flex items-center gap-1.5 shadow-lg whitespace-nowrap">
+                  <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-ping absolute"></div>
+                  <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full relative"></div>
+                  <span className="text-white text-[7px] font-bold tracking-widest uppercase">Eagle Eye Monitored</span>
                 </div>
-                <div className="absolute -right-2 sm:-right-10 bottom-12 sm:bottom-20 bg-black/40 backdrop-blur-2xl border border-white/10 p-2 sm:p-4 rounded-xl sm:rounded-2xl shadow-[0_20px_40px_rgba(0,0,0,0.5)] z-40 text-right">
+                {/* Resident Tag */}
+                <div className="absolute -right-4 bottom-10 bg-black/60 backdrop-blur-2xl border border-white/10 p-2 sm:p-4 rounded-xl sm:rounded-2xl shadow-[0_20px_40px_rgba(0,0,0,0.5)] z-40 text-right whitespace-nowrap">
                   <p className="text-blue-500 text-[6px] sm:text-[8px] font-black uppercase tracking-[0.3em] mb-1">Resident Experience</p>
-                  <p className="text-white text-[10px] sm:text-sm font-bold">Brivo Mobile Pass</p>
+                  <p className="text-white text-[10px] sm:text-sm font-bold">Mobile Pass</p>
                 </div>
-                 <div className="bg-gradient-to-b from-zinc-800 to-black p-[2px] rounded-[1.8rem] sm:rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.6)]">
+                {/* Phone Body */}
+                <div className="bg-gradient-to-b from-zinc-800 to-black p-[2px] rounded-[1.8rem] sm:rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.6)]">
                   <div className="bg-black p-1 sm:p-1.5 rounded-[1.7rem] sm:rounded-[2.4rem]">
                     <div className="aspect-[9/19] rounded-[1.5rem] sm:rounded-[2rem] overflow-hidden relative border border-white/10 bg-[#0f1423]">
-                      <Image src="/app-brivo.png" alt="Brivo Mobile Pass Smart Access Control App for Apartment Residents" fill className="object-cover" />
-                      <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-tr from-transparent via-white/5 to-transparent pointer-events-none"></div>
+                      <Image src="/app-brivo.png" alt="Resident Experience" fill className="object-cover" />
                     </div>
                   </div>
                 </div>

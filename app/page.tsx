@@ -11,11 +11,12 @@ export default function Home() {
   const [conciergeShifts, setConciergeShifts] = useState(0); // <-- This changed
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Math Logic (With Floor Pricing)
+// Math Logic (With Floor Pricing)
   const MINIMUM_PRICE_PER_SHIFT = 1000;
   const FIRST_SHIFT_PER_UNIT = 3;
   const ADDITIONAL_SHIFT_PER_UNIT = 1; // Change this if your 2nd/3rd shift per-unit price is different
 
+  // 1. Calculate Gate Guard Costs
   let conciergeMonthly = 0;
   if (conciergeShifts > 0) {
     const floorPrice = MINIMUM_PRICE_PER_SHIFT * conciergeShifts;
@@ -29,6 +30,15 @@ export default function Home() {
   const cameraCost = cameras * 85;
   const totalMonthly = gatesCost + pedCost + cameraCost + conciergeMonthly;
   const perUnitMonthly = (totalMonthly / units).toFixed(2);
+
+  // 2. Calculate "The Old Way" Reactive Costs (Based on Market Research)
+  const GUARD_MONTHLY_PER_SHIFT = 7200; // $30/hr * 8hrs * 30 days
+  const oldGuardCost = conciergeShifts > 0 ? (GUARD_MONTHLY_PER_SHIFT * conciergeShifts) : 0;
+  const oldRepairCost = (vehicleGates * 100) + (pedGates * 50); // Reactive break-fix estimates
+  const oldFobCost = units * 2; // Est. $2/mo per unit for replacing lost physical fobs/cards
+  
+  const oldTotalMonthly = oldGuardCost + oldRepairCost + oldFobCost;
+  const monthlySavings = oldTotalMonthly > totalMonthly ? (oldTotalMonthly - totalMonthly) : 0;
 
   return (
     <main className="bg-[#050505] text-white min-h-screen selection:bg-cyan-500/30 font-sans overflow-x-hidden">
@@ -457,17 +467,47 @@ export default function Home() {
 
               <div className="space-y-4 border-t border-white/10 pt-6">
                 <div className="flex justify-between text-sm">
-                  <span className="text-zinc-400">Total Monthly Subscription</span>
+                  <span className="text-zinc-400">Gate Guard Monthly</span>
                   <span className="text-white font-bold">${totalMonthly.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-zinc-400">One-Time Setup Fee (Avg)</span>
                   <span className="text-white font-bold">${((vehicleGates + pedGates) * 500).toLocaleString()}</span>
                 </div>
-                <div className="flex justify-between text-sm mt-4 p-4 bg-red-500/10 border border-red-500/20 rounded-xl">
-                  <span className="text-red-400 font-bold">Cost of 24/7 Physical Guards</span>
-                  <span className="text-red-400 font-bold line-through">$12,500 / mo</span>
-                </div>
+                
+                {/* Dynamic "Old Way" Cost Comparison */}
+                {oldTotalMonthly > 0 && (
+                  <div className="mt-6 p-4 bg-red-500/5 border border-red-500/20 rounded-xl space-y-3">
+                    <p className="text-[10px] font-bold text-red-400 uppercase tracking-widest border-b border-red-500/20 pb-2">Estimated Cost of the "Old Way"</p>
+                    
+                    {oldGuardCost > 0 && (
+                      <div className="flex justify-between text-xs">
+                        <span className="text-zinc-500">Physical Guard Contracts</span>
+                        <span className="text-zinc-400 line-through">${oldGuardCost.toLocaleString()}</span>
+                      </div>
+                    )}
+                    
+                    {(vehicleGates > 0 || pedGates > 0) && (
+                      <div className="flex justify-between text-xs">
+                        <span className="text-zinc-500">Reactive Repairs & Fobs</span>
+                        <span className="text-zinc-400 line-through">${(oldRepairCost + oldFobCost).toLocaleString()}</span>
+                      </div>
+                    )}
+                    
+                    <div className="flex justify-between text-sm font-bold pt-2 border-t border-red-500/10">
+                      <span className="text-red-400">Old Way Total</span>
+                      <span className="text-red-400 line-through">${oldTotalMonthly.toLocaleString()} / mo</span>
+                    </div>
+
+                    {/* The Hero Metric: Total Savings */}
+                    {monthlySavings > 0 && (
+                      <div className="mt-4 p-3 bg-cyan-500/10 border border-cyan-500/30 rounded-lg flex justify-between items-center transform transition-all hover:scale-105 shadow-[0_0_15px_rgba(6,182,212,0.3)]">
+                        <span className="text-cyan-400 font-bold text-xs uppercase tracking-wider">Your Monthly Savings</span>
+                        <span className="text-cyan-300 font-black text-lg">${monthlySavings.toLocaleString()}</span>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
 
                <button 

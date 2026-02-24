@@ -576,7 +576,7 @@ export default function Home() {
               
               {/* HIDDEN MAGIC: Lead Source & Calculator Data */}
               <input type="hidden" name="lead_source" value="ROI Calculator" />
-              <input type="hidden" name="description" value={`Calculated Quote: ${units} Units | ${vehicleGates} Vehicle Gates | ${pedGates} Ped Gates | ${cameras} Cameras | Concierge Shift: $${concierge} | Estimated Total: $${totalMonthly.toLocaleString()}/mo ($${perUnitMonthly}/unit)`} />
+              <input type="hidden" name="description" value={`Calculated Quote: ${units} Units | ${vehicleGates} Vehicle Gates | ${pedGates} Ped Gates | ${cameras} Cameras | Concierge Shifts: ${conciergeShifts} ($${conciergeMonthly}/m0) | Estimated Total: $${totalMonthly.toLocaleString()}/mo ($${perUnitMonthly}/unit)`} />
 
               {/* Form Fields */}
               <div className="grid grid-cols-2 gap-4">

@@ -34,8 +34,8 @@ export default function Home() {
   // 2. Calculate "The Old Way" Reactive Costs (Based on Market Research)
   const GUARD_MONTHLY_PER_SHIFT = 7200; // $30/hr * 8hrs * 30 days
   const oldGuardCost = conciergeShifts > 0 ? (GUARD_MONTHLY_PER_SHIFT * conciergeShifts) : 0;
-  const oldRepairCost = (vehicleGates * 100) + (pedGates * 50); // Reactive break-fix estimates
-  const oldFobCost = units * 2; // Est. $2/mo per unit for replacing lost physical fobs/cards
+  const oldRepairCost = (vehicleGates * 500) + (pedGates * 250); // Reactive break-fix estimates
+  const oldFobCost = units * 3.5; // Est. $3.50/mo per unit for replacing lost physical fobs/cards
   
   const oldTotalMonthly = oldGuardCost + oldRepairCost + oldFobCost;
   const monthlySavings = oldTotalMonthly > totalMonthly ? (oldTotalMonthly - totalMonthly) : 0;

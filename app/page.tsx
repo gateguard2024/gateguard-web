@@ -2,19 +2,31 @@
 import React, { useState } from 'react';
 
 export default function Home() {
-  // ROI Calculator State
+// ROI Calculator State
   const [units, setUnits] = useState(250);
   const [vehicleGates, setVehicleGates] = useState(2);
   const [pedGates, setPedGates] = useState(2);
   const [cameras, setCameras] = useState(4);
-  const [concierge, setConcierge] = useState(0);
+  const [conciergeShifts, setConciergeShifts] = useState(0); // <-- This changed
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Math Logic
+  // Math Logic (With Floor Pricing)
+  const MINIMUM_PRICE_PER_SHIFT = 1000;
+  const FIRST_SHIFT_PER_UNIT = 3;
+  const ADDITIONAL_SHIFT_PER_UNIT = 1; // Change this if your 2nd/3rd shift per-unit price is different
+
+  let conciergeMonthly = 0;
+  if (conciergeShifts > 0) {
+    const floorPrice = MINIMUM_PRICE_PER_SHIFT * conciergeShifts;
+    const scalablePrice = (units * FIRST_SHIFT_PER_UNIT) + 
+                          (units * ADDITIONAL_SHIFT_PER_UNIT * (conciergeShifts - 1));
+    conciergeMonthly = Math.max(floorPrice, scalablePrice);
+  }
+
   const gatesCost = vehicleGates * 150;
   const pedCost = pedGates * 125;
   const cameraCost = cameras * 85;
-  const totalMonthly = gatesCost + pedCost + cameraCost + concierge;
+  const totalMonthly = gatesCost + pedCost + cameraCost + conciergeMonthly;
   const perUnitMonthly = (totalMonthly / units).toFixed(2);
 
   return (

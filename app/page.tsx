@@ -31,16 +31,17 @@ export default function Home() {
   const totalMonthly = gatesCost + pedCost + cameraCost + conciergeMonthly;
   const perUnitMonthly = (totalMonthly / units).toFixed(2);
 
-  // 2. Calculate "The Old Way" Reactive Costs (Based on Market Research)
+// 2. Calculate "The Old Way" Reactive Costs (Based on Market Research)
   const GUARD_MONTHLY_PER_SHIFT = 7200; // $30/hr * 8hrs * 30 days
   const oldGuardCost = conciergeShifts > 0 ? (GUARD_MONTHLY_PER_SHIFT * conciergeShifts) : 0;
-  const oldRepairCost = (vehicleGates * 500) + (pedGates * 250); // Reactive break-fix estimates
-  const oldFobCost = units * 3.5; // Est. $3.50/mo per unit for replacing lost physical fobs/cards
+  const oldRepairCost = (vehicleGates * 100) + (pedGates * 50); // Reactive break-fix estimates
+  const oldFobCost = units * 2; // Est. $2/mo per unit for replacing physical fobs
+  const oldCameraCost = cameras * 150; // $150/mo per camera for traditional 3rd-party monitoring
   
-  const oldTotalMonthly = oldGuardCost + oldRepairCost + oldFobCost;
+  // Add oldCameraCost to the total!
+  const oldTotalMonthly = oldGuardCost + oldRepairCost + oldFobCost + oldCameraCost;
   const monthlySavings = oldTotalMonthly > totalMonthly ? (oldTotalMonthly - totalMonthly) : 0;
-
-  return (
+  
     <main className="bg-[#050505] text-white min-h-screen selection:bg-cyan-500/30 font-sans overflow-x-hidden">
       
       {/* Custom CSS for the floating phone animations */}
@@ -475,7 +476,7 @@ export default function Home() {
                   <span className="text-white font-bold">${((vehicleGates + pedGates) * 500).toLocaleString()}</span>
                 </div>
                 
-                {/* Dynamic "Old Way" Cost Comparison */}
+{/* Dynamic "Old Way" Cost Comparison */}
                 {oldTotalMonthly > 0 && (
                   <div className="mt-6 p-4 bg-red-500/5 border border-red-500/20 rounded-xl space-y-3">
                     <p className="text-[10px] font-bold text-red-400 uppercase tracking-widest border-b border-red-500/20 pb-2">Estimated Cost of the "Old Way"</p>
@@ -484,6 +485,13 @@ export default function Home() {
                       <div className="flex justify-between text-xs">
                         <span className="text-zinc-500">Physical Guard Contracts</span>
                         <span className="text-zinc-400 line-through">${oldGuardCost.toLocaleString()}</span>
+                      </div>
+                    )}
+
+                    {oldCameraCost > 0 && (
+                      <div className="flex justify-between text-xs">
+                        <span className="text-zinc-500">3rd-Party Video Monitoring</span>
+                        <span className="text-zinc-400 line-through">${oldCameraCost.toLocaleString()}</span>
                       </div>
                     )}
                     
@@ -498,6 +506,16 @@ export default function Home() {
                       <span className="text-red-400">Old Way Total</span>
                       <span className="text-red-400 line-through">${oldTotalMonthly.toLocaleString()} / mo</span>
                     </div>
+
+                    {/* The Hero Metric: Total Savings */}
+                    {monthlySavings > 0 && (
+                      <div className="mt-4 p-3 bg-cyan-500/10 border border-cyan-500/30 rounded-lg flex justify-between items-center transform transition-all hover:scale-105 shadow-[0_0_15px_rgba(6,182,212,0.3)]">
+                        <span className="text-cyan-400 font-bold text-xs uppercase tracking-wider">Your Monthly Savings</span>
+                        <span className="text-cyan-300 font-black text-lg">${monthlySavings.toLocaleString()}</span>
+                      </div>
+                    )}
+                  </div>
+                )}
 
                     {/* The Hero Metric: Total Savings */}
                     {monthlySavings > 0 && (

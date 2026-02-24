@@ -385,7 +385,6 @@ export default function Home() {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] bg-cyan-900/10 blur-[150px] rounded-full pointer-events-none"></div>
         
         <div className="container mx-auto px-6 relative z-10">
-        <div className="container mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold mb-6 tracking-tight">
               Calculate Your <span className="text-cyan-400 italic mr-2 md:mr-3">Gate Guard</span> Savings.
@@ -400,8 +399,6 @@ export default function Home() {
             
             {/* Left: Interactive Controls */}
             <div className="flex-1 space-y-8">
-              
-              {/* Units Slider */}
               <div>
                 <div className="flex justify-between mb-2">
                   <label className="text-white font-bold text-sm tracking-wide uppercase">Total Units / Apartments</label>
@@ -414,7 +411,6 @@ export default function Home() {
                 />
               </div>
 
-              {/* Hardware Inputs */}
               <div className="grid grid-cols-2 gap-6">
                 <div>
                   <label className="text-zinc-400 font-bold text-xs tracking-widest uppercase block mb-2">Vehicle Gates</label>
@@ -434,7 +430,6 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* Extra Cameras */}
               <div>
                 <label className="text-zinc-400 font-bold text-xs tracking-widest uppercase block mb-2">Additional Video Monitoring</label>
                 <p className="text-[10px] text-zinc-500 mb-2 leading-tight">Property-wide Eagle Eye cameras ($85/ea)</p>
@@ -444,7 +439,6 @@ export default function Home() {
                 />
               </div>
 
-              {/* Virtual Concierge Dropdown */}
               <div>
                 <label className="text-zinc-400 font-bold text-xs tracking-widest uppercase block mb-2">2-Way Video Concierge</label>
                 <p className="text-[10px] text-zinc-500 mb-2 leading-tight">Live operators checking IDs and logging plates</p>
@@ -464,7 +458,6 @@ export default function Home() {
             {/* Right: The Live Results */}
             <div className="flex-1 bg-black border border-cyan-500/30 rounded-3xl p-8 relative overflow-hidden flex flex-col justify-center">
               <div className="absolute top-0 left-0 w-full h-1 bg-cyan-400 shadow-[0_0_15px_#22d3ee]"></div>
-              <div className="absolute -right-20 -bottom-20 w-64 h-64 bg-cyan-500/10 blur-[100px] rounded-full pointer-events-none"></div>
               
               <h3 className="text-center text-zinc-400 text-sm font-bold uppercase tracking-widest mb-2">Estimated Predictable OpEx</h3>
               
@@ -483,38 +476,31 @@ export default function Home() {
                   <span className="text-white font-bold">${((vehicleGates + pedGates) * 500).toLocaleString()}</span>
                 </div>
                 
-                {/* Dynamic "Old Way" Cost Comparison */}
                 {oldTotalMonthly > 0 && (
                   <div className="mt-6 p-4 bg-red-500/5 border border-red-500/20 rounded-xl space-y-3">
                     <p className="text-[10px] font-bold text-red-400 uppercase tracking-widest border-b border-red-500/20 pb-2">Estimated Cost of the "Old Way"</p>
-                    
                     {oldGuardCost > 0 && (
                       <div className="flex justify-between text-xs">
                         <span className="text-zinc-500">Physical Guard Contracts</span>
                         <span className="text-zinc-400 line-through">${oldGuardCost.toLocaleString()}</span>
                       </div>
                     )}
-
                     {oldCameraCost > 0 && (
                       <div className="flex justify-between text-xs">
                         <span className="text-zinc-500">3rd-Party Video Monitoring</span>
                         <span className="text-zinc-400 line-through">${oldCameraCost.toLocaleString()}</span>
                       </div>
                     )}
-                    
                     {(vehicleGates > 0 || pedGates > 0) && (
                       <div className="flex justify-between text-xs">
-                        <span className="text-zinc-500">Reactive Repairs, Fobs & Fees</span>
+                        <span className="text-zinc-500">Reactive Repairs & Fobs</span>
                         <span className="text-zinc-400 line-through">${(oldRepairCost + oldFobCost).toLocaleString()}</span>
                       </div>
                     )}
-                    
                     <div className="flex justify-between text-sm font-bold pt-2 border-t border-red-500/10">
                       <span className="text-red-400">Old Way Total</span>
                       <span className="text-red-400 line-through">${oldTotalMonthly.toLocaleString()} / mo</span>
                     </div>
-
-                    {/* The Hero Metric: Total Savings */}
                     {monthlySavings > 0 && (
                       <div className="mt-4 p-3 bg-cyan-500/10 border border-cyan-500/30 rounded-lg flex justify-between items-center transform transition-all hover:scale-105 shadow-[0_0_15px_rgba(6,182,212,0.3)]">
                         <span className="text-cyan-400 font-bold text-xs uppercase tracking-wider">Your Monthly Savings</span>
@@ -532,11 +518,9 @@ export default function Home() {
                 LOCK IN THIS RATE
               </button>
             </div>
-
           </div>
         </div>
       </section>
-
       {/* 7. CALL TO ACTION (LEAD CAPTURE) */}
       <section id="contact" className="py-32 bg-gradient-to-b from-[#050505] to-[#0A192F] relative overflow-hidden">
         <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">

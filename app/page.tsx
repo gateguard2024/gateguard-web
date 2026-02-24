@@ -494,7 +494,7 @@ export default function Home() {
                     
                     {(vehicleGates > 0 || pedGates > 0) && (
                       <div className="flex justify-between text-xs">
-                        <span className="text-zinc-500">Reactive Repairs & Fobs</span>
+                        <span className="text-zinc-500">Reactive Repairs, Fobs & Fees</span>
                         <span className="text-zinc-400 line-through">${(oldRepairCost + oldFobCost).toLocaleString()}</span>
                       </div>
                     )}

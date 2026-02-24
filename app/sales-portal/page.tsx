@@ -10,9 +10,12 @@ export default function SalesPortal() {
   const [cameras, setCameras] = useState(4);
   const [conciergeShifts, setConciergeShifts] = useState(0);
 
-  // 2. Interactive Phone State
+  // 2. Interactive Phone & Gate State
   const [brivoStatus, setBrivoStatus] = useState('idle'); 
-  const [visitorStatus, setVisitorStatus] = useState('idle'); 
+  const [visitorStatus, setVisitorStatus] = useState('idle');
+  
+  // Determine if the gate should be shown as open based on phone status
+  const isGateOpen = brivoStatus === 'granted' || visitorStatus === 'granted';
 
   // 3. Form & Simulation State
   const [formState, setFormState] = useState<'idle' | 'loading' | 'success'>('idle');
@@ -22,15 +25,16 @@ export default function SalesPortal() {
   const handleBrivoTap = () => {
     if (brivoStatus !== 'idle') return;
     setBrivoStatus('loading');
+    // Sequence: Loading -> Granted (Gate Opens) -> Idle (Gate Closes)
     setTimeout(() => setBrivoStatus('granted'), 1200);
-    setTimeout(() => setBrivoStatus('idle'), 4500);
+    setTimeout(() => setBrivoStatus('idle'), 5500); // Gate stays open for ~4s
   };
 
   const handleVisitorTap = () => {
     if (visitorStatus !== 'idle') return;
     setVisitorStatus('loading');
     setTimeout(() => setVisitorStatus('granted'), 1500);
-    setTimeout(() => setVisitorStatus('idle'), 4500);
+    setTimeout(() => setVisitorStatus('idle'), 5500);
   };
 
   // Math Logic
@@ -43,14 +47,12 @@ export default function SalesPortal() {
   const perUnitMonthly = (totalMonthly / units).toFixed(2);
   const monthlySavings = ((vehicleGates * 100) + (pedGates * 50) + (units * 2) + (cameras * 150) + (conciergeShifts > 0 ? 7200 * conciergeShifts : 0)) - totalMonthly;
 
-  // Custom Form Handler (Simulating the Zapier Webhook)
+  // Custom Form Handler
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setFormState('loading'); // Show spinner
-    
-    // Simulate the 2-second delay of Zapier talking to Salesforce & Qwilr
+    setFormState('loading'); 
     setTimeout(() => {
-      setFormState('success'); // Show the Mock Qwilr Proposal
+      setFormState('success'); 
     }, 2000);
   };
 
@@ -135,33 +137,61 @@ export default function SalesPortal() {
             {/* 2. Interactive App Demo Section */}
             <div className="pt-10 border-t border-white/10">
               <h2 className="text-2xl font-black mb-2 tracking-tight">Interactive <span className="text-cyan-400">Simulation</span></h2>
-              <p className="text-zinc-500 text-sm mb-8">Tap the devices below to simulate a real-time gate credential transmission.</p>
+              <p className="text-zinc-500 text-sm mb-8">Tap the devices below to trigger a real-time gate event.</p>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+              {/* NEW: LIVE GATE CAMERA FEED SIMULATION */}
+              <div className="relative w-full h-64 sm:h-80 rounded-3xl overflow-hidden mb-12 border border-white/10 shadow-2xl group">
+                {/* The "Closed" State (Base Layer) */}
+                <Image src="/gate-closed.png" alt="Main Gate Closed" fill className="object-cover" />
+                
+                {/* The "Open" State (Top Layer - Fades In/Out) */}
+                <div className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${isGateOpen ? 'opacity-100' : 'opacity-0'}`}>
+                   <Image src="/gate-open.png" alt="Main Gate Open" fill className="object-cover" />
+                </div>
+
+                {/* Live Cam Overlay UI */}
+                <div className="absolute top-4 left-4 flex items-center gap-2 bg-black/50 backdrop-blur-md px-3 py-1.5 rounded-full">
+                    <div className={`w-2 h-2 rounded-full ${isGateOpen ? 'bg-red-500 animate-pulse' : 'bg-emerald-500'}`}></div>
+                    <p className="text-[8px] font-bold uppercase tracking-widest text-white">LIVE CAM 01 • MAIN ENTRY</p>
+                </div>
+                
+                {/* Gate Status Indicator */}
+                 <div className="absolute bottom-4 left-4 bg-black/80 backdrop-blur-xl p-4 rounded-2xl border border-white/10">
+                    <p className="text-[8px] uppercase tracking-widest text-zinc-400 mb-1">System Status</p>
+                    <p className={`text-lg font-black uppercase tracking-tight transition-colors duration-300 ${isGateOpen ? 'text-emerald-400' : 'text-white'}`}>
+                        {isGateOpen ? '✓ GATE OPENING' : 'SECURE & CLOSED'}
+                    </p>
+                </div>
+                 {/* Eagle Eye Branding */}
+                 <div className="absolute bottom-4 right-4 opacity-50 grayscale group-hover:opacity-100 group-hover:grayscale-0 transition-all">
+                    <Image src="/logo.png" alt="Eagle Eye" width={30} height={30} className="object-contain" />
+                 </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-10 justify-items-center">
                 {/* Brivo Simulation */}
                 <div className="flex flex-col items-center">
                   <p className="text-[10px] font-bold tracking-widest text-zinc-400 uppercase mb-4">Resident Mobile Pass</p>
-                  <div onClick={handleBrivoTap} className="relative w-64 h-[520px] bg-black rounded-[2.5rem] border-[4px] border-zinc-800 shadow-2xl overflow-hidden cursor-pointer transform transition-transform hover:scale-[1.02]">
+                  <div onClick={handleBrivoTap} className="relative w-56 h-[480px] bg-black rounded-[2.5rem] border-[4px] border-zinc-800 shadow-xl overflow-hidden cursor-pointer transform transition-transform hover:scale-[1.02]">
                     <Image src="/app-brivo.png" alt="Brivo" fill className="object-cover opacity-80" />
                     {brivoStatus === 'idle' && (
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-32 h-32 bg-cyan-500/20 rounded-full animate-ping absolute"></div>
+                        <div className="w-28 h-28 bg-cyan-500/20 rounded-full animate-ping absolute"></div>
                         <div className="bg-cyan-500 text-black text-[10px] font-black uppercase px-4 py-2 rounded-full z-10 shadow-[0_0_20px_#22d3ee]">Tap to Open</div>
                       </div>
                     )}
                     {brivoStatus === 'loading' && (
                       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center z-20">
-                        <div className="w-12 h-12 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+                        <div className="w-10 h-10 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin mb-4"></div>
                         <p className="text-cyan-400 text-xs font-bold uppercase tracking-widest animate-pulse">Authenticating...</p>
                       </div>
                     )}
                     {brivoStatus === 'granted' && (
                       <div className="absolute inset-0 bg-emerald-500/90 backdrop-blur-md flex flex-col items-center justify-center z-30 transition-all duration-300">
-                        <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-4 shadow-xl">
-                          <span className="text-emerald-500 text-3xl font-black">✓</span>
+                        <div className="w-14 h-14 bg-white rounded-full flex items-center justify-center mb-4 shadow-xl">
+                          <span className="text-emerald-500 text-2xl font-black">✓</span>
                         </div>
-                        <p className="text-white text-lg font-black uppercase tracking-wider shadow-sm">Access Granted</p>
-                        <p className="text-emerald-100 text-xs mt-1">Main Entry Gate Opening</p>
+                        <p className="text-white text-base font-black uppercase tracking-wider shadow-sm">Access Granted</p>
                       </div>
                     )}
                   </div>
@@ -170,30 +200,24 @@ export default function SalesPortal() {
                 {/* Callbox Simulation */}
                 <div className="flex flex-col items-center">
                   <p className="text-[10px] font-bold tracking-widest text-zinc-400 uppercase mb-4">Visitor Callbox Intercom</p>
-                  <div onClick={handleVisitorTap} className="relative w-64 h-[520px] bg-black rounded-[2.5rem] border-[4px] border-zinc-800 shadow-2xl overflow-hidden cursor-pointer transform transition-transform hover:scale-[1.02]">
+                  <div onClick={handleVisitorTap} className="relative w-56 h-[480px] bg-black rounded-[2.5rem] border-[4px] border-zinc-800 shadow-xl overflow-hidden cursor-pointer transform transition-transform hover:scale-[1.02]">
                     <Image src="/app-callbox.png" alt="Callbox" fill className="object-cover opacity-80" />
                     {visitorStatus === 'idle' && (
-                      <div className="absolute bottom-20 left-1/2 -translate-x-1/2">
-                        <div className="bg-blue-500 text-white text-[10px] font-black uppercase px-6 py-3 rounded-full shadow-[0_0_20px_rgba(59,130,246,0.6)]">Hold To Talk</div>
+                      <div className="absolute bottom-16 left-1/2 -translate-x-1/2">
+                        <div className="bg-blue-500 text-white text-[10px] font-black uppercase px-6 py-3 rounded-full shadow-[0_0_20px_rgba(59,130,246,0.6)]">Tap To Call</div>
                       </div>
                     )}
                     {visitorStatus === 'loading' && (
                       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center z-20">
-                        <div className="flex gap-2 mb-4">
-                          <div className="w-3 h-3 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                          <div className="w-3 h-3 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                          <div className="w-3 h-3 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
-                        </div>
-                        <p className="text-blue-400 text-xs font-bold uppercase tracking-widest">Calling Resident...</p>
+                        <p className="text-blue-400 text-xs font-bold uppercase tracking-widest animate-pulse">Calling Resident...</p>
                       </div>
                     )}
                     {visitorStatus === 'granted' && (
                       <div className="absolute inset-0 bg-emerald-500/90 backdrop-blur-md flex flex-col items-center justify-center z-30 transition-all duration-300">
-                        <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-4 shadow-xl">
-                          <span className="text-emerald-500 text-3xl font-black">✓</span>
+                        <div className="w-14 h-14 bg-white rounded-full flex items-center justify-center mb-4 shadow-xl">
+                          <span className="text-emerald-500 text-2xl font-black">✓</span>
                         </div>
-                        <p className="text-white text-lg font-black uppercase tracking-wider">Gate Opened</p>
-                        <p className="text-emerald-100 text-xs mt-1">Triggered by App</p>
+                        <p className="text-white text-base font-black uppercase tracking-wider">Gate Opened</p>
                       </div>
                     )}
                   </div>

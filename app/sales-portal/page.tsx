@@ -58,7 +58,7 @@ export default function SalesPortal() {
   }
   const totalMonthly = (vehicleGates * 150) + (pedGates * 125) + (cameras * 85) + conciergeMonthly;
   const perUnitMonthly = (totalMonthly / units).toFixed(2);
-  const oldTotalMonthly = (conciergeShifts > 0 ? 7200 * conciergeShifts : 0) + ((vehicleGates * 100) + (pedGates * 50)) + (units * 2) + (cameras * 150);
+  const oldTotalMonthly = (conciergeShifts > 0 ? 7200 * conciergeShifts : 0) + ((vehicleGates * 400) + (pedGates * 150)) + (units * 2) + (cameras * 150);
   const monthlySavings = oldTotalMonthly > totalMonthly ? (oldTotalMonthly - totalMonthly) : 0;
 
   // Form Logic

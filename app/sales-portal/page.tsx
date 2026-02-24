@@ -169,23 +169,36 @@ export default function SalesPortal() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-10 justify-items-center">
-                {/* Brivo Simulation */}
+{/* Brivo Simulation */}
                 <div className="flex flex-col items-center">
                   <p className="text-[10px] font-bold tracking-widest text-zinc-400 uppercase mb-4">Resident Mobile Pass</p>
-                  <div onClick={handleBrivoTap} className="relative w-56 h-[480px] bg-black rounded-[2.5rem] border-[4px] border-zinc-800 shadow-xl overflow-hidden cursor-pointer transform transition-transform hover:scale-[1.02]">
-                    <Image src="/app-brivo.png" alt="Brivo" fill className="object-cover opacity-80" />
+                  <div 
+                    onClick={handleBrivoTap} 
+                    className="relative w-56 h-[480px] bg-black rounded-[2.5rem] border-[4px] border-zinc-800 shadow-xl overflow-hidden cursor-pointer transform transition-transform hover:scale-[1.02]"
+                  >
+                    <Image src="/app-brivo.png" alt="Brivo" fill className="object-cover opacity-90" />
+                    
+                    {/* IDLE STATE: The Native "Magic Button" Pulse */}
                     {brivoStatus === 'idle' && (
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-28 h-28 bg-cyan-500/20 rounded-full animate-ping absolute"></div>
-                        <div className="bg-cyan-500 text-black text-[10px] font-black uppercase px-4 py-2 rounded-full z-10 shadow-[0_0_20px_#22d3ee]">Tap to Open</div>
+                      <div className="absolute top-[68%] left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center">
+                        {/* Outer Ripple */}
+                        <div className="absolute w-32 h-32 border-[1px] border-blue-400/30 rounded-full animate-[ping_2.5s_cubic-bezier(0,0,0.2,1)_infinite]"></div>
+                        {/* Inner Ripple */}
+                        <div className="absolute w-24 h-24 border-[2px] border-blue-400/50 rounded-full animate-[ping_2.5s_cubic-bezier(0,0,0.2,1)_infinite_500ms]"></div>
+                        {/* Core Button Glow */}
+                        <div className="w-16 h-16 bg-blue-500/10 rounded-full shadow-[0_0_40px_rgba(59,130,246,0.6)]"></div>
                       </div>
                     )}
+
+                    {/* LOADING STATE: Authenticating */}
                     {brivoStatus === 'loading' && (
-                      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center z-20">
-                        <div className="w-10 h-10 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin mb-4"></div>
-                        <p className="text-cyan-400 text-xs font-bold uppercase tracking-widest animate-pulse">Authenticating...</p>
+                      <div className="absolute inset-0 bg-[#0f1423]/80 backdrop-blur-sm flex flex-col items-center justify-center z-20">
+                        <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+                        <p className="text-blue-400 text-xs font-bold uppercase tracking-widest animate-pulse">Authenticating...</p>
                       </div>
                     )}
+
+                    {/* SUCCESS STATE: Granted */}
                     {brivoStatus === 'granted' && (
                       <div className="absolute inset-0 bg-emerald-500/90 backdrop-blur-md flex flex-col items-center justify-center z-30 transition-all duration-300">
                         <div className="w-14 h-14 bg-white rounded-full flex items-center justify-center mb-4 shadow-xl">

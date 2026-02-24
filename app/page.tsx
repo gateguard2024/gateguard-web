@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from 'react';
+import Image from 'next/image':
 
 export default function Home() {
 // ROI Calculator State
@@ -51,7 +52,7 @@ export default function Home() {
         <div className="container mx-auto px-6 h-24 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-3">
-              <img src="/logo.png" alt="Gate Guard" className="h-20 w-20 object-contain" />
+              <Image src="/logo.png" alt="Gate Guard" className="h-20 w-20 object-contain" />
               <div className="flex flex-col">
                  <span className="text-xl md:text-2xl font-black tracking-tighter uppercase italic leading-none text-white">Gate Guard</span>
                  <span className="text-[9px] font-bold tracking-[0.3em] uppercase text-cyan-500 mt-1">Security Ecosystem</span>
@@ -79,7 +80,7 @@ export default function Home() {
       {/* 2. PREMIUM HERO SECTION */}
       <section className="relative pt-40 pb-20 lg:pt-48 lg:pb-32 overflow-hidden border-b border-white/5">
         <div className="absolute inset-0 z-0">
-          <img 
+          <Image 
             src="/hero-bg.jpg" 
             alt="Multi-Family Building" 
             className="w-full h-full object-cover grayscale"
@@ -131,7 +132,7 @@ export default function Home() {
                 <div className="bg-gradient-to-b from-zinc-700 to-black p-[2px] rounded-[2.5rem] shadow-[0_30px_60px_rgba(0,0,0,0.8)]">
                   <div className="bg-black p-1.5 rounded-[2.4rem]">
                     <div className="aspect-[9/19] rounded-[2rem] overflow-hidden relative border border-white/10 bg-[#050505]">
-                      <img src="/app-callbox.png" alt="Gate Guard Visitor Experience" className="w-full h-full object-cover" />
+                      <Image src="/app-callbox.png" alt="Gate Guard Visitor Experience" className="w-full h-full object-cover" />
                       <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-tr from-transparent via-white/5 to-transparent pointer-events-none"></div>
                     </div>
                   </div>
@@ -152,7 +153,7 @@ export default function Home() {
                  <div className="bg-gradient-to-b from-zinc-800 to-black p-[2px] rounded-[2.5rem] shadow-[0_30px_60px_rgba(0,0,0,0.6)]">
                   <div className="bg-black p-1.5 rounded-[2.4rem]">
                     <div className="aspect-[9/19] rounded-[2rem] overflow-hidden relative border border-white/10 bg-[#0f1423]">
-                      <img src="/app-brivo.png" alt="Brivo Resident Experience" className="w-full h-full object-cover" />
+                      <Image src="/app-brivo.png" alt="Brivo Resident Experience" className="w-full h-full object-cover" />
                       <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-tr from-transparent via-white/5 to-transparent pointer-events-none"></div>
                     </div>
                   </div>
@@ -195,7 +196,7 @@ export default function Home() {
             {/* 1. Proactive Plans */}
             <div className="lg:col-span-2 relative border border-white/10 rounded-[2rem] hover:border-cyan-500/50 transition-colors group overflow-hidden shadow-lg">
                <div className="absolute inset-0 z-0 overflow-hidden">
-                 <img src="/hero-bg.jpg" alt="Property Background" className="w-full h-full object-cover grayscale opacity-40 group-hover:scale-105 transition-transform duration-1000 ease-out" />
+                 <Image src="/hero-bg.jpg" alt="Property Background" className="w-full h-full object-cover grayscale opacity-40 group-hover:scale-105 transition-transform duration-1000 ease-out" />
                  <div className="absolute inset-0 bg-[#0A192F] opacity-90 mix-blend-multiply"></div>
                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent"></div>
                </div>
@@ -212,7 +213,7 @@ export default function Home() {
             {/* 2. Eagle Eye Networks */}
             <div className="relative border border-white/10 rounded-[2rem] hover:border-blue-500/50 transition-colors group overflow-hidden">
                <div className="absolute inset-0 z-0 overflow-hidden">
-                 <img src="/hero-bg.jpg" alt="Property Background" className="w-full h-full object-cover grayscale opacity-30 group-hover:scale-105 transition-transform duration-1000 ease-out" />
+                 <Image src="/hero-bg.jpg" alt="Property Background" className="w-full h-full object-cover grayscale opacity-30 group-hover:scale-105 transition-transform duration-1000 ease-out" />
                  <div className="absolute inset-0 bg-[#0A192F] opacity-90 mix-blend-multiply"></div>
                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-[#0A192F]/50"></div>
                </div>
@@ -228,7 +229,7 @@ export default function Home() {
             {/* 3. PMS Smart Sync (Updated Brivo Card) */}
             <div className="relative border border-white/10 rounded-[2rem] hover:border-cyan-500/50 transition-colors group overflow-hidden">
                <div className="absolute inset-0 z-0 overflow-hidden">
-                 <img src="/hero-bg.jpg" alt="Property Background" className="w-full h-full object-cover grayscale opacity-30 group-hover:scale-105 transition-transform duration-1000 ease-out" />
+                 <Image src="/hero-bg.jpg" alt="Property Background" className="w-full h-full object-cover grayscale opacity-30 group-hover:scale-105 transition-transform duration-1000 ease-out" />
                  <div className="absolute inset-0 bg-[#0A192F] opacity-90 mix-blend-multiply"></div>
                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-[#0A192F]/50"></div>
                </div>

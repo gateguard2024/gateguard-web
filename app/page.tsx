@@ -88,8 +88,8 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* 2. PREMIUM HERO SECTION */}
-      <section className="relative pt-40 pb-20 lg:pt-48 lg:pb-32 overflow-hidden border-b border-white/5">
+{/* 2. PREMIUM HERO SECTION - FULLY REACTIVE MOBILE FIX */}
+      <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden border-b border-white/5 bg-[#050505]">
         <div className="absolute inset-0 z-0">
           <Image 
             src="/hero-bg.jpg" 
@@ -103,74 +103,66 @@ export default function Home() {
         </div>
 
         <div className="container mx-auto px-6 relative z-10">
-          <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
+          {/* We use flex-col on mobile to stack images BELOW text, and flex-row on desktop */}
+          <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-20">
             
             {/* Left: Content & Messaging */}
-            <div className="flex-1 text-center lg:text-left z-20">
-              <div className="inline-flex items-center gap-2 px-4 py-2 mb-8 text-[10px] font-bold tracking-[0.2em] uppercase bg-zinc-900/50 backdrop-blur-md border border-white/10 rounded-full text-cyan-400 shadow-xl">
+            <div className="w-full lg:flex-1 text-center lg:text-left">
+              <div className="inline-flex items-center gap-2 px-4 py-2 mb-6 text-[10px] font-bold tracking-[0.2em] uppercase bg-zinc-900/50 backdrop-blur-md border border-white/10 rounded-full text-cyan-400 shadow-xl">
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
                 </span>
                 Proactive Multi-Family Security
               </div>
-              <h1 className="text-5xl lg:text-7xl font-extrabold tracking-tight mb-6 leading-[1.05] drop-shadow-2xl">
+              <h1 className="text-4xl sm:text-5xl lg:text-7xl font-extrabold tracking-tight mb-6 leading-[1.1] drop-shadow-2xl">
                 Intelligent Access. <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Unrivaled Security.</span>
               </h1>
-              <div className="border-l-2 border-cyan-500/50 pl-5 mb-10 max-w-xl mx-auto lg:mx-0 text-left">
-                <p className="text-zinc-400 text-lg lg:text-xl leading-relaxed font-light">
+              <div className="border-l-2 border-cyan-500/50 pl-5 mb-8 max-w-xl mx-auto lg:mx-0 text-left">
+                <p className="text-zinc-400 text-base lg:text-xl leading-relaxed font-light">
                   We don't just fix gates; we manage them. Enjoy proactive AI monitoring, seamless Brivo access, and our digital visitor callbox for <span className="text-white font-semibold">one nominal price per unit.</span>
                 </p>
               </div>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                <a href="#services" className="px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-black rounded-full hover:shadow-[0_0_30px_-5px_rgba(6,182,212,0.6)] transition-all transform hover:-translate-y-1 border border-cyan-400/50 tracking-wide text-sm text-center inline-block">
+              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                <a href="#services" className="px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-black rounded-full hover:shadow-[0_0_30px_-5px_rgba(6,182,212,0.6)] transition-all transform hover:-translate-y-1 border border-cyan-400/50 tracking-wide text-sm text-center">
                   VIEW THE PLAN
                 </a>
-                <a href="#pricing" className="px-8 py-4 bg-white/5 backdrop-blur-md border border-white/10 text-white font-bold rounded-full hover:bg-white/10 transition-all text-sm tracking-wide text-center inline-block">
+                <a href="#pricing" className="px-8 py-4 bg-white/5 backdrop-blur-md border border-white/10 text-white font-bold rounded-full hover:bg-white/10 transition-all text-sm tracking-wide text-center">
                   CALCULATE ROI
                 </a>
               </div>
             </div>
 
-{/* Right: The Overlapping App Experiences (FIXED MOBILE OVERLAP) */}
-            <div className="flex-1 w-full max-w-2xl relative mt-32 sm:mt-40 lg:mt-0 h-[450px] sm:h-[500px] lg:h-[550px] mx-auto">
+            {/* Right: The Overlapping App Experiences (THE REACTIVE FIX) */}
+            {/* Increased height on mobile to h-[500px] and added mt-12 to separate from buttons */}
+            <div className="w-full lg:flex-1 relative mt-16 lg:mt-0 h-[450px] sm:h-[550px] lg:h-[600px] max-w-lg mx-auto">
               
-              {/* VISITOR EXPERIENCE (The "Callbox" Phone - Top/Left) */}
-              <div className="absolute left-[-5%] sm:left-0 top-0 w-[55%] sm:w-56 lg:w-64 z-30 animate-float">
-                {/* Floating Tag */}
-                <div className="absolute -left-4 sm:-left-12 top-10 sm:top-16 bg-black/60 backdrop-blur-2xl border border-white/10 p-2 sm:p-4 rounded-xl sm:rounded-2xl shadow-[0_20px_40px_rgba(0,0,0,0.5)] z-40 whitespace-nowrap">
+              {/* Phone 1: Visitor Experience (Top-Left) */}
+              <div className="absolute left-0 top-0 w-[60%] sm:w-64 z-30 animate-float">
+                <div className="absolute -left-2 sm:-left-12 top-10 bg-black/60 backdrop-blur-2xl border border-white/10 p-2 sm:p-4 rounded-xl z-40 whitespace-nowrap">
                   <p className="text-cyan-400 text-[6px] sm:text-[8px] font-black uppercase tracking-[0.3em] mb-1">Visitor Experience</p>
                   <p className="text-white text-[10px] sm:text-sm font-bold">Digital Callbox</p>
                 </div>
-                {/* Phone Body */}
-                <div className="bg-gradient-to-b from-zinc-700 to-black p-[2px] rounded-[2rem] sm:rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.8)]">
-                  <div className="bg-black p-1 sm:p-1.5 rounded-[1.9rem] sm:rounded-[2.4rem]">
-                    <div className="aspect-[9/19] rounded-[1.7rem] sm:rounded-[2rem] overflow-hidden relative border border-white/10 bg-[#050505]">
-                      <Image src="/app-callbox.png" alt="Visitor Experience" fill className="object-cover" />
+                <div className="bg-gradient-to-b from-zinc-700 to-black p-[2px] rounded-[2rem] sm:rounded-[2.5rem] shadow-2xl">
+                  <div className="bg-black p-1 rounded-[1.9rem] sm:rounded-[2.4rem]">
+                    <div className="aspect-[9/19] rounded-[1.7rem] sm:rounded-[2rem] overflow-hidden relative border border-white/10">
+                      <Image src="/app-callbox.png" alt="Visitor App" fill className="object-cover" />
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* RESIDENT EXPERIENCE (The "Brivo" Phone - Bottom/Right) */}
-              <div className="absolute right-[-5%] sm:right-0 bottom-4 w-[50%] sm:w-48 lg:w-56 z-20 animate-float-reverse">
-                {/* Eagle Eye Monitored Tag */}
-                <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-black/80 backdrop-blur-xl border border-white/10 px-3 py-1.5 rounded-full z-40 flex items-center gap-1.5 shadow-lg whitespace-nowrap">
-                  <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-ping absolute"></div>
-                  <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full relative"></div>
-                  <span className="text-white text-[7px] font-bold tracking-widest uppercase">Eagle Eye Monitored</span>
-                </div>
-                {/* Resident Tag */}
-                <div className="absolute -right-4 bottom-10 bg-black/60 backdrop-blur-2xl border border-white/10 p-2 sm:p-4 rounded-xl sm:rounded-2xl shadow-[0_20px_40px_rgba(0,0,0,0.5)] z-40 text-right whitespace-nowrap">
+              {/* Phone 2: Resident Experience (Bottom-Right) */}
+              <div className="absolute right-0 top-32 sm:top-40 lg:top-auto lg:bottom-0 w-[55%] sm:w-56 z-20 animate-float-reverse">
+                 <div className="absolute -right-2 sm:-right-8 bottom-10 bg-black/60 backdrop-blur-2xl border border-white/10 p-2 sm:p-4 rounded-xl z-40 text-right whitespace-nowrap">
                   <p className="text-blue-500 text-[6px] sm:text-[8px] font-black uppercase tracking-[0.3em] mb-1">Resident Experience</p>
                   <p className="text-white text-[10px] sm:text-sm font-bold">Mobile Pass</p>
                 </div>
-                {/* Phone Body */}
-                <div className="bg-gradient-to-b from-zinc-800 to-black p-[2px] rounded-[1.8rem] sm:rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.6)]">
-                  <div className="bg-black p-1 sm:p-1.5 rounded-[1.7rem] sm:rounded-[2.4rem]">
-                    <div className="aspect-[9/19] rounded-[1.5rem] sm:rounded-[2rem] overflow-hidden relative border border-white/10 bg-[#0f1423]">
-                      <Image src="/app-brivo.png" alt="Resident Experience" fill className="object-cover" />
+                <div className="bg-gradient-to-b from-zinc-800 to-black p-[2px] rounded-[1.8rem] sm:rounded-[2.5rem] shadow-2xl">
+                  <div className="bg-black p-1 rounded-[1.7rem] sm:rounded-[2.4rem]">
+                    <div className="aspect-[9/19] rounded-[1.5rem] sm:rounded-[2rem] overflow-hidden relative border border-white/10">
+                      <Image src="/app-brivo.png" alt="Resident App" fill className="object-cover" />
                     </div>
                   </div>
                 </div>
@@ -180,7 +172,7 @@ export default function Home() {
           </div>
         </div>
       </section>
-
+      
       {/* 3. TARGET AUDIENCE TRUST BAR */}
       <section className="py-12 bg-[#050505] border-y border-white/5 relative z-20">
         <div className="container mx-auto px-6 text-center">

@@ -142,11 +142,11 @@ export default function SalesPortal() {
               {/* NEW: LIVE GATE CAMERA FEED SIMULATION */}
               <div className="relative w-full h-64 sm:h-80 rounded-3xl overflow-hidden mb-12 border border-white/10 shadow-2xl group">
                 {/* The "Closed" State (Base Layer) */}
-                <Image src="/gate-closed.png" alt="Main Gate Closed" fill className="object-cover" />
+                <Image src="/gate-closed.jpg" alt="Main Gate Closed" fill className="object-cover" />
                 
                 {/* The "Open" State (Top Layer - Fades In/Out) */}
                 <div className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${isGateOpen ? 'opacity-100' : 'opacity-0'}`}>
-                   <Image src="/gate-open.png" alt="Main Gate Open" fill className="object-cover" />
+                   <Image src="/gate-open.jpg" alt="Main Gate Open" fill className="object-cover" />
                 </div>
 
                 {/* Live Cam Overlay UI */}

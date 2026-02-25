@@ -5,9 +5,8 @@ const isProtectedRoute = createRouteMatcher(['/portal(.*)']);
 
 export default clerkMiddleware(async (auth, req) => {
   if (isProtectedRoute(req)) {
-    // Await the auth check (Clerk v6 requirement)
-    const session = await auth();
-    session.protect();
+    // Await the protect method directly (Clerk v6 requirement)
+    await auth.protect();
   }
 });
 

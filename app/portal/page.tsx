@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { createClient } from '@supabase/supabase-js';
+import { useUser } from '@clerk/nextjs';
 
 // ---------------------------------------------------------
 // 🔌 SUPABASE CONNECTION
@@ -18,38 +19,45 @@ const STATIC_FALLBACK = {
     { id: "CAM-03", name: "Leasing Office", status: "online", image: "/hero-bg.jpg" },
     { id: "CAM-04", name: "Package Room", status: "offline", image: "" } 
   ],
-  billing: {
-    balance: "$0.00",
-    nextPayment: "Mar 1, 2026",
-    cardSuffix: "4242",
-    invoices: [
-      { id: 'INV-2045', date: 'Feb 1, 2026', amount: '$3,500.00', status: 'Paid' },
-      { id: 'INV-2044', date: 'Jan 1, 2026', amount: '$3,500.00', status: 'Paid' }
-    ]
-  },
+  billing: { balance: "$0.00", nextPayment: "Mar 1, 2026", cardSuffix: "4242" },
   socAlerts: [
-    { id: 1, time: 'Just Now', type: 'alert', text: 'Tailgating event detected at Main Entry Gate. License plate captured. Video clip saved.', sender: 'Gate Guard AI' },
-    { id: 2, time: '10:42 AM', type: 'info', text: 'FedEx delivery verified via Callbox. Courier granted temporary access to package room.', sender: 'Live Dispatch' }
+    { id: 1, time: 'Just Now', type: 'alert', text: 'Tailgating event detected at Main Entry Gate. License plate captured.', sender: 'Gate Guard AI' },
+    { id: 2, time: '10:42 AM', type: 'info', text: 'FedEx delivery verified via Callbox. Access granted.', sender: 'Live Dispatch' }
   ]
 };
 
 export default function ClientPortal() {
+  const { user, isLoaded: isClerkLoaded } = useUser(); 
+  
   const [activeTab, setActiveTab] = useState<'brivo' | 'eagleeye' | 'billing' | 'training' | 'support'>('brivo');
-  const [dbProperty, setDbProperty] = useState<any>(null);
+  
+  // NEW: State for MULTI-PROPERTY support!
+  const [properties, setProperties] = useState<any[]>([]);
+  const [selectedPropertyId, setSelectedPropertyId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchPropertyData() {
+    if (!isClerkLoaded) return;
+    if (!user) {
+      setIsLoading(false);
+      return;
+    }
+
+    async function fetchProperties() {
       try {
+        // NEW: Notice there is NO .single() anymore! It pulls everything that matches your ID.
         const { data, error } = await supabase
           .from('properties')
           .select('*')
-          .limit(1)
-          .single(); 
+          .eq('manager_user_id', user.id)
+          .order('name'); 
 
-        if (data) {
-          console.log("Here is the live data from Supabase:", data);
-          setDbProperty(data);
+        if (data && data.length > 0) {
+          console.log("Found properties for user:", data);
+          setProperties(data);
+          setSelectedPropertyId(data[0].id); // Auto-select the first property in the list
+        } else {
+          console.log("No properties linked to this user yet.");
         }
       } catch (err) {
         console.error("Failed to fetch database info", err);
@@ -57,25 +65,29 @@ export default function ClientPortal() {
         setIsLoading(false);
       }
     }
-    fetchPropertyData();
-  }, []);
+    
+    fetchProperties();
+  }, [isClerkLoaded, user]);
 
-  if (isLoading) {
+  if (!isClerkLoaded || isLoading) {
     return (
       <main className="bg-[#050505] text-white min-h-screen flex items-center justify-center flex-col">
         <Image src="/logo.png" alt="Gate Guard" width={60} height={60} className="animate-pulse mb-6" />
-        <h1 className="text-cyan-500 font-black uppercase tracking-widest text-sm">Decrypting Secure Connection...</h1>
+        <h1 className="text-cyan-500 font-black uppercase tracking-widest text-sm">Verifying Credentials...</h1>
       </main>
     );
   }
 
-  const propertyName = dbProperty?.name || "Unknown Property";
-  const managerName = dbProperty?.manager_name || "Admin User";
-  const brivoUrl = dbProperty?.brivo_iframe_url || "";
+  // Determine which property is currently selected
+  const currentProperty = properties.find(p => p.id === selectedPropertyId) || null;
+  const propertyName = currentProperty?.name || "Unassigned Property";
+  const managerName = currentProperty?.manager_name || user?.firstName || "Client";
+  const brivoUrl = currentProperty?.brivo_iframe_url || "";
 
   return (
     <main className="bg-[#050505] text-white min-h-screen font-sans selection:bg-cyan-500/30 flex flex-col overflow-hidden">
       
+      {/* HEADER */}
       <header className="h-16 border-b border-white/10 bg-black/50 backdrop-blur-xl flex items-center justify-between px-6 z-50 shrink-0">
         <div className="flex items-center gap-4">
           <Link href="/" className="hover:scale-110 hover:drop-shadow-[0_0_10px_rgba(6,182,212,0.8)] transition-all cursor-pointer" title="Return to Main Website">
@@ -83,10 +95,24 @@ export default function ClientPortal() {
           </Link>
           <div className="w-[1px] h-6 bg-white/10"></div>
           <div>
-            <h1 className="text-sm font-black tracking-widest uppercase text-white">{propertyName}</h1>
-            <p className="text-[10px] text-cyan-500 font-bold uppercase tracking-widest">Property Command Center</p>
+            {/* NEW: MULTI-PROPERTY DROPDOWN MENU */}
+            {properties.length > 1 ? (
+              <select 
+                value={selectedPropertyId || ''} 
+                onChange={(e) => setSelectedPropertyId(e.target.value)}
+                className="bg-transparent text-sm font-black tracking-widest uppercase text-white outline-none cursor-pointer hover:text-cyan-400 transition-colors"
+              >
+                {properties.map(p => (
+                  <option key={p.id} value={p.id} className="bg-[#111] text-white">{p.name}</option>
+                ))}
+              </select>
+            ) : (
+              <h1 className="text-sm font-black tracking-widest uppercase text-white">{propertyName}</h1>
+            )}
+            <p className="text-[10px] text-cyan-500 font-bold uppercase tracking-widest mt-0.5">Property Command Center</p>
           </div>
         </div>
+        
         <div className="flex items-center gap-4">
           <div className="text-right hidden sm:block">
             <p className="text-[10px] text-zinc-500 uppercase font-bold tracking-widest">Logged in as</p>
@@ -98,7 +124,10 @@ export default function ClientPortal() {
         </div>
       </header>
 
+      {/* MAIN WORKSPACE */}
       <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
+        
+        {/* LEFT PORTION */}
         <div className="lg:w-2/3 flex flex-col bg-gradient-to-br from-[#050505] to-[#0a0f1a] overflow-hidden border-r border-white/5">
           <div className="flex overflow-x-auto scrollbar-hide border-b border-white/10 bg-[#0a0a0a] shrink-0 px-4 pt-4">
             {[
@@ -128,9 +157,8 @@ export default function ClientPortal() {
                 <div className="flex justify-between items-end mb-6">
                   <div>
                     <h2 className="text-2xl font-black mb-1">Brivo Access Engine</h2>
-                    <p className="text-xs text-zinc-500 font-medium">Manage credentials, unlock doors remotely, and view activity logs.</p>
+                    <p className="text-xs text-zinc-500 font-medium">Manage credentials and logs for {propertyName}.</p>
                   </div>
-                  <button className="bg-blue-600 hover:bg-blue-500 text-white text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-lg transition-colors shadow-[0_0_15px_rgba(37,99,235,0.3)]">Launch Full Brivo App ↗</button>
                 </div>
                 
                 {brivoUrl ? (
@@ -143,7 +171,7 @@ export default function ClientPortal() {
                     </div>
                     <h3 className="text-lg font-black uppercase tracking-widest text-white relative z-10 mb-2">Secure Gateway Active</h3>
                     <p className="text-xs text-zinc-400 mt-2 max-w-md relative z-10 leading-relaxed">
-                      This space is reserved for the native Brivo Identity Management portal. {propertyName} managers can add users and manage fobs directly from this dashboard.
+                      {propertyName} managers can add users and manage fobs directly from this dashboard.
                     </p>
                   </div>
                 )}
@@ -152,12 +180,8 @@ export default function ClientPortal() {
 
             {activeTab === 'eagleeye' && (
               <div className="h-full flex flex-col animate-[fadeIn_0.3s_ease-out]">
-                <div className="flex justify-between items-end mb-6">
-                  <div>
-                    <h2 className="text-2xl font-black mb-1">Eagle Eye Cloud VMS</h2>
-                    <p className="text-xs text-zinc-500 font-medium">Live camera feeds, cloud playback, and LPR analytics.</p>
-                  </div>
-                </div>
+                <h2 className="text-2xl font-black mb-1">Eagle Eye Cloud VMS</h2>
+                <p className="text-xs text-zinc-500 font-medium mb-6">Live camera feeds for {propertyName}.</p>
                 
                 <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
                    {STATIC_FALLBACK.cameras.map((cam, idx) => (
@@ -183,7 +207,7 @@ export default function ClientPortal() {
 
             {activeTab === 'billing' && (
               <div className="h-full animate-[fadeIn_0.3s_ease-out]">
-                 <h2 className="text-2xl font-black mb-4">Financial Overview</h2>
+                 <h2 className="text-2xl font-black mb-4">Financial Overview: {propertyName}</h2>
                  <p className="text-sm text-zinc-400">Current Balance: {STATIC_FALLBACK.billing.balance}</p>
                  <p className="text-sm text-zinc-400">Next Auto-Pay: {STATIC_FALLBACK.billing.nextPayment}</p>
               </div>
@@ -203,6 +227,7 @@ export default function ClientPortal() {
           </div>
         </div>
 
+        {/* SOC ALERTS */}
         <div className="lg:w-1/3 bg-gradient-to-b from-[#0a1128] to-[#040812] border-l border-white/5 flex flex-col h-[600px] lg:h-auto z-10">
           <div className="p-6 border-b border-blue-900/30">
             <h3 className="text-sm font-black uppercase tracking-widest text-blue-100 flex items-center gap-2">

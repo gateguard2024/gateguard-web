@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { ClerkProvider } from '@clerk/nextjs'; // <-- ADDED THIS IMPORT
 import './globals.css';
 
 // 1. Your SEO and Tab Title Data (Including Open Graph for Social Sharing!)
@@ -68,15 +69,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className="bg-[#050505] text-white">
-        {/* Injecting the Schema invisibly into the page */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
-        {children}
-      </body>
-    </html>
+    // <-- WRAPPED THE HTML IN THE CLERK PROVIDER
+    <ClerkProvider>
+      <html lang="en">
+        <body className="bg-[#050505] text-white">
+          {/* Injecting the Schema invisibly into the page */}
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          />
+          {children}
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

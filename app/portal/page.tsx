@@ -36,20 +36,23 @@ export default function ClientPortal() {
   const [selectedPropertyId, setSelectedPropertyId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
+useEffect(() => {
     if (!isClerkLoaded) return;
-    if (!user) {
+    
+    // Prove to TypeScript that the user and their ID absolutely exist
+    if (!user || !user.id) {
       setIsLoading(false);
       return;
     }
 
-    async function fetchProperties() {
+    // Pass the confirmed ID as a guaranteed string variable (userId)
+    async function fetchProperties(userId: string) {
       try {
         // NEW: Notice there is NO .single() anymore! It pulls everything that matches your ID.
         const { data, error } = await supabase
           .from('properties')
           .select('*')
-          .eq('manager_user_id', user.id)
+          .eq('manager_user_id', userId) // <-- No more TypeScript panic!
           .order('name'); 
 
         if (data && data.length > 0) {
@@ -66,7 +69,8 @@ export default function ClientPortal() {
       }
     }
     
-    fetchProperties();
+    // Run the function and hand it the ID
+    fetchProperties(user.id);
   }, [isClerkLoaded, user]);
 
   if (!isClerkLoaded || isLoading) {

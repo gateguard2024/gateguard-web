@@ -44,15 +44,15 @@ export default function ClientPortal() {
   const [dbProperty, setDbProperty] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // When the portal loads, go ask Supabase for the data!
+// When the portal loads, go ask Supabase for the data!
   useEffect(() => {
     async function fetchPropertyData() {
       try {
         const { data, error } = await supabase
           .from('properties')
           .select('*')
-          .eq('name', 'Eagles Landing')
-          .single(); // Tells Supabase we just want the one specific row
+          .limit(1)    // <-- Tell it to just grab the first row it finds
+          .single();   // <-- Return it as a single object
 
         if (data) {
           setDbProperty(data);

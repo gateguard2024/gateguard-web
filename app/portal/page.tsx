@@ -3,19 +3,18 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 
 // ---------------------------------------------------------
-// 🛠️ DEMO CONTROL PANEL
-// Edit this object right before a pitch to customize the portal!
+// 🛠️ DEMO CONTROL PANEL: EAGLES LANDING
 // ---------------------------------------------------------
 const PROPERTY_DATA = {
-  propertyName: "Elevate Eagles",
-  propertyAddress: "123 Main St, Dall Ordlho, GA",
+  propertyName: "Eagles Landing",
+  propertyAddress: "4500 Eagles Way, Ball Ground, GA",
   managerName: "Sarah Jenkins",
-  brivoIframeUrl: "", // Leave blank to show the simulation, or add a real URL later
+  brivoIframeUrl: "", 
   cameras: [
     { id: "CAM-01", name: "Main Entry Gate", status: "online", image: "/gate-closed.png" },
-    { id: "CAM-02", name: "Exit Gate", status: "online", image: "/gate-open.png" }, // Uses your existing images
+    { id: "CAM-02", name: "Exit Gate", status: "online", image: "/gate-open.png" }, 
     { id: "CAM-03", name: "Leasing Office", status: "online", image: "/hero-bg.jpg" },
-    { id: "CAM-04", name: "Package Room", status: "offline", image: "" } // Simulates a downed camera
+    { id: "CAM-04", name: "Package Room", status: "offline", image: "" } 
   ],
   billing: {
     balance: "$0.00",
@@ -114,7 +113,7 @@ export default function ClientPortal() {
                     </div>
                     <h3 className="text-lg font-black uppercase tracking-widest text-white relative z-10 mb-2">Secure Gateway Active</h3>
                     <p className="text-xs text-zinc-400 mt-2 max-w-md relative z-10 leading-relaxed">
-                      This space is reserved for your native Brivo Identity Management portal. In a live environment, authorized managers can add users and manage fobs directly from this dashboard.
+                      This space is reserved for the native Brivo Identity Management portal. {PROPERTY_DATA.propertyName} managers can add users and manage fobs directly from this dashboard.
                     </p>
                   </div>
                 )}
@@ -181,141 +180,4 @@ export default function ClientPortal() {
                  <h3 className="text-sm font-black uppercase tracking-widest text-zinc-400 mb-4 border-b border-white/10 pb-2">Recent Invoices</h3>
                  <div className="space-y-3">
                     {PROPERTY_DATA.billing.invoices.map((inv) => (
-                      <div key={inv.id} className="flex justify-between items-center bg-[#0a0a0a] border border-white/5 p-4 rounded-xl hover:bg-white/5 transition-colors cursor-pointer group">
-                        <div className="flex items-center gap-4">
-                           <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-500 font-bold text-lg">✓</div>
-                           <div>
-                              <p className="text-sm font-bold text-white group-hover:text-cyan-400 transition-colors">{inv.id}</p>
-                              <p className="text-[10px] text-zinc-500 uppercase tracking-wider">{inv.date}</p>
-                           </div>
-                        </div>
-                        <div className="text-right flex items-center gap-6">
-                           <span className="text-sm font-black text-white">{inv.amount}</span>
-                           <button className="text-[10px] bg-zinc-800 text-zinc-300 px-3 py-1.5 rounded uppercase font-bold tracking-widest hover:bg-zinc-700 transition-colors">PDF</button>
-                        </div>
-                      </div>
-                    ))}
-                 </div>
-              </div>
-            )}
-
-            {/* TRAINING / VIDEOS TAB */}
-            {activeTab === 'training' && (
-              <div className="h-full animate-[fadeIn_0.3s_ease-out]">
-                 <h2 className="text-2xl font-black mb-1">Knowledge Base</h2>
-                 <p className="text-xs text-zinc-500 font-medium mb-8">On-demand video tutorials for property staff and management.</p>
-                 
-                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    {[
-                      { title: 'How to add a new resident to Brivo', dur: '2:45' },
-                      { title: 'Pulling video clips for law enforcement', dur: '4:12' },
-                      { title: 'Updating Callbox directory listings', dur: '1:30' },
-                      { title: 'Ordering new physical key fobs', dur: '3:05' }
-                    ].map((vid, idx) => (
-                      <div key={idx} className="group cursor-pointer">
-                        <div className="w-full aspect-video bg-[#0a0a0a] border border-white/10 rounded-xl mb-3 relative overflow-hidden flex items-center justify-center group-hover:border-cyan-500/50 transition-colors shadow-lg">
-                           <div className="absolute inset-0 bg-gradient-to-br from-black to-zinc-900 opacity-50"></div>
-                           <div className="w-14 h-14 rounded-full bg-cyan-500/20 flex items-center justify-center backdrop-blur-md group-hover:scale-110 transition-transform border border-cyan-500/30">
-                              <span className="text-cyan-400 ml-1 text-lg">▶</span>
-                           </div>
-                           <div className="absolute bottom-3 right-3 bg-black/80 text-white text-[9px] font-bold px-2.5 py-1 rounded tracking-wider">{vid.dur}</div>
-                        </div>
-                        <h4 className="text-sm font-bold text-white group-hover:text-cyan-400 transition-colors">{vid.title}</h4>
-                      </div>
-                    ))}
-                 </div>
-              </div>
-            )}
-
-             {/* SUPPORT TAB */}
-             {activeTab === 'support' && (
-              <div className="h-full animate-[fadeIn_0.3s_ease-out] max-w-xl">
-                 <h2 className="text-2xl font-black mb-1">Create Support Ticket</h2>
-                 <p className="text-xs text-zinc-500 font-medium mb-8">Our technicians monitor this queue 24/7 for hardware and software issues.</p>
-                 
-                 <form className="space-y-5 bg-[#0a0a0a] p-6 rounded-2xl border border-white/5 shadow-xl">
-                    <div>
-                      <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-2">Issue Type</label>
-                      <select className="w-full bg-[#111] border border-white/10 rounded-xl p-4 text-sm text-white outline-none focus:border-cyan-500 appearance-none shadow-inner">
-                        <option>Gate Operator Malfunction</option>
-                        <option>Visitor Callbox Offline</option>
-                        <option>Camera Feed Down or Blurry</option>
-                        <option>Brivo Sync Issue</option>
-                        <option>Other / General Inquiry</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-2">Description</label>
-                      <textarea rows={5} className="w-full bg-[#111] border border-white/10 rounded-xl p-4 text-sm text-white outline-none focus:border-cyan-500 shadow-inner resize-none" placeholder="Please describe the issue in detail. Include gate names or camera numbers if possible..."></textarea>
-                    </div>
-                    <button type="button" className="w-full py-4 bg-white text-black font-black rounded-xl hover:bg-cyan-400 transition-colors uppercase tracking-widest text-xs shadow-lg mt-2">
-                       Submit Ticket to Dispatch
-                    </button>
-                 </form>
-              </div>
-            )}
-
-          </div>
-        </div>
-
-        {/* RIGHT 1/3: THE SOC ALERTS FEED */}
-        <div className="lg:w-1/3 bg-[#020202] border-l border-white/5 flex flex-col h-[600px] lg:h-auto border-t lg:border-t-0">
-          
-          <div className="p-6 border-b border-white/5 bg-[#050505] shrink-0">
-            <h3 className="text-sm font-black uppercase tracking-widest text-white flex items-center gap-2 mb-1">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_#10b981]"></span>
-              Live SOC Feed
-            </h3>
-            <p className="text-[10px] text-zinc-500 font-medium">Real-time alerts via Gate Guard AI & Dispatch</p>
-          </div>
-
-          <div className="flex-1 overflow-y-auto p-6 space-y-6 scrollbar-hide">
-            {PROPERTY_DATA.socAlerts.map((alert) => (
-              <div key={alert.id} className="animate-[fadeIn_0.5s_ease-out]">
-                <div className="flex justify-center mb-4">
-                  <span className="text-[9px] text-zinc-600 font-bold uppercase tracking-wider bg-white/5 px-3 py-1 rounded-full border border-white/5">{alert.time}</span>
-                </div>
-                
-                <div className="flex flex-col items-start max-w-[95%]">
-                   <span className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 mb-1.5 ml-1">{alert.sender}</span>
-                   <div className={`p-4 rounded-2xl rounded-tl-sm text-sm shadow-xl border ${
-                     alert.type === 'alert' 
-                       ? 'bg-red-500/10 border-red-500/30 text-red-50' 
-                       : alert.type === 'info'
-                       ? 'bg-zinc-900 border-zinc-700 text-zinc-200'
-                       : 'bg-blue-500/10 border-blue-500/30 text-blue-50'
-                   }`}>
-                     <p className="leading-relaxed text-[13px]">{alert.text}</p>
-                     
-                     {/* "Attachment" Simulation for Alerts */}
-                     {alert.type === 'alert' && (
-                       <div className="mt-3 relative h-24 bg-black rounded-xl overflow-hidden border border-red-500/30 flex items-center justify-center group cursor-pointer shadow-lg">
-                          <Image src="/gate-closed.png" alt="Snapshot" fill className="object-cover opacity-60 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500" />
-                          <div className="relative z-10 w-10 h-10 rounded-full bg-black/50 backdrop-blur-md flex items-center justify-center border border-white/20 group-hover:bg-red-500/80 transition-colors">
-                            <span className="text-white text-[12px] ml-0.5">▶</span>
-                          </div>
-                          <div className="absolute top-2 left-2 bg-red-600 text-white text-[8px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded">Auto-Clip</div>
-                       </div>
-                     )}
-                   </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Chat Input */}
-          <div className="p-4 border-t border-white/5 bg-[#050505] shrink-0">
-             <div className="bg-zinc-900 border border-white/10 rounded-full p-1.5 pl-5 flex items-center gap-2 focus-within:border-cyan-500/50 transition-colors">
-               <input type="text" placeholder="Message Dispatch Team..." className="bg-transparent outline-none text-xs text-white flex-1 placeholder:text-zinc-600" />
-               <button className="w-8 h-8 rounded-full bg-cyan-500 hover:bg-cyan-400 flex items-center justify-center text-black transition-colors shadow-[0_0_15px_rgba(6,182,212,0.3)]">
-                  <span className="text-sm transform rotate-45 -translate-y-[1px] -translate-x-[1px] font-black">✈</span>
-               </button>
-             </div>
-          </div>
-
-        </div>
-
-      </div>
-    </main>
-  );
-}
+                      <div key={inv.id} className="flex justify-between items-center bg-[#0a0

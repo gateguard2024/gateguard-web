@@ -58,7 +58,7 @@ export default function Home() {
         .animate-float-reverse { animation: float-reverse 8s ease-in-out infinite; }
       `}} />
 
-      {/* 1. NAVIGATION BAR */}
+    {/* 1. NAVIGATION BAR */}
       <nav className="fixed top-0 w-full z-50 border-b border-white/5 bg-[#050505]/80 backdrop-blur-2xl">
         <div className="container mx-auto px-6 h-24 flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -74,9 +74,13 @@ export default function Home() {
             <a href="#services" className="hover:text-cyan-400 transition-colors">Services</a>
             <a href="#roi" className="hover:text-cyan-400 transition-colors">Compare</a>
             
-            <button className="px-8 py-3 bg-transparent border border-white/20 hover:border-cyan-400 text-white rounded-full transition-all">
+            {/* UPDATED LOGIN LINK */}
+            <Link 
+              href="/login"
+              className="px-8 py-3 bg-transparent border border-white/20 hover:border-cyan-400 text-white rounded-full transition-all flex items-center justify-center"
+            >
               Login
-            </button>
+            </Link>
             
             <button 
               onClick={() => setIsModalOpen(true)}
@@ -87,7 +91,6 @@ export default function Home() {
           </div>
         </div>
       </nav>
-
 {/* 2. PREMIUM HERO SECTION - FULLY REACTIVE MOBILE FIX */}
       <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden border-b border-white/5 bg-[#050505]">
         <div className="absolute inset-0 z-0">

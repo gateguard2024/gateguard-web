@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
+import Link from 'next/link'; // <-- ADD THIS LINE
 import { createClient } from '@supabase/supabase-js';
 
 // ---------------------------------------------------------
@@ -51,10 +52,12 @@ export default function ClientPortal() {
         const { data, error } = await supabase
           .from('properties')
           .select('*')
-          .limit(1)    // <-- Tell it to just grab the first row it finds
-          .single();   // <-- Return it as a single object
+          .limit(1)    
+          .single();   
 
         if (data) {
+          // ADD IT RIGHT HERE 👇
+          console.log("Here is the live data from Supabase:", data); 
           setDbProperty(data);
         }
       } catch (err) {

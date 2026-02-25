@@ -1,21 +1,16 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import Link from 'next/link'; // <-- ADD THIS LINE
+import Link from 'next/link';
 import { createClient } from '@supabase/supabase-js';
 
 // ---------------------------------------------------------
 // 🔌 SUPABASE CONNECTION
-// We use your public Vercel keys to securely ask the database for info
 // ---------------------------------------------------------
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-// ---------------------------------------------------------
-// 🛠️ STATIC FALLBACK DATA
-// We will move this into Supabase tables later!
-// ---------------------------------------------------------
 const STATIC_FALLBACK = {
   cameras: [
     { id: "CAM-01", name: "Main Entry Gate", status: "online", image: "/gate-closed.png" },
@@ -40,24 +35,20 @@ const STATIC_FALLBACK = {
 
 export default function ClientPortal() {
   const [activeTab, setActiveTab] = useState<'brivo' | 'eagleeye' | 'billing' | 'training' | 'support'>('brivo');
-  
-  // State to hold our live database information
   const [dbProperty, setDbProperty] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-// When the portal loads, go ask Supabase for the data!
   useEffect(() => {
     async function fetchPropertyData() {
       try {
         const { data, error } = await supabase
           .from('properties')
           .select('*')
-          .limit(1)    
-          .single();   
+          .limit(1)
+          .single(); 
 
         if (data) {
-          // ADD IT RIGHT HERE 👇
-          console.log("Here is the live data from Supabase:", data); 
+          console.log("Here is the live data from Supabase:", data);
           setDbProperty(data);
         }
       } catch (err) {
@@ -69,7 +60,6 @@ export default function ClientPortal() {
     fetchPropertyData();
   }, []);
 
-  // Show a slick loading screen while the database is thinking
   if (isLoading) {
     return (
       <main className="bg-[#050505] text-white min-h-screen flex items-center justify-center flex-col">
@@ -79,7 +69,6 @@ export default function ClientPortal() {
     );
   }
 
-  // If the database fails (or keys are missing), use a fallback name so the app doesn't break
   const propertyName = dbProperty?.name || "Unknown Property";
   const managerName = dbProperty?.manager_name || "Admin User";
   const brivoUrl = dbProperty?.brivo_iframe_url || "";
@@ -87,10 +76,11 @@ export default function ClientPortal() {
   return (
     <main className="bg-[#050505] text-white min-h-screen font-sans selection:bg-cyan-500/30 flex flex-col overflow-hidden">
       
-      {/* Top Header - NOW POWERED BY SUPABASE! */}
       <header className="h-16 border-b border-white/10 bg-black/50 backdrop-blur-xl flex items-center justify-between px-6 z-50 shrink-0">
         <div className="flex items-center gap-4">
-          <Image src="/logo.png" alt="Gate Guard" width={32} height={32} className="object-contain" />
+          <Link href="/" className="hover:scale-110 hover:drop-shadow-[0_0_10px_rgba(6,182,212,0.8)] transition-all cursor-pointer" title="Return to Main Website">
+            <Image src="/logo.png" alt="Gate Guard" width={32} height={32} className="object-contain" />
+          </Link>
           <div className="w-[1px] h-6 bg-white/10"></div>
           <div>
             <h1 className="text-sm font-black tracking-widest uppercase text-white">{propertyName}</h1>
@@ -109,11 +99,7 @@ export default function ClientPortal() {
       </header>
 
       <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
-        
-        {/* LEFT 2/3: THE WORKSPACE */}
         <div className="lg:w-2/3 flex flex-col bg-gradient-to-br from-[#050505] to-[#0a0f1a] overflow-hidden border-r border-white/5">
-          
-          {/* Custom Tab Navigation */}
           <div className="flex overflow-x-auto scrollbar-hide border-b border-white/10 bg-[#0a0a0a] shrink-0 px-4 pt-4">
             {[
               { id: 'brivo', label: 'Access Control', icon: '🔑' },
@@ -136,10 +122,7 @@ export default function ClientPortal() {
             ))}
           </div>
 
-          {/* Tab Content Area */}
           <div className="flex-1 overflow-y-auto p-6 lg:p-10">
-            
-            {/* BRIVO EMBED TAB */}
             {activeTab === 'brivo' && (
               <div className="h-full flex flex-col animate-[fadeIn_0.3s_ease-out]">
                 <div className="flex justify-between items-end mb-6">
@@ -167,7 +150,6 @@ export default function ClientPortal() {
               </div>
             )}
 
-            {/* EAGLE EYE EMBED TAB */}
             {activeTab === 'eagleeye' && (
               <div className="h-full flex flex-col animate-[fadeIn_0.3s_ease-out]">
                 <div className="flex justify-between items-end mb-6">
@@ -199,7 +181,6 @@ export default function ClientPortal() {
               </div>
             )}
 
-            {/* BILLING & TRAINING TABS (Simplified for brevity) */}
             {activeTab === 'billing' && (
               <div className="h-full animate-[fadeIn_0.3s_ease-out]">
                  <h2 className="text-2xl font-black mb-4">Financial Overview</h2>
@@ -222,7 +203,6 @@ export default function ClientPortal() {
           </div>
         </div>
 
-        {/* RIGHT 1/3: THE SOC ALERTS FEED */}
         <div className="lg:w-1/3 bg-gradient-to-b from-[#0a1128] to-[#040812] border-l border-white/5 flex flex-col h-[600px] lg:h-auto z-10">
           <div className="p-6 border-b border-blue-900/30">
             <h3 className="text-sm font-black uppercase tracking-widest text-blue-100 flex items-center gap-2">
@@ -238,7 +218,6 @@ export default function ClientPortal() {
              ))}
           </div>
         </div>
-
       </div>
     </main>
   );

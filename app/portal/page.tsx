@@ -26,15 +26,11 @@ export default function ClientPortal() {
   const { user, isLoaded: isClerkLoaded } = useUser(); 
   
   const [activeTab, setActiveTab] = useState<'brivo' | 'eagleeye' | 'billing' | 'training' | 'support'>('brivo');
-  
   const [properties, setProperties] = useState<any[]>([]);
   const [selectedPropertyId, setSelectedPropertyId] = useState<string | null>(null);
-  
-  // NEW: State to hold our live WhatsApp/SOC feed
   const [alerts, setAlerts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // 1. Fetch the user's properties
   useEffect(() => {
     if (!isClerkLoaded) return;
     if (!user || !user.id) {
@@ -63,7 +59,6 @@ export default function ClientPortal() {
     fetchProperties(user.id);
   }, [isClerkLoaded, user]);
 
-  // 2. NEW: Fetch alerts whenever the selected property changes!
   useEffect(() => {
     if (!selectedPropertyId) return;
 
@@ -73,7 +68,8 @@ export default function ClientPortal() {
           .from('soc_alerts')
           .select('*')
           .eq('property_id', selectedPropertyId)
-          .order('created_at', { ascending: false }); // Newest alerts at the top
+          // NEWEST ON TOP: Flipped back to descending order
+          .order('created_at', { ascending: false }); 
 
         if (data) {
           setAlerts(data);
@@ -201,7 +197,6 @@ export default function ClientPortal() {
               </div>
             )}
 
-            {/* Other tabs omitted for brevity, they function exactly the same */}
             {(activeTab === 'billing' || activeTab === 'training' || activeTab === 'support') && (
                <div className="h-full animate-[fadeIn_0.3s_ease-out]">
                  <h2 className="text-2xl font-black mb-4">Dashboard Section</h2>
@@ -212,13 +207,14 @@ export default function ClientPortal() {
         </div>
 
         {/* 🚨 LIVE SOC ALERTS FEED 🚨 */}
-        <div className="lg:w-1/3 bg-gradient-to-b from-[#0a1128] to-[#040812] border-l border-white/5 flex flex-col h-[600px] lg:h-auto z-10">
-          <div className="p-6 border-b border-blue-900/30">
+        <div className="lg:w-1/3 bg-gradient-to-b from-[#0a1128] to-[#040812] border-l border-white/5 flex flex-col h-[600px] lg:h-auto z-10 relative">
+          <div className="p-6 border-b border-blue-900/30 shrink-0 bg-[#0a1128] z-20">
             <h3 className="text-sm font-black uppercase tracking-widest text-blue-100 flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_10px_#34d399]"></span> Live SOC Feed
             </h3>
           </div>
-          <div className="flex-1 overflow-y-auto p-6 space-y-4">
+          
+          <div className="flex-1 overflow-y-auto p-6 space-y-4 pb-20">
              {alerts.length === 0 ? (
                 <div className="text-center text-blue-400/50 text-xs py-10 font-medium">
                   Monitoring online. No recent alerts for {propertyName}.
@@ -231,11 +227,9 @@ export default function ClientPortal() {
                     </p>
                     <p className="leading-relaxed">{alert.message}</p>
                     
-                    {/* NEW: If the alert has an image, render it! */}
                     {alert.image_url && (
-                      <div className="mt-2 rounded-lg overflow-hidden border border-blue-500/40 shadow-lg">
-                        {/* We use standard <img> here so Next.js doesn't block external WhatsApp links */}
-                        <img src={alert.image_url} alt="Alert Evidence" className="w-full h-auto object-cover max-h-48" />
+                      <div className="mt-2 rounded-lg overflow-hidden border border-blue-500/40 shadow-lg bg-black/50">
+                        <img src={alert.image_url} alt="Alert Evidence" className="w-full h-auto object-contain max-h-48" />
                       </div>
                     )}
                   </div>

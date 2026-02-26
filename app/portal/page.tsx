@@ -55,16 +55,20 @@ export default function ClientPortal() {
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState('');
 
-  useEffect(() => {
+useEffect(() => {
     if (!isClerkLoaded) return;
     if (!user || !user.id) { setIsLoading(false); return; }
-    async function fetchProperties() {
+    
+    // ✨ FIX: We explicitly tell TypeScript that userId is a guaranteed string
+    async function fetchProperties(userId: string) {
       try {
-        const { data } = await supabase.from('properties').select('*').ilike('manager_user_id', `%${user.id}%`).order('name'); 
+        const { data } = await supabase.from('properties').select('*').ilike('manager_user_id', `%${userId}%`).order('name'); 
         if (data && data.length > 0) { setProperties(data); setSelectedPropertyId(data[0].id); }
       } catch (err) { console.error(err); } finally { setIsLoading(false); }
     }
-    fetchProperties();
+    
+    // We pass the verified user.id into the function here
+    fetchProperties(user.id);
   }, [isClerkLoaded, user]);
 
   useEffect(() => {

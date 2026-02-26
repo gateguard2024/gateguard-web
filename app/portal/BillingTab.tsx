@@ -5,8 +5,10 @@ export default function BillingTab({ qboCustomerId }: { qboCustomerId: string | 
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    // If we don't have an ID yet, don't fetch.
+ useEffect(() => {
+    // 1. WHAT DID SUPABASE GIVE US?
+    console.log("1. Supabase gave us QBO ID:", qboCustomerId);
+
     if (!qboCustomerId) {
       setError("No QuickBooks ID linked to this account.");
       setLoading(false);
@@ -15,16 +17,25 @@ export default function BillingTab({ qboCustomerId }: { qboCustomerId: string | 
 
     const fetchInvoices = async () => {
       try {
-        // Calling your new Make.com API!
-        const response = await fetch(`https://hook.us1.make.com/https://hook.us2.make.com/wn74ht8m6qg1uspf3cquhe894qebclmn?qbo_customer_id=${qboCustomerId}`);
+        const makeUrl = `https://hook.us1.make.com/YOUR_LONG_STRING_HERE?qbo_customer_id=${qboCustomerId}`;
         
-        if (!response.ok) throw new Error("Failed to load billing data.");
+        // 2. WHAT EXACTLY ARE WE PINGING?
+        console.log("2. Attempting to ping Make.com at:", makeUrl);
+
+        const response = await fetch(makeUrl);
+        
+        if (!response.ok) {
+          // 3. IF MAKE.COM REJECTS IT, WHY?
+          console.log("3. Make.com rejected the request. Status:", response.status);
+          throw new Error("Failed to load billing data.");
+        }
         
         const data = await response.json();
         setInvoices(data);
       } catch (err) {
-        console.error(err);
-        setError("Could not load invoices at this time.");
+        // 4. IF IT CRASHES COMPLETELY (LIKE A BROWSER BLOCK)
+        console.error("4. CRITICAL FETCH ERROR:", err);
+        setError(`Could not load invoices: ${err.message}`);
       } finally {
         setLoading(false);
       }

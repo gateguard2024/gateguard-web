@@ -32,14 +32,12 @@ export default function BillingTab({ qboCustomerId }: { qboCustomerId: string | 
         
         const data = await response.json();
         setInvoices(data);
-      } catch (err) {
+} catch (err) {
         // 4. IF IT CRASHES COMPLETELY (LIKE A BROWSER BLOCK)
         console.error("4. CRITICAL FETCH ERROR:", err);
-        setError(`Could not load invoices: ${err.message}`);
+        const errorMessage = err instanceof Error ? err.message : "Unknown error";
+        setError(`Could not load invoices: ${errorMessage}`);
       } finally {
-        setLoading(false);
-      }
-    };
 
     fetchInvoices();
   }, [qboCustomerId]);

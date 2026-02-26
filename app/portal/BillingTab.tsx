@@ -65,7 +65,7 @@ export default function BillingTab({ qboCustomerId }: { qboCustomerId: string | 
           <tbody className="divide-y divide-gray-100">
             {invoices.length === 0 ? (
               <tr>
-                <td colSpan="5" className="p-8 text-center text-gray-500">
+                <td colSpan={5} className="p-8 text-center text-gray-500">
                   No invoices found.
                 </td>
               </tr>

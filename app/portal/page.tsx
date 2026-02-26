@@ -21,12 +21,16 @@ const HOLIDAYS = [
 
 export default function ClientPortal() {
   const { user, isLoaded: isClerkLoaded } = useUser(); 
-  const [activeTab, setActiveTab] = useState<'brivo' | 'billing' | 'rms' | 'support'>('brivo');
+  // ✨ CHANGED TAB TO 'systems'
+  const [activeTab, setActiveTab] = useState<'systems' | 'billing' | 'rms' | 'support'>('systems');
   const [properties, setProperties] = useState<any[]>([]);
   const [selectedPropertyId, setSelectedPropertyId] = useState<string | null>(null);
   const [alerts, setAlerts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  // ---------------------------------------------------------
+  // 📋 THE COMPLETE RMS JSON STATE
+  // ---------------------------------------------------------
   const defaultRmsData = {
     businessName: '', customerName: '', serviceAddress: '', cityStateZip: '', phone: '', email: '',
     billingName: '', billingAddress: '', billingCityStateZip: '', billingPhone: '', billingEmail: '',
@@ -34,10 +38,14 @@ export default function ClientPortal() {
     monitoringHours: DAYS.reduce((acc, day) => ({ 
       ...acc, [day]: { s1: '', c1: false, s2: '', c2: false, s3: '', c3: false } 
     }), {}),
-    cameraCount: '', cameraList: [{ number: '', location: '', view: '', expectedActivity: '' }],
+    cameraCount: '',
+    cameraList: [{ number: '', location: '', view: '', expectedActivity: '' }],
     activityDescription: '', hasGuard: 'No', guardCompany: '', guardPhone: '',
-    policePhone: '', firePhone: '', janitorialCompany: '', janitorialPhone: '', janitorialSchedule: '',
-    emergencyContacts: [{ name: '', role: '', phone: '' }], reportingContacts: [{ name: '', role: '', phone: '' }], authorizedEmployees: [{ name: '', role: '', phone: '' }],
+    policePhone: '', firePhone: '', 
+    janitorialCompany: '', janitorialPhone: '', janitorialSchedule: '',
+    emergencyContacts: [{ name: '', role: '', phone: '' }],
+    reportingContacts: [{ name: '', role: '', phone: '' }],
+    authorizedEmployees: [{ name: '', role: '', phone: '' }],
     holidays: HOLIDAYS.reduce((acc, h) => ({ ...acc, [h.id]: { hours: '', monitoring247: 'No' } }), {}),
     customProcedures: [{ title: 'Procedure #1', details: '' }, { title: 'Procedure #2', details: '' }],
     specialNotes: ''
@@ -47,14 +55,12 @@ export default function ClientPortal() {
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState('');
 
-  // ✨ THE UPGRADED SEARCH FUNCTION ✨
   useEffect(() => {
     if (!isClerkLoaded) return;
     if (!user || !user.id) { setIsLoading(false); return; }
     async function fetchProperties() {
       try {
-        // We use .ilike so it searches inside the comma-separated list!
-        const { data } = await supabase.from('properties').select('*').ilike('manager_user_id', `%${user?.id}%`).order('name');
+        const { data } = await supabase.from('properties').select('*').ilike('manager_user_id', `%${user.id}%`).order('name'); 
         if (data && data.length > 0) { setProperties(data); setSelectedPropertyId(data[0].id); }
       } catch (err) { console.error(err); } finally { setIsLoading(false); }
     }
@@ -107,8 +113,11 @@ export default function ClientPortal() {
 
   const currentProperty = properties.find(p => p.id === selectedPropertyId) || null;
   const propertyName = currentProperty?.name || "Unassigned Property";
-  const managerName = currentProperty?.manager_name || user?.firstName || "Client";
-  const brivoUrl = currentProperty?.brivo_iframe_url || "";
+  const managerName = user?.fullName || user?.firstName || "Property Manager"; 
+  
+  // ✨ THE FALLBACK URLS ✨
+  const brivoUrl = currentProperty?.brivo_iframe_url || "https://account.brivo.com/global/index.html?useGlobalLogin=true";
+  const eagleEyeUrl = currentProperty?.eagleeye_url || "https://camera.auth.eagleeyenetworks.com/login";
 
   return (
     <main className="bg-[#050505] text-white min-h-screen font-sans selection:bg-cyan-500/30 flex flex-col overflow-hidden">
@@ -127,6 +136,15 @@ export default function ClientPortal() {
             <p className="text-[10px] text-cyan-500 font-bold uppercase tracking-widest mt-0.5">Property Command Center</p>
           </div>
         </div>
+        <div className="flex items-center gap-4">
+          <div className="text-right hidden sm:block">
+             <p className="text-[10px] text-zinc-500 uppercase font-bold tracking-widest">Logged in as</p>
+             <p className="text-xs text-white font-bold">{managerName}</p>
+          </div>
+          <div className="w-8 h-8 rounded-full bg-zinc-800 border border-white/10 flex items-center justify-center text-xs font-black text-zinc-400">
+            {managerName.charAt(0)}
+          </div>
+        </div>
       </header>
 
       {/* MAIN WORKSPACE */}
@@ -135,8 +153,10 @@ export default function ClientPortal() {
         {/* LEFT PORTION WITH FAINT BACKGROUND */}
         <div className="lg:w-2/3 relative flex flex-col bg-gradient-to-br from-[#050505] to-[#0a0f1a] overflow-hidden border-r border-white/5">
           <div className="absolute inset-0 z-0 opacity-[0.04] pointer-events-none" style={{ backgroundImage: "url('/hero-bg.jpg')", backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed' }}></div>
+          
           <div className="flex overflow-x-auto border-b border-white/10 bg-[#0a0a0a] px-4 pt-4 shrink-0 z-10 relative">
-            {[{ id: 'brivo', label: 'Access Control', icon: '🔑' }, { id: 'rms', label: 'Service Order Form', icon: '📋' }, { id: 'billing', label: 'Billing & Invoices', icon: '💳' }].map((tab) => (
+            {/* ✨ UPDATED TAB NAMES ✨ */}
+            {[{ id: 'systems', label: 'Systems Access', icon: '🔐' }, { id: 'rms', label: 'Service Order Form', icon: '📋' }, { id: 'billing', label: 'Billing & Invoices', icon: '💳' }].map((tab) => (
               <button key={tab.id} onClick={() => setActiveTab(tab.id as any)} className={`flex items-center gap-2 px-6 py-4 text-xs font-black uppercase tracking-widest transition-all border-b-2 whitespace-nowrap ${ activeTab === tab.id ? 'border-cyan-500 text-cyan-400 bg-cyan-500/10' : 'border-transparent text-zinc-500 hover:text-white' }`}>
                 <span>{tab.icon}</span> {tab.label}
               </button>
@@ -145,38 +165,65 @@ export default function ClientPortal() {
 
           <div className="flex-1 overflow-y-auto p-6 lg:p-10 z-10 relative">
             
-            {activeTab === 'brivo' && (
-  <div className="h-full flex flex-col items-center justify-center animate-[fadeIn_0.3s_ease-out]">
-    <div className="bg-[#111] border border-white/10 p-10 rounded-2xl max-w-lg w-full text-center shadow-2xl relative overflow-hidden">
-      {/* Decorative top border */}
-      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-500 to-blue-600"></div>
-      
-      <div className="w-20 h-20 bg-black border border-zinc-800 rounded-full flex items-center justify-center mx-auto mb-6 shadow-[0_0_20px_rgba(6,182,212,0.15)]">
-        <span className="text-4xl drop-shadow-md">🔑</span>
-      </div>
-      
-      <h2 className="text-2xl font-black mb-2 text-white">Brivo Access Engine</h2>
-      <p className="text-sm text-zinc-400 mb-8 leading-relaxed">
-        To maintain enterprise security compliance, the Brivo Command Center operates in a dedicated, encrypted window.
-      </p>
-      
-      {brivoUrl ? (
-        <a 
-          href={brivoUrl} 
-          target="_blank" 
-          rel="noopener noreferrer" 
-          className="inline-block bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-black uppercase tracking-widest px-8 py-4 rounded-lg transition-all shadow-[0_0_15px_rgba(6,182,212,0.4)] hover:shadow-[0_0_25px_rgba(6,182,212,0.6)] transform hover:-translate-y-1"
-        >
-          Launch Secure Gateway
-        </a>
-      ) : (
-        <p className="text-xs text-red-400 font-bold uppercase tracking-widest bg-red-500/10 py-3 rounded-lg border border-red-500/20">
-          No gateway assigned to this property.
-        </p>
-      )}
-    </div>
-  </div>
-)}
+            {/* ✨ THE UPGRADED SYSTEMS DASHBOARD ✨ */}
+            {activeTab === 'systems' && (
+              <div className="animate-[fadeIn_0.3s_ease-out] w-full max-w-4xl">
+                 <h2 className="text-2xl font-black mb-1">Security Systems</h2>
+                 <p className="text-xs text-zinc-500 font-medium mb-8">Access your dedicated enterprise security gateways for {propertyName}.</p>
+
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                   
+                   {/* BRIVO CARD */}
+                   <div className="group relative bg-[#0a0a0a] border border-white/10 p-8 rounded-3xl overflow-hidden hover:border-cyan-500/50 transition-all duration-500 shadow-2xl flex flex-col">
+                     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-500 to-blue-600 opacity-50 group-hover:opacity-100 transition-opacity"></div>
+                     <div className="absolute -inset-24 bg-cyan-500/5 blur-3xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
+
+                     <div className="relative z-10 flex flex-col h-full">
+                       <div className="w-16 h-16 bg-black border border-white/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500 shadow-[0_0_15px_rgba(6,182,212,0.15)]">
+                         <span className="text-3xl">🔑</span>
+                       </div>
+                       <h3 className="text-xl font-black text-white mb-2">Brivo Access</h3>
+                       <p className="text-sm text-zinc-400 leading-relaxed mb-8 flex-1">
+                         Manage credentials, remote doors, and facility access through the secure Brivo enterprise gateway.
+                       </p>
+                       <a
+                         href={brivoUrl}
+                         target="_blank"
+                         rel="noopener noreferrer"
+                         className="flex items-center justify-center gap-2 w-full bg-cyan-600/10 hover:bg-cyan-600 text-cyan-400 hover:text-white border border-cyan-500/30 hover:border-cyan-500 text-xs font-black uppercase tracking-widest py-4 rounded-xl transition-all duration-300"
+                       >
+                         Launch Brivo Gateway <span className="text-lg">→</span>
+                       </a>
+                     </div>
+                   </div>
+
+                   {/* EAGLE EYE CARD */}
+                   <div className="group relative bg-[#0a0a0a] border border-white/10 p-8 rounded-3xl overflow-hidden hover:border-indigo-500/50 transition-all duration-500 shadow-2xl flex flex-col">
+                     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 to-purple-600 opacity-50 group-hover:opacity-100 transition-opacity"></div>
+                     <div className="absolute -inset-24 bg-indigo-500/5 blur-3xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
+
+                     <div className="relative z-10 flex flex-col h-full">
+                       <div className="w-16 h-16 bg-black border border-white/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500 shadow-[0_0_15px_rgba(99,102,241,0.15)]">
+                         <span className="text-3xl">📷</span>
+                       </div>
+                       <h3 className="text-xl font-black text-white mb-2">Eagle Eye Networks</h3>
+                       <p className="text-sm text-zinc-400 leading-relaxed mb-8 flex-1">
+                         View live camera feeds and historical surveillance footage via the cloud VMS portal.
+                       </p>
+                       <a
+                         href={eagleEyeUrl}
+                         target="_blank"
+                         rel="noopener noreferrer"
+                         className="flex items-center justify-center gap-2 w-full bg-indigo-600/10 hover:bg-indigo-600 text-indigo-400 hover:text-white border border-indigo-500/30 hover:border-indigo-500 text-xs font-black uppercase tracking-widest py-4 rounded-xl transition-all duration-300"
+                       >
+                         Launch Video VMS <span className="text-lg">→</span>
+                       </a>
+                     </div>
+                   </div>
+
+                 </div>
+              </div>
+            )}
 
             {/* 📋 THE FULL RMS FORM */}
             {activeTab === 'rms' && (

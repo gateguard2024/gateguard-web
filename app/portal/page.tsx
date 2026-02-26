@@ -6,7 +6,7 @@ import { createClient } from '@supabase/supabase-js';
 import { useUser } from '@clerk/nextjs';
 
 // ✨ NEW: Imported your Billing component
-import BillingTab from '@/components/BillingTab'; 
+import BillingTab from '../../components/BillingTab';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";

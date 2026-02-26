@@ -145,7 +145,38 @@ export default function ClientPortal() {
 
           <div className="flex-1 overflow-y-auto p-6 lg:p-10 z-10 relative">
             
-            {activeTab === 'brivo' && ( <div className="h-full"><iframe src={brivoUrl} className="w-full h-full rounded-2xl border border-zinc-800 bg-black"></iframe></div> )}
+            {activeTab === 'brivo' && (
+  <div className="h-full flex flex-col items-center justify-center animate-[fadeIn_0.3s_ease-out]">
+    <div className="bg-[#111] border border-white/10 p-10 rounded-2xl max-w-lg w-full text-center shadow-2xl relative overflow-hidden">
+      {/* Decorative top border */}
+      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-500 to-blue-600"></div>
+      
+      <div className="w-20 h-20 bg-black border border-zinc-800 rounded-full flex items-center justify-center mx-auto mb-6 shadow-[0_0_20px_rgba(6,182,212,0.15)]">
+        <span className="text-4xl drop-shadow-md">🔑</span>
+      </div>
+      
+      <h2 className="text-2xl font-black mb-2 text-white">Brivo Access Engine</h2>
+      <p className="text-sm text-zinc-400 mb-8 leading-relaxed">
+        To maintain enterprise security compliance, the Brivo Command Center operates in a dedicated, encrypted window.
+      </p>
+      
+      {brivoUrl ? (
+        <a 
+          href={brivoUrl} 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          className="inline-block bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-black uppercase tracking-widest px-8 py-4 rounded-lg transition-all shadow-[0_0_15px_rgba(6,182,212,0.4)] hover:shadow-[0_0_25px_rgba(6,182,212,0.6)] transform hover:-translate-y-1"
+        >
+          Launch Secure Gateway
+        </a>
+      ) : (
+        <p className="text-xs text-red-400 font-bold uppercase tracking-widest bg-red-500/10 py-3 rounded-lg border border-red-500/20">
+          No gateway assigned to this property.
+        </p>
+      )}
+    </div>
+  </div>
+)}
 
             {/* 📋 THE FULL RMS FORM */}
             {activeTab === 'rms' && (

@@ -21,16 +21,12 @@ const HOLIDAYS = [
 
 export default function ClientPortal() {
   const { user, isLoaded: isClerkLoaded } = useUser(); 
-  // ✨ CHANGED TAB TO 'systems'
   const [activeTab, setActiveTab] = useState<'systems' | 'billing' | 'rms' | 'support'>('systems');
   const [properties, setProperties] = useState<any[]>([]);
   const [selectedPropertyId, setSelectedPropertyId] = useState<string | null>(null);
   const [alerts, setAlerts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // ---------------------------------------------------------
-  // 📋 THE COMPLETE RMS JSON STATE
-  // ---------------------------------------------------------
   const defaultRmsData = {
     businessName: '', customerName: '', serviceAddress: '', cityStateZip: '', phone: '', email: '',
     billingName: '', billingAddress: '', billingCityStateZip: '', billingPhone: '', billingEmail: '',
@@ -55,11 +51,11 @@ export default function ClientPortal() {
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState('');
 
-useEffect(() => {
+  // ✨ TYPESCRIPT FIX APPLIED HERE
+  useEffect(() => {
     if (!isClerkLoaded) return;
     if (!user || !user.id) { setIsLoading(false); return; }
     
-    // ✨ FIX: We explicitly tell TypeScript that userId is a guaranteed string
     async function fetchProperties(userId: string) {
       try {
         const { data } = await supabase.from('properties').select('*').ilike('manager_user_id', `%${userId}%`).order('name'); 
@@ -67,7 +63,6 @@ useEffect(() => {
       } catch (err) { console.error(err); } finally { setIsLoading(false); }
     }
     
-    // We pass the verified user.id into the function here
     fetchProperties(user.id);
   }, [isClerkLoaded, user]);
 
@@ -119,7 +114,6 @@ useEffect(() => {
   const propertyName = currentProperty?.name || "Unassigned Property";
   const managerName = user?.fullName || user?.firstName || "Property Manager"; 
   
-  // ✨ THE FALLBACK URLS ✨
   const brivoUrl = currentProperty?.brivo_iframe_url || "https://account.brivo.com/global/index.html?useGlobalLogin=true";
   const eagleEyeUrl = currentProperty?.eagleeye_url || "https://camera.auth.eagleeyenetworks.com/login";
 
@@ -159,7 +153,6 @@ useEffect(() => {
           <div className="absolute inset-0 z-0 opacity-[0.04] pointer-events-none" style={{ backgroundImage: "url('/hero-bg.jpg')", backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed' }}></div>
           
           <div className="flex overflow-x-auto border-b border-white/10 bg-[#0a0a0a] px-4 pt-4 shrink-0 z-10 relative">
-            {/* ✨ UPDATED TAB NAMES ✨ */}
             {[{ id: 'systems', label: 'Systems Access', icon: '🔐' }, { id: 'rms', label: 'Service Order Form', icon: '📋' }, { id: 'billing', label: 'Billing & Invoices', icon: '💳' }].map((tab) => (
               <button key={tab.id} onClick={() => setActiveTab(tab.id as any)} className={`flex items-center gap-2 px-6 py-4 text-xs font-black uppercase tracking-widest transition-all border-b-2 whitespace-nowrap ${ activeTab === tab.id ? 'border-cyan-500 text-cyan-400 bg-cyan-500/10' : 'border-transparent text-zinc-500 hover:text-white' }`}>
                 <span>{tab.icon}</span> {tab.label}
@@ -176,8 +169,6 @@ useEffect(() => {
                  <p className="text-xs text-zinc-500 font-medium mb-8">Access your dedicated enterprise security gateways for {propertyName}.</p>
 
                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                   
-                   {/* BRIVO CARD */}
                    <div className="group relative bg-[#0a0a0a] border border-white/10 p-8 rounded-3xl overflow-hidden hover:border-cyan-500/50 transition-all duration-500 shadow-2xl flex flex-col">
                      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-500 to-blue-600 opacity-50 group-hover:opacity-100 transition-opacity"></div>
                      <div className="absolute -inset-24 bg-cyan-500/5 blur-3xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
@@ -201,7 +192,6 @@ useEffect(() => {
                      </div>
                    </div>
 
-                   {/* EAGLE EYE CARD */}
                    <div className="group relative bg-[#0a0a0a] border border-white/10 p-8 rounded-3xl overflow-hidden hover:border-indigo-500/50 transition-all duration-500 shadow-2xl flex flex-col">
                      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 to-purple-600 opacity-50 group-hover:opacity-100 transition-opacity"></div>
                      <div className="absolute -inset-24 bg-indigo-500/5 blur-3xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
@@ -224,7 +214,6 @@ useEffect(() => {
                        </a>
                      </div>
                    </div>
-
                  </div>
               </div>
             )}

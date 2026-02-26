@@ -54,7 +54,7 @@ export default function ClientPortal() {
     async function fetchProperties() {
       try {
         // We use .ilike so it searches inside the comma-separated list!
-        const { data } = await supabase.from('properties').select('*').ilike('manager_user_id', `%${user.id}%`).order('name'); 
+        const { data } = await supabase.from('properties').select('*').ilike('manager_user_id', `%${user?.id}%`).order('name');
         if (data && data.length > 0) { setProperties(data); setSelectedPropertyId(data[0].id); }
       } catch (err) { console.error(err); } finally { setIsLoading(false); }
     }

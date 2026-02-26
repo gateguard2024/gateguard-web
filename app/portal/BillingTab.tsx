@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 
-export default function BillingTab({ qboCustomerId }) {
-  const [invoices, setInvoices] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+export default function BillingTab({ qboCustomerId }: { qboCustomerId: string | null | undefined }) {
+  const [invoices, setInvoices] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     // If we don't have an ID yet, don't fetch.

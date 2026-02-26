@@ -5,6 +5,9 @@ import Link from 'next/link';
 import { createClient } from '@supabase/supabase-js';
 import { useUser } from '@clerk/nextjs';
 
+// ✨ NEW: Imported your Billing component
+import BillingTab from '@/components/BillingTab'; 
+
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
@@ -51,7 +54,6 @@ export default function ClientPortal() {
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState('');
 
-  // ✨ TYPESCRIPT FIX APPLIED HERE
   useEffect(() => {
     if (!isClerkLoaded) return;
     if (!user || !user.id) { setIsLoading(false); return; }
@@ -225,184 +227,184 @@ export default function ClientPortal() {
                  <p className="text-xs text-zinc-500 font-medium mb-8">Complete all sections. Data syncs instantly to our live Dispatch Center.</p>
                  
                  <form onSubmit={handleSaveRms} className="space-y-8 mt-6 backdrop-blur-sm">
-                    {/* 1 & 2. CUSTOMER & BILLING */}
-                    <div className="bg-black/60 p-6 rounded-2xl border border-white/10 space-y-4">
-                      <h3 className="text-sm font-black uppercase tracking-widest text-cyan-500 border-b border-white/10 pb-2 mb-4">Customer & Billing Information</h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <input name="businessName" value={rmsData.businessName} onChange={handleSimpleChange} placeholder="Business Name" className="bg-black border border-zinc-800 rounded-lg px-4 py-2 text-sm text-white focus:border-cyan-500 outline-none" />
-                        <input name="customerName" value={rmsData.customerName} onChange={handleSimpleChange} placeholder="Customer Name" className="bg-black border border-zinc-800 rounded-lg px-4 py-2 text-sm text-white focus:border-cyan-500 outline-none" />
-                        <input name="serviceAddress" value={rmsData.serviceAddress} onChange={handleSimpleChange} placeholder="Service Address" className="bg-black border border-zinc-800 rounded-lg px-4 py-2 text-sm text-white focus:border-cyan-500 outline-none" />
-                        <input name="cityStateZip" value={rmsData.cityStateZip} onChange={handleSimpleChange} placeholder="City, State, Zip" className="bg-black border border-zinc-800 rounded-lg px-4 py-2 text-sm text-white focus:border-cyan-500 outline-none" />
-                        <input name="phone" value={rmsData.phone} onChange={handleSimpleChange} placeholder="Phone" className="bg-black border border-zinc-800 rounded-lg px-4 py-2 text-sm text-white focus:border-cyan-500 outline-none" />
-                        <input name="email" value={rmsData.email} onChange={handleSimpleChange} placeholder="Email" className="bg-black border border-zinc-800 rounded-lg px-4 py-2 text-sm text-white focus:border-cyan-500 outline-none" />
-                      </div>
-                      <p className="text-xs text-zinc-500 mt-4 font-bold uppercase">Billing Information (If Different)</p>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <input name="billingName" value={rmsData.billingName} onChange={handleSimpleChange} placeholder="Billing Name" className="bg-black border border-zinc-800 rounded-lg px-4 py-2 text-sm text-white focus:border-cyan-500 outline-none" />
-                        <input name="billingAddress" value={rmsData.billingAddress} onChange={handleSimpleChange} placeholder="Billing Address" className="bg-black border border-zinc-800 rounded-lg px-4 py-2 text-sm text-white focus:border-cyan-500 outline-none" />
-                      </div>
-                    </div>
+                   {/* 1 & 2. CUSTOMER & BILLING */}
+                   <div className="bg-black/60 p-6 rounded-2xl border border-white/10 space-y-4">
+                     <h3 className="text-sm font-black uppercase tracking-widest text-cyan-500 border-b border-white/10 pb-2 mb-4">Customer & Billing Information</h3>
+                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                       <input name="businessName" value={rmsData.businessName} onChange={handleSimpleChange} placeholder="Business Name" className="bg-black border border-zinc-800 rounded-lg px-4 py-2 text-sm text-white focus:border-cyan-500 outline-none" />
+                       <input name="customerName" value={rmsData.customerName} onChange={handleSimpleChange} placeholder="Customer Name" className="bg-black border border-zinc-800 rounded-lg px-4 py-2 text-sm text-white focus:border-cyan-500 outline-none" />
+                       <input name="serviceAddress" value={rmsData.serviceAddress} onChange={handleSimpleChange} placeholder="Service Address" className="bg-black border border-zinc-800 rounded-lg px-4 py-2 text-sm text-white focus:border-cyan-500 outline-none" />
+                       <input name="cityStateZip" value={rmsData.cityStateZip} onChange={handleSimpleChange} placeholder="City, State, Zip" className="bg-black border border-zinc-800 rounded-lg px-4 py-2 text-sm text-white focus:border-cyan-500 outline-none" />
+                       <input name="phone" value={rmsData.phone} onChange={handleSimpleChange} placeholder="Phone" className="bg-black border border-zinc-800 rounded-lg px-4 py-2 text-sm text-white focus:border-cyan-500 outline-none" />
+                       <input name="email" value={rmsData.email} onChange={handleSimpleChange} placeholder="Email" className="bg-black border border-zinc-800 rounded-lg px-4 py-2 text-sm text-white focus:border-cyan-500 outline-none" />
+                     </div>
+                     <p className="text-xs text-zinc-500 mt-4 font-bold uppercase">Billing Information (If Different)</p>
+                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                       <input name="billingName" value={rmsData.billingName} onChange={handleSimpleChange} placeholder="Billing Name" className="bg-black border border-zinc-800 rounded-lg px-4 py-2 text-sm text-white focus:border-cyan-500 outline-none" />
+                       <input name="billingAddress" value={rmsData.billingAddress} onChange={handleSimpleChange} placeholder="Billing Address" className="bg-black border border-zinc-800 rounded-lg px-4 py-2 text-sm text-white focus:border-cyan-500 outline-none" />
+                     </div>
+                   </div>
 
-                    {/* 3 & 4. HOURS OF OPERATION */}
-                    <div className="bg-black/60 p-6 rounded-2xl border border-white/10 space-y-4 overflow-x-auto">
-                      <h3 className="text-sm font-black uppercase tracking-widest text-cyan-500 border-b border-white/10 pb-2 mb-4">Normal & Monitoring Hours</h3>
-                      <div className="min-w-[850px]">
-                        <div className="grid grid-cols-5 gap-4 mb-2">
-                          <div className="text-[10px] font-bold text-zinc-500 uppercase">Day</div>
-                          <div className="text-[10px] font-bold text-zinc-500 uppercase">Operating Hours</div>
-                          <div className="text-[10px] font-bold text-cyan-400 uppercase">Shift 1 (Hours & Concierge)</div>
-                          <div className="text-[10px] font-bold text-cyan-400 uppercase">Shift 2 (Hours & Concierge)</div>
-                          <div className="text-[10px] font-bold text-cyan-400 uppercase">Shift 3 (Hours & Concierge)</div>
-                        </div>
-                        {DAYS.map(day => (
-                          <div key={day} className="grid grid-cols-5 gap-4 items-center mb-3">
-                            <span className="text-xs font-medium capitalize">{day}</span>
-                            <input placeholder="e.g. 9am-5pm" value={(rmsData.normalHours as any)[day]} onChange={e => updateNested('normalHours', day, e.target.value)} className="bg-black border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:border-cyan-500 outline-none" />
-                            <div className="flex items-center gap-2">
-                              <input placeholder="e.g. 5pm-10pm" value={(rmsData.monitoringHours as any)[day].s1} onChange={e => updateMonitoring(day, 's1', e.target.value)} className="w-full bg-black border border-zinc-800 rounded-lg px-2 py-2 text-xs text-white focus:border-cyan-500 outline-none" />
-                              <label className="flex flex-col items-center justify-center text-[8px] text-zinc-500 uppercase font-bold cursor-pointer"><input type="checkbox" checked={(rmsData.monitoringHours as any)[day].c1} onChange={e => updateMonitoring(day, 'c1', e.target.checked)} className="mb-1 accent-cyan-500" /> Concierge</label>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <input placeholder="e.g. 10pm-2am" value={(rmsData.monitoringHours as any)[day].s2} onChange={e => updateMonitoring(day, 's2', e.target.value)} className="w-full bg-black border border-zinc-800 rounded-lg px-2 py-2 text-xs text-white focus:border-cyan-500 outline-none" />
-                              <label className="flex flex-col items-center justify-center text-[8px] text-zinc-500 uppercase font-bold cursor-pointer"><input type="checkbox" checked={(rmsData.monitoringHours as any)[day].c2} onChange={e => updateMonitoring(day, 'c2', e.target.checked)} className="mb-1 accent-cyan-500" /> Concierge</label>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <input placeholder="e.g. 2am-6am" value={(rmsData.monitoringHours as any)[day].s3} onChange={e => updateMonitoring(day, 's3', e.target.value)} className="w-full bg-black border border-zinc-800 rounded-lg px-2 py-2 text-xs text-white focus:border-cyan-500 outline-none" />
-                              <label className="flex flex-col items-center justify-center text-[8px] text-zinc-500 uppercase font-bold cursor-pointer"><input type="checkbox" checked={(rmsData.monitoringHours as any)[day].c3} onChange={e => updateMonitoring(day, 'c3', e.target.checked)} className="mb-1 accent-cyan-500" /> Concierge</label>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
+                   {/* 3 & 4. HOURS OF OPERATION */}
+                   <div className="bg-black/60 p-6 rounded-2xl border border-white/10 space-y-4 overflow-x-auto">
+                     <h3 className="text-sm font-black uppercase tracking-widest text-cyan-500 border-b border-white/10 pb-2 mb-4">Normal & Monitoring Hours</h3>
+                     <div className="min-w-[850px]">
+                       <div className="grid grid-cols-5 gap-4 mb-2">
+                         <div className="text-[10px] font-bold text-zinc-500 uppercase">Day</div>
+                         <div className="text-[10px] font-bold text-zinc-500 uppercase">Operating Hours</div>
+                         <div className="text-[10px] font-bold text-cyan-400 uppercase">Shift 1 (Hours & Concierge)</div>
+                         <div className="text-[10px] font-bold text-cyan-400 uppercase">Shift 2 (Hours & Concierge)</div>
+                         <div className="text-[10px] font-bold text-cyan-400 uppercase">Shift 3 (Hours & Concierge)</div>
+                       </div>
+                       {DAYS.map(day => (
+                         <div key={day} className="grid grid-cols-5 gap-4 items-center mb-3">
+                           <span className="text-xs font-medium capitalize">{day}</span>
+                           <input placeholder="e.g. 9am-5pm" value={(rmsData.normalHours as any)[day]} onChange={e => updateNested('normalHours', day, e.target.value)} className="bg-black border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:border-cyan-500 outline-none" />
+                           <div className="flex items-center gap-2">
+                             <input placeholder="e.g. 5pm-10pm" value={(rmsData.monitoringHours as any)[day].s1} onChange={e => updateMonitoring(day, 's1', e.target.value)} className="w-full bg-black border border-zinc-800 rounded-lg px-2 py-2 text-xs text-white focus:border-cyan-500 outline-none" />
+                             <label className="flex flex-col items-center justify-center text-[8px] text-zinc-500 uppercase font-bold cursor-pointer"><input type="checkbox" checked={(rmsData.monitoringHours as any)[day].c1} onChange={e => updateMonitoring(day, 'c1', e.target.checked)} className="mb-1 accent-cyan-500" /> Concierge</label>
+                           </div>
+                           <div className="flex items-center gap-2">
+                             <input placeholder="e.g. 10pm-2am" value={(rmsData.monitoringHours as any)[day].s2} onChange={e => updateMonitoring(day, 's2', e.target.value)} className="w-full bg-black border border-zinc-800 rounded-lg px-2 py-2 text-xs text-white focus:border-cyan-500 outline-none" />
+                             <label className="flex flex-col items-center justify-center text-[8px] text-zinc-500 uppercase font-bold cursor-pointer"><input type="checkbox" checked={(rmsData.monitoringHours as any)[day].c2} onChange={e => updateMonitoring(day, 'c2', e.target.checked)} className="mb-1 accent-cyan-500" /> Concierge</label>
+                           </div>
+                           <div className="flex items-center gap-2">
+                             <input placeholder="e.g. 2am-6am" value={(rmsData.monitoringHours as any)[day].s3} onChange={e => updateMonitoring(day, 's3', e.target.value)} className="w-full bg-black border border-zinc-800 rounded-lg px-2 py-2 text-xs text-white focus:border-cyan-500 outline-none" />
+                             <label className="flex flex-col items-center justify-center text-[8px] text-zinc-500 uppercase font-bold cursor-pointer"><input type="checkbox" checked={(rmsData.monitoringHours as any)[day].c3} onChange={e => updateMonitoring(day, 'c3', e.target.checked)} className="mb-1 accent-cyan-500" /> Concierge</label>
+                           </div>
+                         </div>
+                       ))}
+                     </div>
+                   </div>
 
-                    {/* 5. SITE BACKGROUND & CAMERAS */}
-                    <div className="bg-black/60 p-6 rounded-2xl border border-white/10 space-y-6">
-                      <h3 className="text-sm font-black uppercase tracking-widest text-cyan-500 border-b border-white/10 pb-2">Site Background & Camera Layout</h3>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <input type="number" name="cameraCount" value={rmsData.cameraCount} onChange={handleSimpleChange} placeholder="Total # of Cameras" className="bg-black border border-zinc-800 rounded-lg px-4 py-2 text-sm text-white focus:border-cyan-500 outline-none" />
-                        <select name="hasGuard" value={rmsData.hasGuard} onChange={handleSimpleChange} className="bg-black border border-zinc-800 rounded-lg px-4 py-2 text-sm text-white focus:border-cyan-500 outline-none"><option value="No">No Guard Service</option><option value="Yes">Has Guard/Patrol Service</option></select>
-                        {rmsData.hasGuard === 'Yes' && <input name="guardCompany" value={rmsData.guardCompany} onChange={handleSimpleChange} placeholder="Guard Company Name & Phone" className="bg-black border border-zinc-800 rounded-lg px-4 py-2 text-sm text-white focus:border-cyan-500 outline-none" />}
-                      </div>
-                      <div className="space-y-2 mt-4">
-                        <div className="flex justify-between items-center mb-2">
-                          <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Camera Directory</label>
-                          <button type="button" onClick={() => addArrayRow('cameraList', { number: '', location: '', view: '', expectedActivity: '' })} className="text-[10px] font-bold text-cyan-500 hover:text-cyan-400">+ Add Camera</button>
-                        </div>
-                        {rmsData.cameraList.map((cam: any, idx: number) => (
-                          <div key={idx} className="flex gap-2 items-center">
-                            <input placeholder="Cam #" value={cam.number} onChange={e => updateArray('cameraList', idx, 'number', e.target.value)} className="w-20 bg-black border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:border-cyan-500 outline-none" />
-                            <input placeholder="Location" value={cam.location} onChange={e => updateArray('cameraList', idx, 'location', e.target.value)} className="flex-1 bg-black border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:border-cyan-500 outline-none" />
-                            <input placeholder="View" value={cam.view} onChange={e => updateArray('cameraList', idx, 'view', e.target.value)} className="flex-1 bg-black border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:border-cyan-500 outline-none" />
-                            <input placeholder="Expected Activity" value={cam.expectedActivity} onChange={e => updateArray('cameraList', idx, 'expectedActivity', e.target.value)} className="flex-1 bg-black border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:border-cyan-500 outline-none" />
-                            <button type="button" onClick={() => removeArrayRow('cameraList', idx)} className="text-red-500 hover:text-red-400 text-xs font-bold px-2">X</button>
-                          </div>
-                        ))}
-                      </div>
-                      <textarea name="activityDescription" value={rmsData.activityDescription} onChange={handleSimpleChange} placeholder="Describe typical activity across the site..." rows={3} className="w-full mt-2 bg-black border border-zinc-800 rounded-lg px-4 py-2 text-sm text-white focus:border-cyan-500 outline-none resize-none"></textarea>
-                    </div>
+                   {/* 5. SITE BACKGROUND & CAMERAS */}
+                   <div className="bg-black/60 p-6 rounded-2xl border border-white/10 space-y-6">
+                     <h3 className="text-sm font-black uppercase tracking-widest text-cyan-500 border-b border-white/10 pb-2">Site Background & Camera Layout</h3>
+                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                       <input type="number" name="cameraCount" value={rmsData.cameraCount} onChange={handleSimpleChange} placeholder="Total # of Cameras" className="bg-black border border-zinc-800 rounded-lg px-4 py-2 text-sm text-white focus:border-cyan-500 outline-none" />
+                       <select name="hasGuard" value={rmsData.hasGuard} onChange={handleSimpleChange} className="bg-black border border-zinc-800 rounded-lg px-4 py-2 text-sm text-white focus:border-cyan-500 outline-none"><option value="No">No Guard Service</option><option value="Yes">Has Guard/Patrol Service</option></select>
+                       {rmsData.hasGuard === 'Yes' && <input name="guardCompany" value={rmsData.guardCompany} onChange={handleSimpleChange} placeholder="Guard Company Name & Phone" className="bg-black border border-zinc-800 rounded-lg px-4 py-2 text-sm text-white focus:border-cyan-500 outline-none" />}
+                     </div>
+                     <div className="space-y-2 mt-4">
+                       <div className="flex justify-between items-center mb-2">
+                         <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Camera Directory</label>
+                         <button type="button" onClick={() => addArrayRow('cameraList', { number: '', location: '', view: '', expectedActivity: '' })} className="text-[10px] font-bold text-cyan-500 hover:text-cyan-400">+ Add Camera</button>
+                       </div>
+                       {rmsData.cameraList.map((cam: any, idx: number) => (
+                         <div key={idx} className="flex gap-2 items-center">
+                           <input placeholder="Cam #" value={cam.number} onChange={e => updateArray('cameraList', idx, 'number', e.target.value)} className="w-20 bg-black border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:border-cyan-500 outline-none" />
+                           <input placeholder="Location" value={cam.location} onChange={e => updateArray('cameraList', idx, 'location', e.target.value)} className="flex-1 bg-black border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:border-cyan-500 outline-none" />
+                           <input placeholder="View" value={cam.view} onChange={e => updateArray('cameraList', idx, 'view', e.target.value)} className="flex-1 bg-black border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:border-cyan-500 outline-none" />
+                           <input placeholder="Expected Activity" value={cam.expectedActivity} onChange={e => updateArray('cameraList', idx, 'expectedActivity', e.target.value)} className="flex-1 bg-black border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:border-cyan-500 outline-none" />
+                           <button type="button" onClick={() => removeArrayRow('cameraList', idx)} className="text-red-500 hover:text-red-400 text-xs font-bold px-2">X</button>
+                         </div>
+                       ))}
+                     </div>
+                     <textarea name="activityDescription" value={rmsData.activityDescription} onChange={handleSimpleChange} placeholder="Describe typical activity across the site..." rows={3} className="w-full mt-2 bg-black border border-zinc-800 rounded-lg px-4 py-2 text-sm text-white focus:border-cyan-500 outline-none resize-none"></textarea>
+                   </div>
 
-                    {/* 6 & 7. EMS AND STAFF */}
-                    <div className="bg-black/60 p-6 rounded-2xl border border-white/10 space-y-4">
-                      <h3 className="text-sm font-black uppercase tracking-widest text-cyan-500 border-b border-white/10 pb-2 mb-4">Additional Contacts: EMS & Staff</h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <input name="policePhone" value={rmsData.policePhone} onChange={handleSimpleChange} placeholder="Local Police Dept Phone" className="bg-black border border-zinc-800 rounded-lg px-4 py-2 text-sm text-white focus:border-cyan-500 outline-none" />
-                        <input name="firePhone" value={rmsData.firePhone} onChange={handleSimpleChange} placeholder="Local Fire Dept Phone" className="bg-black border border-zinc-800 rounded-lg px-4 py-2 text-sm text-white focus:border-cyan-500 outline-none" />
-                        <input name="janitorialCompany" value={rmsData.janitorialCompany} onChange={handleSimpleChange} placeholder="Janitorial/Maintenance Company" className="bg-black border border-zinc-800 rounded-lg px-4 py-2 text-sm text-white focus:border-cyan-500 outline-none" />
-                        <input name="janitorialSchedule" value={rmsData.janitorialSchedule} onChange={handleSimpleChange} placeholder="Maintenance Visit Schedule" className="bg-black border border-zinc-800 rounded-lg px-4 py-2 text-sm text-white focus:border-cyan-500 outline-none" />
-                      </div>
-                    </div>
+                   {/* 6 & 7. EMS AND STAFF */}
+                   <div className="bg-black/60 p-6 rounded-2xl border border-white/10 space-y-4">
+                     <h3 className="text-sm font-black uppercase tracking-widest text-cyan-500 border-b border-white/10 pb-2 mb-4">Additional Contacts: EMS & Staff</h3>
+                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                       <input name="policePhone" value={rmsData.policePhone} onChange={handleSimpleChange} placeholder="Local Police Dept Phone" className="bg-black border border-zinc-800 rounded-lg px-4 py-2 text-sm text-white focus:border-cyan-500 outline-none" />
+                       <input name="firePhone" value={rmsData.firePhone} onChange={handleSimpleChange} placeholder="Local Fire Dept Phone" className="bg-black border border-zinc-800 rounded-lg px-4 py-2 text-sm text-white focus:border-cyan-500 outline-none" />
+                       <input name="janitorialCompany" value={rmsData.janitorialCompany} onChange={handleSimpleChange} placeholder="Janitorial/Maintenance Company" className="bg-black border border-zinc-800 rounded-lg px-4 py-2 text-sm text-white focus:border-cyan-500 outline-none" />
+                       <input name="janitorialSchedule" value={rmsData.janitorialSchedule} onChange={handleSimpleChange} placeholder="Maintenance Visit Schedule" className="bg-black border border-zinc-800 rounded-lg px-4 py-2 text-sm text-white focus:border-cyan-500 outline-none" />
+                     </div>
+                   </div>
 
-                    {/* 8, 9, 10. CONTACT TABLES */}
-                    <div className="bg-black/60 p-6 rounded-2xl border border-white/10 space-y-6">
-                      <h3 className="text-sm font-black uppercase tracking-widest text-cyan-500 border-b border-white/10 pb-2 mb-4">Personnel Directories</h3>
-                      {[
-                        { title: 'Emergency Contacts', key: 'emergencyContacts' },
-                        { title: 'Reporting Contacts', key: 'reportingContacts' },
-                        { title: 'Authorized After-hours Employees', key: 'authorizedEmployees' }
-                      ].map(table => (
-                        <div key={table.key}>
-                          <div className="flex justify-between items-center mb-2">
-                            <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">{table.title}</label>
-                            <button type="button" onClick={() => addArrayRow(table.key, { name: '', role: '', phone: '' })} className="text-[10px] font-bold text-cyan-500 hover:text-cyan-400">+ Add Row</button>
-                          </div>
-                          <div className="space-y-2">
-                            {(rmsData as any)[table.key].map((contact: any, idx: number) => (
-                              <div key={idx} className="flex gap-2 items-center">
-                                <input placeholder="Name" value={contact.name} onChange={e => updateArray(table.key, idx, 'name', e.target.value)} className="flex-1 bg-black border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:border-cyan-500 outline-none" />
-                                <input placeholder="Role" value={contact.role} onChange={e => updateArray(table.key, idx, 'role', e.target.value)} className="flex-1 bg-black border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:border-cyan-500 outline-none" />
-                                <input placeholder="Phone" value={contact.phone} onChange={e => updateArray(table.key, idx, 'phone', e.target.value)} className="flex-1 bg-black border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:border-cyan-500 outline-none" />
-                                <button type="button" onClick={() => removeArrayRow(table.key, idx)} className="text-red-500 hover:text-red-400 text-xs font-bold px-2">X</button>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+                   {/* 8, 9, 10. CONTACT TABLES */}
+                   <div className="bg-black/60 p-6 rounded-2xl border border-white/10 space-y-6">
+                     <h3 className="text-sm font-black uppercase tracking-widest text-cyan-500 border-b border-white/10 pb-2 mb-4">Personnel Directories</h3>
+                     {[
+                       { title: 'Emergency Contacts', key: 'emergencyContacts' },
+                       { title: 'Reporting Contacts', key: 'reportingContacts' },
+                       { title: 'Authorized After-hours Employees', key: 'authorizedEmployees' }
+                     ].map(table => (
+                       <div key={table.key}>
+                         <div className="flex justify-between items-center mb-2">
+                           <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">{table.title}</label>
+                           <button type="button" onClick={() => addArrayRow(table.key, { name: '', role: '', phone: '' })} className="text-[10px] font-bold text-cyan-500 hover:text-cyan-400">+ Add Row</button>
+                         </div>
+                         <div className="space-y-2">
+                           {(rmsData as any)[table.key].map((contact: any, idx: number) => (
+                             <div key={idx} className="flex gap-2 items-center">
+                               <input placeholder="Name" value={contact.name} onChange={e => updateArray(table.key, idx, 'name', e.target.value)} className="flex-1 bg-black border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:border-cyan-500 outline-none" />
+                               <input placeholder="Role" value={contact.role} onChange={e => updateArray(table.key, idx, 'role', e.target.value)} className="flex-1 bg-black border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:border-cyan-500 outline-none" />
+                               <input placeholder="Phone" value={contact.phone} onChange={e => updateArray(table.key, idx, 'phone', e.target.value)} className="flex-1 bg-black border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:border-cyan-500 outline-none" />
+                               <button type="button" onClick={() => removeArrayRow(table.key, idx)} className="text-red-500 hover:text-red-400 text-xs font-bold px-2">X</button>
+                             </div>
+                           ))}
+                         </div>
+                       </div>
+                     ))}
+                   </div>
 
-                    {/* 11. HOLIDAYS */}
-                    <div className="bg-black/60 p-6 rounded-2xl border border-white/10 space-y-4">
-                      <h3 className="text-sm font-black uppercase tracking-widest text-cyan-500 border-b border-white/10 pb-2 mb-4">Holidays & Special Hours</h3>
-                      <div className="grid grid-cols-3 gap-4 mb-2">
-                        <div className="text-[10px] font-bold text-zinc-500 uppercase">Holiday</div>
-                        <div className="text-[10px] font-bold text-zinc-500 uppercase">Special Hours (if any)</div>
-                        <div className="text-[10px] font-bold text-zinc-500 uppercase">24/7 Monitoring?</div>
-                      </div>
-                      {HOLIDAYS.map(h => (
-                        <div key={h.id} className="grid grid-cols-3 gap-4 items-center">
-                          <span className="text-xs font-medium">{h.label}</span>
-                          <input type="text" placeholder="e.g. Closed" value={(rmsData.holidays as any)[h.id].hours} onChange={e => updateHoliday(h.id, 'hours', e.target.value)} className="bg-black border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:border-cyan-500 outline-none" />
-                          <select value={(rmsData.holidays as any)[h.id].monitoring247} onChange={e => updateHoliday(h.id, 'monitoring247', e.target.value)} className="bg-black border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:border-cyan-500 outline-none"><option>No</option><option>Yes</option></select>
-                        </div>
-                      ))}
-                    </div>
+                   {/* 11. HOLIDAYS */}
+                   <div className="bg-black/60 p-6 rounded-2xl border border-white/10 space-y-4">
+                     <h3 className="text-sm font-black uppercase tracking-widest text-cyan-500 border-b border-white/10 pb-2 mb-4">Holidays & Special Hours</h3>
+                     <div className="grid grid-cols-3 gap-4 mb-2">
+                       <div className="text-[10px] font-bold text-zinc-500 uppercase">Holiday</div>
+                       <div className="text-[10px] font-bold text-zinc-500 uppercase">Special Hours (if any)</div>
+                       <div className="text-[10px] font-bold text-zinc-500 uppercase">24/7 Monitoring?</div>
+                     </div>
+                     {HOLIDAYS.map(h => (
+                       <div key={h.id} className="grid grid-cols-3 gap-4 items-center">
+                         <span className="text-xs font-medium">{h.label}</span>
+                         <input type="text" placeholder="e.g. Closed" value={(rmsData.holidays as any)[h.id].hours} onChange={e => updateHoliday(h.id, 'hours', e.target.value)} className="bg-black border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:border-cyan-500 outline-none" />
+                         <select value={(rmsData.holidays as any)[h.id].monitoring247} onChange={e => updateHoliday(h.id, 'monitoring247', e.target.value)} className="bg-black border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:border-cyan-500 outline-none"><option>No</option><option>Yes</option></select>
+                       </div>
+                     ))}
+                   </div>
 
-                    {/* 12. PROCEDURES */}
-                    <div className="bg-black/60 p-6 rounded-2xl border border-white/10 space-y-6">
-                      <div className="flex justify-between items-center border-b border-white/10 pb-2 mb-4">
-                        <h3 className="text-sm font-black uppercase tracking-widest text-cyan-500">Custom Procedures</h3>
-                        <button type="button" onClick={() => addArrayRow('customProcedures', { title: `Procedure #${rmsData.customProcedures.length + 1}`, details: '' })} className="text-[10px] font-bold text-cyan-500 hover:text-cyan-400">+ Add Procedure</button>
-                      </div>
-                      <div className="space-y-6">
-                        {rmsData.customProcedures.map((proc: any, idx: number) => (
-                          <div key={idx} className="space-y-2 border border-white/5 p-4 rounded-lg bg-black/40 relative">
-                            <button type="button" onClick={() => removeArrayRow('customProcedures', idx)} className="absolute top-4 right-4 text-red-500 hover:text-red-400 text-xs font-bold">Delete</button>
-                            <input placeholder="Procedure Title" value={proc.title} onChange={e => updateArray('customProcedures', idx, 'title', e.target.value)} className="w-5/6 bg-transparent text-sm font-bold text-white focus:outline-none border-b border-zinc-800 pb-2 mb-2" />
-                            <textarea placeholder="List steps..." value={proc.details} onChange={e => updateArray('customProcedures', idx, 'details', e.target.value)} rows={4} className="w-full bg-black border border-zinc-800 rounded-lg px-4 py-2 text-sm text-white focus:border-cyan-500 outline-none resize-none"></textarea>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
+                   {/* 12. PROCEDURES */}
+                   <div className="bg-black/60 p-6 rounded-2xl border border-white/10 space-y-6">
+                     <div className="flex justify-between items-center border-b border-white/10 pb-2 mb-4">
+                       <h3 className="text-sm font-black uppercase tracking-widest text-cyan-500">Custom Procedures</h3>
+                       <button type="button" onClick={() => addArrayRow('customProcedures', { title: `Procedure #${rmsData.customProcedures.length + 1}`, details: '' })} className="text-[10px] font-bold text-cyan-500 hover:text-cyan-400">+ Add Procedure</button>
+                     </div>
+                     <div className="space-y-6">
+                       {rmsData.customProcedures.map((proc: any, idx: number) => (
+                         <div key={idx} className="space-y-2 border border-white/5 p-4 rounded-lg bg-black/40 relative">
+                           <button type="button" onClick={() => removeArrayRow('customProcedures', idx)} className="absolute top-4 right-4 text-red-500 hover:text-red-400 text-xs font-bold">Delete</button>
+                           <input placeholder="Procedure Title" value={proc.title} onChange={e => updateArray('customProcedures', idx, 'title', e.target.value)} className="w-5/6 bg-transparent text-sm font-bold text-white focus:outline-none border-b border-zinc-800 pb-2 mb-2" />
+                           <textarea placeholder="List steps..." value={proc.details} onChange={e => updateArray('customProcedures', idx, 'details', e.target.value)} rows={4} className="w-full bg-black border border-zinc-800 rounded-lg px-4 py-2 text-sm text-white focus:border-cyan-500 outline-none resize-none"></textarea>
+                         </div>
+                       ))}
+                     </div>
+                   </div>
 
-                    {/* 13. SPECIAL NOTES */}
-                    <div className="bg-black/60 p-6 rounded-2xl border border-white/10 space-y-4">
-                      <h3 className="text-sm font-black uppercase tracking-widest text-cyan-500 border-b border-white/10 pb-2 mb-4">Special Notes</h3>
-                      <textarea name="specialNotes" value={rmsData.specialNotes} onChange={handleSimpleChange} placeholder="Enter any overarching site rules or specific warnings here..." rows={6} className="w-full bg-black border border-zinc-800 rounded-lg px-4 py-2 text-sm text-white focus:border-cyan-500 outline-none resize-none"></textarea>
-                    </div>
+                   {/* 13. SPECIAL NOTES */}
+                   <div className="bg-black/60 p-6 rounded-2xl border border-white/10 space-y-4">
+                     <h3 className="text-sm font-black uppercase tracking-widest text-cyan-500 border-b border-white/10 pb-2 mb-4">Special Notes</h3>
+                     <textarea name="specialNotes" value={rmsData.specialNotes} onChange={handleSimpleChange} placeholder="Enter any overarching site rules or specific warnings here..." rows={6} className="w-full bg-black border border-zinc-800 rounded-lg px-4 py-2 text-sm text-white focus:border-cyan-500 outline-none resize-none"></textarea>
+                   </div>
 
-                    {/* SAVE BUTTON */}
-                    <div className="flex items-center justify-between sticky bottom-0 bg-[#050505]/90 backdrop-blur-md py-4 border-t border-white/10 z-10">
-                      <span className="text-xs text-cyan-500 font-bold">{saveMessage}</span>
-                      <button type="submit" disabled={isSaving} className="bg-cyan-600 text-white text-[10px] font-black uppercase tracking-widest px-8 py-3 rounded-lg shadow-[0_0_15px_rgba(6,182,212,0.3)] hover:bg-cyan-500 transition-colors">
-                        {isSaving ? 'Syncing...' : 'Save Service Order Form'}
-                      </button>
-                    </div>
+                   {/* SAVE BUTTON */}
+                   <div className="flex items-center justify-between sticky bottom-0 bg-[#050505]/90 backdrop-blur-md py-4 border-t border-white/10 z-10">
+                     <span className="text-xs text-cyan-500 font-bold">{saveMessage}</span>
+                     <button type="submit" disabled={isSaving} className="bg-cyan-600 text-white text-[10px] font-black uppercase tracking-widest px-8 py-3 rounded-lg shadow-[0_0_15px_rgba(6,182,212,0.3)] hover:bg-cyan-500 transition-colors">
+                       {isSaving ? 'Syncing...' : 'Save Service Order Form'}
+                     </button>
+                   </div>
                  </form>
               </div>
             )}
             
+            {/* ✨ NEW: BILLING DASHBOARD ✨ */}
             {activeTab === 'billing' && (
               <div className="h-full animate-[fadeIn_0.3s_ease-out]">
                  <h2 className="text-2xl font-black mb-4">Financial Overview: {propertyName}</h2>
-                 <div className="bg-[#111] border border-white/10 p-6 rounded-xl max-w-md">
-                   <p className="text-sm text-zinc-400 mb-1">Current Balance</p>
-                   <p className="text-4xl font-black text-white mb-6">{currentProperty?.current_balance || "$0.00"}</p>
-                 </div>
+                 
+                 {/* This connects your Supabase Data to Make.com! */}
+                 <BillingTab qboCustomerId={currentProperty?.qbo_customer_id} />
               </div>
             )}
           </div>
         </div>
 
-        {/* 🚨 RIGHT SIDEBAR SOC FEED */}
+        {/* RIGHT SIDEBAR SOC FEED */}
         <div className="lg:w-1/3 bg-gradient-to-b from-[#0a1128] to-[#040812] border-l border-white/5 flex flex-col h-[600px] lg:h-auto z-10 relative">
           <div className="p-6 border-b border-blue-900/30 shrink-0 bg-[#0a1128] z-20">
             <h3 className="text-sm font-black uppercase tracking-widest text-blue-100 flex items-center gap-2">

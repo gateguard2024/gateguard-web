@@ -16,7 +16,7 @@ export default function BillingTab({ qboCustomerId }: { qboCustomerId: string | 
     const fetchInvoices = async () => {
       try {
         // Calling your new Make.com API!
-        const response = await fetch(`YOUR_MAKE_WEBHOOK_URL_HERE?qbo_customer_id=${qboCustomerId}`);
+        const response = await fetch(`https://hook.us1.make.com/https://hook.us2.make.com/wn74ht8m6qg1uspf3cquhe894qebclmn?qbo_customer_id=${qboCustomerId}`);
         
         if (!response.ok) throw new Error("Failed to load billing data.");
         

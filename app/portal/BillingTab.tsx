@@ -5,7 +5,7 @@ export default function BillingTab({ qboCustomerId }: { qboCustomerId: string | 
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
- useEffect(() => {
+  useEffect(() => {
     // 1. WHAT DID SUPABASE GIVE US?
     console.log("1. Supabase gave us QBO ID:", qboCustomerId);
 
@@ -17,6 +17,7 @@ export default function BillingTab({ qboCustomerId }: { qboCustomerId: string | 
 
     const fetchInvoices = async () => {
       try {
+        // MAKE SURE YOUR REAL MAKE.COM LINK IS HERE!
         const makeUrl = `https://hook.us1.make.com/YOUR_LONG_STRING_HERE?qbo_customer_id=${qboCustomerId}`;
         
         // 2. WHAT EXACTLY ARE WE PINGING?
@@ -32,12 +33,15 @@ export default function BillingTab({ qboCustomerId }: { qboCustomerId: string | 
         
         const data = await response.json();
         setInvoices(data);
-} catch (err) {
+      } catch (err) {
         // 4. IF IT CRASHES COMPLETELY (LIKE A BROWSER BLOCK)
         console.error("4. CRITICAL FETCH ERROR:", err);
         const errorMessage = err instanceof Error ? err.message : "Unknown error";
         setError(`Could not load invoices: ${errorMessage}`);
       } finally {
+        setLoading(false);
+      }
+    };
 
     fetchInvoices();
   }, [qboCustomerId]);

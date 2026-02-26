@@ -18,7 +18,7 @@ export default function BillingTab({ qboCustomerId }: { qboCustomerId: string | 
     const fetchInvoices = async () => {
       try {
         // MAKE SURE YOUR REAL MAKE.COM LINK IS HERE!
-        const makeUrl = `https://hook.us1.make.com/https://hook.us2.make.com/wn74ht8m6qg1uspf3cquhe894qebclmn?qbo_customer_id=${qboCustomerId}`;
+        const makeUrl = `https://hook.us2.make.com/wn74ht8m6qg1uspf3cquhe894qebclmn?qbo_customer_id=${qboCustomerId}`;
         
         // 2. WHAT EXACTLY ARE WE PINGING?
         console.log("2. Attempting to ping Make.com at:", makeUrl);

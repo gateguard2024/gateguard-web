@@ -666,26 +666,79 @@ export default function ClientPortal() {
           </div>
           <div className="flex-1 overflow-y-auto p-6 space-y-6 pb-20">
 
-             {/* Dedicated Concierge Card */}
-             <div className="bg-[#0b131e] border border-cyan-500/20 p-5 rounded-2xl shadow-lg">
-               <p className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest mb-4">Your Dedicated Account Manager</p>
-               <div className="flex items-center gap-4 mb-4">
-                 <div className="w-12 h-12 bg-cyan-900/50 rounded-full flex items-center justify-center border border-cyan-500/30 text-xl">
-                   👨‍💼
+{/* ✨ INTERACTIVE CONCIERGE & REQUEST CARD ✨ */}
+             <div className="bg-[#0b131e] border border-cyan-500/20 p-5 rounded-2xl shadow-lg relative overflow-hidden transition-all duration-300">
+               {!isContactOpen ? (
+                 <div className="animate-in fade-in zoom-in-95 duration-300">
+                   <p className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest mb-4">Your Dedicated Account Manager</p>
+                   <div className="flex items-center gap-4 mb-6">
+                     <div className="w-12 h-12 bg-cyan-900/50 rounded-full flex items-center justify-center border border-cyan-500/30 text-xl">
+                       👨‍💼
+                     </div>
+                     <div>
+                       <h4 className="text-white font-bold text-sm">GateGuard Support</h4>
+                       <p className="text-zinc-400 text-xs">Available 24/7</p>
+                     </div>
+                   </div>
+                   <button 
+                     onClick={() => setIsContactOpen(true)}
+                     className="w-full py-3 bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-[0_0_15px_rgba(6,182,212,0.2)]"
+                   >
+                     Custom Request
+                   </button>
                  </div>
-                 <div>
-                   <h4 className="text-white font-bold text-sm">GateGuard Dispatch</h4>
-                   <p className="text-zinc-400 text-xs">Available 24/7</p>
-                 </div>
-               </div>
-               <a 
-                 href="https://calendly.com/your-booking-link" /* <-- PASTE YOUR CALENDLY LINK HERE */
-                 target="_blank" 
-                 rel="noopener noreferrer"
-                 className="block text-center w-full py-2 bg-cyan-600/20 hover:bg-cyan-600/40 border border-cyan-500/30 text-cyan-300 rounded-lg text-xs font-bold transition-colors"
-               >
-                 Schedule Review Call
-               </a>
+               ) : (
+                 <form onSubmit={handleContactSubmit} className="animate-in fade-in slide-in-from-right-4 duration-300">
+                   <div className="flex justify-between items-center mb-4">
+                     <p className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest">Send Request</p>
+                     <button type="button" onClick={() => setIsContactOpen(false)} className="text-zinc-500 hover:text-white text-xs font-bold">Cancel</button>
+                   </div>
+                   
+                   {contactStatus === 'success' ? (
+                     <div className="text-center py-6">
+                       <div className="w-12 h-12 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center text-2xl mb-3 mx-auto border border-emerald-500/30">✓</div>
+                       <p className="text-white font-bold text-sm">Request Sent</p>
+                       <p className="text-zinc-400 text-xs mt-1">Our team will be in touch shortly.</p>
+                     </div>
+                   ) : (
+                     <div className="space-y-4">
+                       <div>
+                         <label className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 mb-1 block">Department</label>
+                         <select 
+                           value={contactForm.department}
+                           onChange={e => setContactForm({...contactForm, department: e.target.value})}
+                           className="w-full bg-black border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:border-cyan-500 outline-none"
+                         >
+                           <option value="Operations">Operations / Dispatch</option>
+                           <option value="Admin">Admin / Billing</option>
+                           <option value="Sales">Sales / Upgrades</option>
+                         </select>
+                       </div>
+                       <div>
+                         <label className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 mb-1 block">Message</label>
+                         <textarea 
+                           required
+                           rows={3}
+                           placeholder="How can we help you?"
+                           value={contactForm.message}
+                           onChange={e => setContactForm({...contactForm, message: e.target.value})}
+                           className="w-full bg-black border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:border-cyan-500 outline-none resize-none"
+                         ></textarea>
+                       </div>
+                       
+                       {contactStatus === 'error' && <p className="text-red-400 text-[10px] font-bold">Failed to send. Try again.</p>}
+                       
+                       <button 
+                         type="submit" 
+                         disabled={contactStatus === 'sending'}
+                         className="w-full py-2 bg-cyan-600/20 hover:bg-cyan-600/40 border border-cyan-500/30 text-cyan-300 rounded-lg text-xs font-bold transition-colors disabled:opacity-50"
+                       >
+                         {contactStatus === 'sending' ? 'Sending...' : 'Send Message'}
+                       </button>
+                     </div>
+                   )}
+                 </form>
+               )}
              </div>
 
              {/* ✨ LIVE ACTIVE WORK ORDERS ✨ */}

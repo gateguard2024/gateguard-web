@@ -2,11 +2,23 @@ import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
   try {
-    const { title, description, contactInfo, propertyName } = await req.json();
+    const { title, description, contactInfo, propertyName, locationId } = await req.json();
 
     const apiKey = process.env.MAINTAINX_API_KEY;
     if (!apiKey) {
       return NextResponse.json({ error: "API key not configured" }, { status: 500 });
+    }
+
+    // Build the payload
+    const payload: any = {
+      title: `[${propertyName}] ${title}`,
+      description: description,
+      creatorContactInfo: contactInfo
+    };
+
+    // If a location ID is provided from Supabase, attach it as an integer!
+    if (locationId) {
+      payload.locationId = parseInt(locationId, 10);
     }
 
     // Ping the official MaintainX API endpoint for Work Requests
@@ -16,11 +28,7 @@ export async function POST(req: Request) {
         'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        title: `[${propertyName}] ${title}`, // Automatically tags the property name!
-        description: description,
-        creatorContactInfo: contactInfo
-      })
+      body: JSON.stringify(payload)
     });
 
     if (!response.ok) {

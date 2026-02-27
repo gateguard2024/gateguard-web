@@ -69,7 +69,7 @@ export default function ClientPortal() {
     setContactStatus('sending');
     try {
       // ✨ We will point this to a Make.com webhook in the next step!
-      const makeWebhookUrl = "https://hook.us2.make.com/YOUR_WEBHOOK_URL_HERE"; 
+      const makeWebhookUrl = "https://hook.us2.make.com/https://hook.us2.make.com/b1os965mlz57drujb1ryqpegnnxse1s2"; 
       
       const res = await fetch(makeWebhookUrl, {
         method: 'POST',

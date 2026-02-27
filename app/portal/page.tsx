@@ -29,6 +29,11 @@ export default function ClientPortal() {
   const [alerts, setAlerts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  // --- NATIVE MAINTAINX FORM STATE ---
+  const [serviceForm, setServiceForm] = useState({ title: '', description: '', contactInfo: '' });
+  const [isSubmittingService, setIsSubmittingService] = useState(false);
+  const [serviceStatus, setServiceStatus] = useState<'idle' | 'success' | 'error'>('idle');
+
   // --- RMS FORM STATE ---
   const defaultRmsData = {
     businessName: '', customerName: '', serviceAddress: '', cityStateZip: '', phone: '', email: '',
@@ -86,6 +91,40 @@ export default function ClientPortal() {
     }
   }, [selectedPropertyId, properties]);
 
+  const currentProperty = properties.find(p => p.id === selectedPropertyId) || null;
+  const propertyName = currentProperty?.name || "Unassigned Property";
+  const managerName = user?.fullName || user?.firstName || "Property Manager"; 
+  
+  const brivoUrl = currentProperty?.brivo_iframe_url || "https://account.brivo.com/global/index.html?useGlobalLogin=true";
+  const eagleEyeUrl = currentProperty?.eagleeye_url || "https://camera.auth.eagleeyenetworks.com/login";
+
+  // --- NATIVE MAINTAINX HANDLER ---
+  const handleServiceSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmittingService(true);
+    setServiceStatus('idle');
+    try {
+      const res = await fetch('/api/maintainx', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            ...serviceForm,
+            propertyName: propertyName // Automatically pass the property name!
+        })
+      });
+      if (!res.ok) throw new Error('API Error');
+      
+      setServiceStatus('success');
+      setServiceForm({ title: '', description: '', contactInfo: '' }); // Clear form
+      setTimeout(() => setServiceStatus('idle'), 6000); // Reset UI after 6 seconds
+    } catch (err) {
+      console.error(err);
+      setServiceStatus('error');
+    } finally {
+      setIsSubmittingService(false);
+    }
+  };
+
   // --- RMS FORM HANDLERS ---
   const handleSaveRms = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -112,15 +151,6 @@ export default function ClientPortal() {
   };
 
   if (!isClerkLoaded || isLoading) return <main className="bg-[#050505] text-white min-h-screen flex items-center justify-center"><h1 className="text-cyan-500 font-black uppercase tracking-widest text-sm">Loading...</h1></main>;
-
-  const currentProperty = properties.find(p => p.id === selectedPropertyId) || null;
-  const propertyName = currentProperty?.name || "Unassigned Property";
-  const managerName = user?.fullName || user?.firstName || "Property Manager"; 
-  
-  // Dynamic URLs from Supabase
-  const brivoUrl = currentProperty?.brivo_iframe_url || "https://account.brivo.com/global/index.html?useGlobalLogin=true";
-  const eagleEyeUrl = currentProperty?.eagleeye_url || "https://camera.auth.eagleeyenetworks.com/login";
-  const maintainxUrl = currentProperty?.maintainx_url || ""; // <-- ✨ DYNAMIC MAINTAINX LINK ✨
 
   return (
     <main className="bg-[#050505] text-white min-h-screen font-sans selection:bg-cyan-500/30 flex flex-col overflow-hidden">
@@ -237,29 +267,76 @@ export default function ClientPortal() {
               </div>
             )}
 
-            {/* 2. MAINTAINX IFRAME PORTAL */}
+            {/* ✨ 2. NATIVE MAINTAINX API FORM ✨ */}
             {activeTab === 'service' && (
-              <div className="h-full animate-[fadeIn_0.3s_ease-out] flex flex-col">
-                 <div className="mb-6">
+              <div className="max-w-3xl animate-[fadeIn_0.3s_ease-out] flex flex-col">
+                 <div className="mb-8">
                    <h2 className="text-2xl font-black mb-1">Request Service</h2>
-                   <p className="text-xs text-zinc-500 font-medium">Submit and track maintenance requests via our dedicated support portal.</p>
+                   <p className="text-xs text-zinc-500 font-medium">Submit a maintenance request directly to our facility team.</p>
                  </div>
                  
-                 <div className="flex-1 bg-white/5 border border-white/10 rounded-2xl overflow-hidden min-h-[600px] relative shadow-2xl flex items-center justify-center">
-                    {maintainxUrl ? (
-                      <iframe 
-                         src={maintainxUrl} 
-                         className="w-full h-full absolute top-0 left-0 border-0"
-                         title="MaintainX Service Portal"
-                      />
+                 <form onSubmit={handleServiceSubmit} className="bg-[#0a0a0a] border border-white/10 rounded-3xl p-8 shadow-2xl relative overflow-hidden">
+                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-500 to-blue-600"></div>
+                    
+                    {serviceStatus === 'success' ? (
+                      <div className="flex flex-col items-center justify-center text-center py-12 animate-in fade-in zoom-in duration-500">
+                        <div className="w-20 h-20 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center text-4xl mb-6 border border-emerald-500/30 shadow-[0_0_30px_rgba(16,185,129,0.2)]">✓</div>
+                        <h3 className="text-2xl font-black text-white mb-2">Ticket Submitted</h3>
+                        <p className="text-zinc-400 text-sm max-w-sm">Your service request has been securely transmitted directly into the MaintainX system.</p>
+                        <button type="button" onClick={() => setServiceStatus('idle')} className="mt-8 px-6 py-2 bg-white/5 hover:bg-white/10 rounded-lg text-cyan-500 text-xs font-bold uppercase tracking-widest transition-colors">Submit Another Request</button>
+                      </div>
                     ) : (
-                      <div className="text-center p-8 bg-black/40 rounded-xl border border-white/5">
-                        <span className="text-4xl mb-4 block">🚧</span>
-                        <h3 className="text-white font-bold mb-2">Portal Not Linked</h3>
-                        <p className="text-zinc-500 text-sm max-w-xs mx-auto">The MaintainX portal URL has not been added to Supabase for this property yet.</p>
+                      <div className="space-y-6 relative z-10">
+                        <div>
+                          <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-2 block">Issue Summary</label>
+                          <input 
+                            required
+                            placeholder="e.g., Broken gate latch, AC not cooling" 
+                            value={serviceForm.title} 
+                            onChange={e => setServiceForm({...serviceForm, title: e.target.value})}
+                            className="w-full bg-black border border-zinc-800 rounded-xl px-4 py-3 text-sm text-white focus:border-cyan-500 outline-none transition-colors" 
+                          />
+                        </div>
+                        
+                        <div>
+                          <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-2 block">Detailed Description</label>
+                          <textarea 
+                            required
+                            placeholder="Please provide as much detail as possible so our team can prepare..." 
+                            rows={5}
+                            value={serviceForm.description} 
+                            onChange={e => setServiceForm({...serviceForm, description: e.target.value})}
+                            className="w-full bg-black border border-zinc-800 rounded-xl px-4 py-3 text-sm text-white focus:border-cyan-500 outline-none resize-none transition-colors"
+                          ></textarea>
+                        </div>
+
+                        <div>
+                          <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-2 block">Your Contact Info</label>
+                          <input 
+                            required
+                            placeholder="Email or Phone Number" 
+                            value={serviceForm.contactInfo} 
+                            onChange={e => setServiceForm({...serviceForm, contactInfo: e.target.value})}
+                            className="w-full bg-black border border-zinc-800 rounded-xl px-4 py-3 text-sm text-white focus:border-cyan-500 outline-none transition-colors" 
+                          />
+                        </div>
+
+                        {serviceStatus === 'error' && (
+                          <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm font-bold flex items-center gap-3">
+                            <span className="text-lg">⚠️</span> Failed to submit request to MaintainX. Please check your connection and try again.
+                          </div>
+                        )}
+
+                        <button 
+                          type="submit" 
+                          disabled={isSubmittingService}
+                          className="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-black uppercase tracking-widest py-4 rounded-xl transition-all shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:shadow-[0_0_30px_rgba(6,182,212,0.5)] disabled:opacity-50 disabled:cursor-not-allowed mt-4"
+                        >
+                          {isSubmittingService ? 'Transmitting...' : 'Submit Service Request'}
+                        </button>
                       </div>
                     )}
-                 </div>
+                 </form>
               </div>
             )}
 

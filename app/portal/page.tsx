@@ -30,6 +30,10 @@ export default function ClientPortal() {
   const [selectedPropertyId, setSelectedPropertyId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  // --- NEW: LIVE MAINTAINX WORK ORDERS STATE ---
+  const [activeJobs, setActiveJobs] = useState<any[]>([]);
+  const [isLoadingJobs, setIsLoadingJobs] = useState(false);
+
   // --- NATIVE MAINTAINX FORM STATE ---
   const [serviceForm, setServiceForm] = useState({ title: '', description: '', contactInfo: '' });
   const [isSubmittingService, setIsSubmittingService] = useState(false);
@@ -92,6 +96,29 @@ export default function ClientPortal() {
   const maintainxLocationId = currentProperty?.maintainx_location_id || null;
   const isGateHeldOpen = currentProperty?.gate_status === 'held_open';
 
+  // ✨ NEW: FETCH LIVE WORK ORDERS EFFECT ✨
+  useEffect(() => {
+    if (!maintainxLocationId) {
+      setActiveJobs([]);
+      return;
+    }
+    async function fetchLiveJobs() {
+      setIsLoadingJobs(true);
+      try {
+        const res = await fetch(`/api/maintainx/workorders?locationId=${maintainxLocationId}`);
+        if (res.ok) {
+          const data = await res.json();
+          setActiveJobs(data.activeJobs || []);
+        }
+      } catch (err) {
+        console.error("Error fetching jobs:", err);
+      } finally {
+        setIsLoadingJobs(false);
+      }
+    }
+    fetchLiveJobs();
+  }, [maintainxLocationId]); // Re-runs anytime the property (and location ID) changes
+
   // --- NATIVE MAINTAINX HANDLER ---
   const handleServiceSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -111,6 +138,14 @@ export default function ClientPortal() {
       
       setServiceStatus('success');
       setServiceForm({ title: '', description: '', contactInfo: '' }); 
+      
+      // ✨ Instantly refresh the work orders list so the new ticket shows up!
+      if (maintainxLocationId) {
+         fetch(`/api/maintainx/workorders?locationId=${maintainxLocationId}`)
+           .then(r => r.json())
+           .then(d => setActiveJobs(d.activeJobs || []));
+      }
+
       setTimeout(() => setServiceStatus('idle'), 6000); 
     } catch (err) {
       console.error(err);
@@ -198,7 +233,7 @@ export default function ClientPortal() {
 
           <div className="flex-1 overflow-y-auto p-6 lg:p-10 z-10 relative">
             
-            {/* 1. SYSTEMS DASHBOARD UPGRADE */}
+            {/* 1. SYSTEMS DASHBOARD */}
             {activeTab === 'systems' && (
               <div className="animate-[fadeIn_0.3s_ease-out] w-full max-w-4xl">
                  
@@ -584,7 +619,7 @@ export default function ClientPortal() {
           </div>
         </div>
 
-        {/* ✨ RIGHT SIDEBAR: ENTERPRISE CONCIERGE & ACTIVE JOBS ✨ */}
+        {/* ✨ RIGHT SIDEBAR: ENTERPRISE CONCIERGE & LIVE JOBS ✨ */}
         <div className="lg:w-1/3 bg-gradient-to-b from-[#0a1128] to-[#040812] border-l border-white/5 flex flex-col h-[600px] lg:h-auto z-10 relative">
           <div className="p-6 border-b border-cyan-900/30 shrink-0 bg-[#0a1128] z-20">
             <h3 className="text-sm font-black uppercase tracking-widest text-cyan-100 flex items-center gap-2">
@@ -605,32 +640,44 @@ export default function ClientPortal() {
                    <p className="text-zinc-400 text-xs">Available 24/7</p>
                  </div>
                </div>
-               <button className="w-full py-2 bg-cyan-600/20 hover:bg-cyan-600/40 border border-cyan-500/30 text-cyan-300 rounded-lg text-xs font-bold transition-colors">
+               <a 
+                 href="https://calendly.com/your-booking-link" /* <-- PASTE YOUR CALENDLY LINK HERE */
+                 target="_blank" 
+                 rel="noopener noreferrer"
+                 className="block text-center w-full py-2 bg-cyan-600/20 hover:bg-cyan-600/40 border border-cyan-500/30 text-cyan-300 rounded-lg text-xs font-bold transition-colors"
+               >
                  Schedule Review Call
-               </button>
+               </a>
              </div>
 
-             {/* Open Jobs / Active Tickets (Placeholders for now!) */}
+             {/* ✨ LIVE ACTIVE WORK ORDERS ✨ */}
              <div>
                 <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-4">Active Work Orders</p>
                 <div className="space-y-3">
-                   {/* Example Ticket 1 */}
-                   <div className="bg-black/40 border border-white/5 p-4 rounded-xl">
-                     <div className="flex justify-between items-start mb-2">
-                       <h5 className="text-sm font-bold text-white">Main Gate Latch Repair</h5>
-                       <span className="px-2 py-1 bg-amber-500/10 text-amber-400 text-[8px] font-black uppercase tracking-widest rounded border border-amber-500/20">In Progress</span>
+                   {isLoadingJobs ? (
+                     <div className="text-center py-4">
+                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-cyan-500 mx-auto"></div>
                      </div>
-                     <p className="text-xs text-zinc-500">Technician dispatched. Estimated completion: Today by 4:00 PM.</p>
-                   </div>
-                   
-                   {/* Example Ticket 2 */}
-                   <div className="bg-black/40 border border-white/5 p-4 rounded-xl">
-                     <div className="flex justify-between items-start mb-2">
-                       <h5 className="text-sm font-bold text-white">Camera #4 Offline</h5>
-                       <span className="px-2 py-1 bg-blue-500/10 text-blue-400 text-[8px] font-black uppercase tracking-widest rounded border border-blue-500/20">Reviewing</span>
+                   ) : activeJobs.length === 0 ? (
+                     <div className="bg-black/40 border border-white/5 p-6 rounded-xl text-center">
+                        <span className="text-2xl mb-2 block opacity-50">👍</span>
+                        <p className="text-xs text-zinc-400">No active work orders. Everything is running smoothly.</p>
                      </div>
-                     <p className="text-xs text-zinc-500">SOC team is currently running remote diagnostics on the VMS switch.</p>
-                   </div>
+                   ) : (
+                     activeJobs.map((job: any) => (
+                       <div key={job.id} className="bg-black/40 border border-white/5 p-4 rounded-xl animate-in fade-in slide-in-from-right-2 duration-500">
+                         <div className="flex justify-between items-start mb-2 gap-4">
+                           <h5 className="text-sm font-bold text-white flex-1">{job.title || 'Service Request'}</h5>
+                           <span className="px-2 py-1 bg-amber-500/10 text-amber-400 text-[8px] font-black uppercase tracking-widest rounded border border-amber-500/20 whitespace-nowrap">
+                             {job.status || 'OPEN'}
+                           </span>
+                         </div>
+                         <p className="text-xs text-zinc-500 line-clamp-2">
+                           {job.description || 'Ticket is currently in the dispatch queue waiting for review.'}
+                         </p>
+                       </div>
+                     ))
+                   )}
                 </div>
              </div>
 

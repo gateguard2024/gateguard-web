@@ -98,6 +98,9 @@ export default function ClientPortal() {
   const brivoUrl = currentProperty?.brivo_iframe_url || "https://account.brivo.com/global/index.html?useGlobalLogin=true";
   const eagleEyeUrl = currentProperty?.eagleeye_url || "https://camera.auth.eagleeyenetworks.com/login";
 
+  // ✨ Grab the Location ID from your new Supabase column
+  const maintainxLocationId = currentProperty?.maintainx_location_id || null;
+
   // --- NATIVE MAINTAINX HANDLER ---
   const handleServiceSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -109,7 +112,8 @@ export default function ClientPortal() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
             ...serviceForm,
-            propertyName: propertyName // Automatically pass the property name!
+            propertyName: propertyName, 
+            locationId: maintainxLocationId // ✨ Pass the ID to the API Bridge
         })
       });
       if (!res.ok) throw new Error('API Error');

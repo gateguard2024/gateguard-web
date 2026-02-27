@@ -24,9 +24,10 @@ const HOLIDAYS = [
 export default function ClientPortal() {
   const { user, isLoaded: isClerkLoaded } = useUser(); 
   const [activeTab, setActiveTab] = useState<'systems' | 'service' | 'rms' | 'billing'>('systems');
+  const [systemSubTab, setSystemSubTab] = useState<'overview' | 'cameras' | 'doors' | 'gates'>('overview');
+
   const [properties, setProperties] = useState<any[]>([]);
   const [selectedPropertyId, setSelectedPropertyId] = useState<string | null>(null);
-  const [alerts, setAlerts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   // --- NATIVE MAINTAINX FORM STATE ---
@@ -74,15 +75,6 @@ export default function ClientPortal() {
   }, [isClerkLoaded, user]);
 
   useEffect(() => {
-    if (!selectedPropertyId) return;
-    async function fetchAlerts() {
-      try {
-        const { data } = await supabase.from('soc_alerts').select('*').eq('property_id', selectedPropertyId).order('created_at', { ascending: false }); 
-        if (data) setAlerts(data);
-      } catch (err) { console.error(err); }
-    }
-    fetchAlerts();
-
     const currentProp = properties.find(p => p.id === selectedPropertyId);
     if (currentProp && currentProp.rms_data) {
       setRmsData(prev => ({ ...defaultRmsData, ...currentProp.rms_data }));
@@ -97,9 +89,8 @@ export default function ClientPortal() {
   
   const brivoUrl = currentProperty?.brivo_iframe_url || "https://account.brivo.com/global/index.html?useGlobalLogin=true";
   const eagleEyeUrl = currentProperty?.eagleeye_url || "https://camera.auth.eagleeyenetworks.com/login";
-
-  // ✨ Grab the Location ID from your new Supabase column
   const maintainxLocationId = currentProperty?.maintainx_location_id || null;
+  const isGateHeldOpen = currentProperty?.gate_status === 'held_open';
 
   // --- NATIVE MAINTAINX HANDLER ---
   const handleServiceSubmit = async (e: React.FormEvent) => {
@@ -113,14 +104,14 @@ export default function ClientPortal() {
         body: JSON.stringify({
             ...serviceForm,
             propertyName: propertyName, 
-            locationId: maintainxLocationId // ✨ Pass the ID to the API Bridge
+            locationId: maintainxLocationId
         })
       });
       if (!res.ok) throw new Error('API Error');
       
       setServiceStatus('success');
-      setServiceForm({ title: '', description: '', contactInfo: '' }); // Clear form
-      setTimeout(() => setServiceStatus('idle'), 6000); // Reset UI after 6 seconds
+      setServiceForm({ title: '', description: '', contactInfo: '' }); 
+      setTimeout(() => setServiceStatus('idle'), 6000); 
     } catch (err) {
       console.error(err);
       setServiceStatus('error');
@@ -199,7 +190,7 @@ export default function ClientPortal() {
               { id: 'rms', label: 'Monitoring Setup', icon: '📋' }, 
               { id: 'billing', label: 'Billing', icon: '💳' }
             ].map((tab) => (
-              <button key={tab.id} onClick={() => setActiveTab(tab.id as any)} className={`flex items-center gap-2 px-6 py-4 text-xs font-black uppercase tracking-widest transition-all border-b-2 whitespace-nowrap ${ activeTab === tab.id ? 'border-cyan-500 text-cyan-400 bg-cyan-500/10' : 'border-transparent text-zinc-500 hover:text-white' }`}>
+              <button key={tab.id} onClick={() => { setActiveTab(tab.id as any); setSystemSubTab('overview'); }} className={`flex items-center gap-2 px-6 py-4 text-xs font-black uppercase tracking-widest transition-all border-b-2 whitespace-nowrap ${ activeTab === tab.id ? 'border-cyan-500 text-cyan-400 bg-cyan-500/10' : 'border-transparent text-zinc-500 hover:text-white' }`}>
                 <span>{tab.icon}</span> {tab.label}
               </button>
             ))}
@@ -207,71 +198,146 @@ export default function ClientPortal() {
 
           <div className="flex-1 overflow-y-auto p-6 lg:p-10 z-10 relative">
             
-            {/* 1. SYSTEMS DASHBOARD */}
+            {/* 1. SYSTEMS DASHBOARD UPGRADE */}
             {activeTab === 'systems' && (
               <div className="animate-[fadeIn_0.3s_ease-out] w-full max-w-4xl">
-                 <h2 className="text-2xl font-black mb-1">Systems Overview</h2>
-                 <p className="text-xs text-zinc-500 font-medium mb-8">Live status and access gateways for {propertyName}.</p>
-
-                 <div className="bg-[#0a0a0a] border border-white/10 p-6 rounded-2xl shadow-lg flex items-center justify-between mb-8">
-                   <div className="flex items-center gap-5">
-                     <div className="relative flex h-4 w-4">
-                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                       <span className="relative inline-flex rounded-full h-4 w-4 bg-emerald-500"></span>
-                     </div>
-                     <div>
-                       <h3 className="text-lg font-black text-white tracking-wide">All Systems Operational</h3>
-                       <p className="text-zinc-400 text-xs mt-1">Cameras, gates, and access controls are online.</p>
-                     </div>
-                   </div>
-                   <div className="hidden sm:block">
-                     <span className="px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-lg text-[10px] font-black uppercase tracking-widest">
-                       Live Status
-                     </span>
+                 
+                 <div className="mb-6 flex justify-between items-end">
+                   <div>
+                     <h2 className="text-2xl font-black mb-1">Systems Overview</h2>
+                     <p className="text-xs text-zinc-500 font-medium">Manage hardware and access gateways for {propertyName}.</p>
                    </div>
                  </div>
 
-                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                   <div className="group relative bg-[#0a0a0a] border border-white/10 p-8 rounded-3xl overflow-hidden hover:border-cyan-500/50 transition-all duration-500 shadow-2xl flex flex-col">
-                     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-500 to-blue-600 opacity-50 group-hover:opacity-100 transition-opacity"></div>
-                     <div className="absolute -inset-24 bg-cyan-500/5 blur-3xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
-
-                     <div className="relative z-10 flex flex-col h-full">
-                       <div className="w-16 h-16 bg-black border border-white/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500 shadow-[0_0_15px_rgba(6,182,212,0.15)]">
-                         <span className="text-3xl">🔑</span>
+                 {/* DYNAMIC ALERT BANNER */}
+                 {isGateHeldOpen ? (
+                   <div className="bg-red-500/10 border border-red-500/30 p-5 rounded-2xl flex items-center justify-between mb-8 shadow-lg shadow-red-500/5">
+                     <div className="flex items-center gap-4">
+                       <div className="w-10 h-10 bg-red-500/20 rounded-full flex items-center justify-center shrink-0">
+                          <span className="text-red-500 text-xl animate-pulse">⚠️</span>
                        </div>
-                       <h3 className="text-xl font-black text-white mb-2">Brivo Access</h3>
-                       <p className="text-sm text-zinc-400 leading-relaxed mb-8 flex-1">
-                         Manage credentials, remote doors, and facility access through the secure Brivo enterprise gateway.
-                       </p>
-                       <a href={brivoUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 w-full bg-cyan-600/10 hover:bg-cyan-600 text-cyan-400 hover:text-white border border-cyan-500/30 hover:border-cyan-500 text-xs font-black uppercase tracking-widest py-4 rounded-xl transition-all duration-300">
-                         Launch Brivo Gateway <span className="text-lg">→</span>
-                       </a>
+                       <div>
+                         <h4 className="text-red-400 font-black tracking-wide text-sm uppercase">Gates Held Open</h4>
+                         <p className="text-red-300/80 text-xs mt-1">Property gates are currently locked in the open position due to an account hold. Please check the Billing tab.</p>
+                       </div>
+                     </div>
+                     <button onClick={() => setActiveTab('billing')} className="hidden sm:block px-6 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg text-[10px] font-black uppercase tracking-widest transition-colors">
+                       View Billing
+                     </button>
+                   </div>
+                 ) : (
+                   <div className="bg-[#0a0a0a] border border-white/10 p-6 rounded-2xl shadow-lg flex items-center justify-between mb-8">
+                     <div className="flex items-center gap-5">
+                       <div className="relative flex h-4 w-4">
+                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                         <span className="relative inline-flex rounded-full h-4 w-4 bg-emerald-500"></span>
+                       </div>
+                       <div>
+                         <h3 className="text-lg font-black text-white tracking-wide">All Systems Operational</h3>
+                         <p className="text-zinc-400 text-xs mt-1">Cameras, gates, and access controls are online.</p>
+                       </div>
+                     </div>
+                     <div className="hidden sm:block">
+                       <span className="px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-lg text-[10px] font-black uppercase tracking-widest">
+                         Live Status
+                       </span>
                      </div>
                    </div>
+                 )}
 
-                   <div className="group relative bg-[#0a0a0a] border border-white/10 p-8 rounded-3xl overflow-hidden hover:border-indigo-500/50 transition-all duration-500 shadow-2xl flex flex-col">
-                     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 to-purple-600 opacity-50 group-hover:opacity-100 transition-opacity"></div>
-                     <div className="absolute -inset-24 bg-indigo-500/5 blur-3xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
-
-                     <div className="relative z-10 flex flex-col h-full">
-                       <div className="w-16 h-16 bg-black border border-white/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500 shadow-[0_0_15px_rgba(99,102,241,0.15)]">
-                         <span className="text-3xl">📷</span>
-                       </div>
-                       <h3 className="text-xl font-black text-white mb-2">Eagle Eye Networks</h3>
-                       <p className="text-sm text-zinc-400 leading-relaxed mb-8 flex-1">
-                         View live camera feeds and historical surveillance footage via the cloud VMS portal.
-                       </p>
-                       <a href={eagleEyeUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 w-full bg-indigo-600/10 hover:bg-indigo-600 text-indigo-400 hover:text-white border border-indigo-500/30 hover:border-indigo-500 text-xs font-black uppercase tracking-widest py-4 rounded-xl transition-all duration-300">
-                         Launch Video VMS <span className="text-lg">→</span>
-                       </a>
-                     </div>
-                   </div>
+                 {/* SYSTEM SUB-TABS */}
+                 <div className="flex gap-2 mb-8 border-b border-white/10 pb-4 overflow-x-auto">
+                    {[
+                      { id: 'overview', label: 'All Hardware' }, 
+                      { id: 'cameras', label: 'Cameras' }, 
+                      { id: 'doors', label: 'Doors' }, 
+                      { id: 'gates', label: 'Gates' }
+                    ].map(sub => (
+                       <button 
+                         key={sub.id}
+                         onClick={() => setSystemSubTab(sub.id as any)}
+                         className={`px-5 py-2 text-xs font-black uppercase tracking-widest rounded-lg transition-all whitespace-nowrap ${
+                           systemSubTab === sub.id ? 'bg-cyan-600/20 text-cyan-400 border border-cyan-500/30' : 'bg-transparent text-zinc-500 hover:text-white border border-transparent'
+                         }`}
+                       >
+                         {sub.label}
+                       </button>
+                    ))}
                  </div>
+
+                 {/* SUB-TAB CONTENT ROUTING */}
+                 {systemSubTab === 'overview' && (
+                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                     <div className="group relative bg-[#0a0a0a] border border-white/10 p-8 rounded-3xl overflow-hidden hover:border-cyan-500/50 transition-all duration-500 shadow-2xl flex flex-col">
+                       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-500 to-blue-600 opacity-50 group-hover:opacity-100 transition-opacity"></div>
+                       <div className="relative z-10 flex flex-col h-full">
+                         <div className="w-16 h-16 bg-black border border-white/10 rounded-2xl flex items-center justify-center mb-6 shadow-[0_0_15px_rgba(6,182,212,0.15)] group-hover:scale-110 transition-transform duration-500">
+                           <span className="text-3xl">🔑</span>
+                         </div>
+                         <h3 className="text-xl font-black text-white mb-2">Brivo Access</h3>
+                         <p className="text-sm text-zinc-400 leading-relaxed mb-8 flex-1">
+                           Manage credentials, remote doors, and facility access through the secure Brivo enterprise gateway.
+                         </p>
+                         <a href={brivoUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 w-full bg-cyan-600/10 hover:bg-cyan-600 text-cyan-400 hover:text-white border border-cyan-500/30 hover:border-cyan-500 text-xs font-black uppercase tracking-widest py-4 rounded-xl transition-all duration-300">
+                           Launch Brivo Gateway <span className="text-lg">→</span>
+                         </a>
+                       </div>
+                     </div>
+
+                     <div className="group relative bg-[#0a0a0a] border border-white/10 p-8 rounded-3xl overflow-hidden hover:border-indigo-500/50 transition-all duration-500 shadow-2xl flex flex-col">
+                       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 to-purple-600 opacity-50 group-hover:opacity-100 transition-opacity"></div>
+                       <div className="relative z-10 flex flex-col h-full">
+                         <div className="w-16 h-16 bg-black border border-white/10 rounded-2xl flex items-center justify-center mb-6 shadow-[0_0_15px_rgba(99,102,241,0.15)] group-hover:scale-110 transition-transform duration-500">
+                           <span className="text-3xl">📷</span>
+                         </div>
+                         <h3 className="text-xl font-black text-white mb-2">Eagle Eye Networks</h3>
+                         <p className="text-sm text-zinc-400 leading-relaxed mb-8 flex-1">
+                           View live camera feeds and historical surveillance footage via the cloud VMS portal.
+                         </p>
+                         <a href={eagleEyeUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 w-full bg-indigo-600/10 hover:bg-indigo-600 text-indigo-400 hover:text-white border border-indigo-500/30 hover:border-indigo-500 text-xs font-black uppercase tracking-widest py-4 rounded-xl transition-all duration-300">
+                           Launch Video VMS <span className="text-lg">→</span>
+                         </a>
+                       </div>
+                     </div>
+                   </div>
+                 )}
+
+                 {systemSubTab === 'cameras' && (
+                    <div className="bg-[#0a0a0a] border border-white/10 p-10 rounded-3xl flex flex-col items-center text-center animate-in fade-in slide-in-from-bottom-2 duration-300">
+                        <div className="w-20 h-20 bg-indigo-500/10 text-indigo-400 border border-indigo-500/30 rounded-2xl flex items-center justify-center text-4xl mb-6 shadow-[0_0_30px_rgba(99,102,241,0.15)]">📷</div>
+                        <h3 className="text-2xl font-black text-white mb-2">Camera Infrastructure</h3>
+                        <p className="text-zinc-400 text-sm max-w-md mb-8">Access all live video feeds, historical playback, and license plate recognition through your centralized VMS dashboard.</p>
+                        <a href={eagleEyeUrl} target="_blank" rel="noopener noreferrer" className="bg-indigo-600 hover:bg-indigo-500 text-white font-black uppercase tracking-widest px-10 py-4 rounded-xl transition-all shadow-[0_0_20px_rgba(99,102,241,0.3)] hover:shadow-[0_0_30px_rgba(99,102,241,0.5)]">
+                          Open Camera Portal
+                        </a>
+                    </div>
+                 )}
+
+                 {systemSubTab === 'doors' && (
+                    <div className="bg-[#0a0a0a] border border-white/10 p-10 rounded-3xl flex flex-col items-center text-center animate-in fade-in slide-in-from-bottom-2 duration-300">
+                        <div className="w-20 h-20 bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 rounded-2xl flex items-center justify-center text-4xl mb-6 shadow-[0_0_30px_rgba(6,182,212,0.15)]">🚪</div>
+                        <h3 className="text-2xl font-black text-white mb-2">Door & Credential Management</h3>
+                        <p className="text-zinc-400 text-sm max-w-md mb-8">Add new residents, revoke lost key fobs, and manage mobile credentials for all pedestrian doors.</p>
+                        <a href={brivoUrl} target="_blank" rel="noopener noreferrer" className="bg-cyan-600 hover:bg-cyan-500 text-white font-black uppercase tracking-widest px-10 py-4 rounded-xl transition-all shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:shadow-[0_0_30px_rgba(6,182,212,0.5)]">
+                          Manage Doors
+                        </a>
+                    </div>
+                 )}
+
+                 {systemSubTab === 'gates' && (
+                    <div className="bg-[#0a0a0a] border border-white/10 p-10 rounded-3xl flex flex-col items-center text-center animate-in fade-in slide-in-from-bottom-2 duration-300">
+                        <div className="w-20 h-20 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 rounded-2xl flex items-center justify-center text-4xl mb-6 shadow-[0_0_30px_rgba(16,185,129,0.15)]">🚧</div>
+                        <h3 className="text-2xl font-black text-white mb-2">Gate Infrastructure</h3>
+                        <p className="text-zinc-400 text-sm max-w-md mb-8">Manage resident directory dialers, vehicle gate clickers, and toll-tag transponders for automated vehicle access.</p>
+                        <a href={brivoUrl} target="_blank" rel="noopener noreferrer" className="bg-emerald-600 hover:bg-emerald-500 text-white font-black uppercase tracking-widest px-10 py-4 rounded-xl transition-all shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)]">
+                          Manage Gates
+                        </a>
+                    </div>
+                 )}
               </div>
             )}
 
-            {/* ✨ 2. NATIVE MAINTAINX API FORM ✨ */}
+            {/* 2. NATIVE MAINTAINX API FORM */}
             {activeTab === 'service' && (
               <div className="max-w-3xl animate-[fadeIn_0.3s_ease-out] flex flex-col">
                  <div className="mb-8">
@@ -518,25 +584,56 @@ export default function ClientPortal() {
           </div>
         </div>
 
-        {/* RIGHT SIDEBAR SOC FEED */}
+        {/* ✨ RIGHT SIDEBAR: ENTERPRISE CONCIERGE & ACTIVE JOBS ✨ */}
         <div className="lg:w-1/3 bg-gradient-to-b from-[#0a1128] to-[#040812] border-l border-white/5 flex flex-col h-[600px] lg:h-auto z-10 relative">
-          <div className="p-6 border-b border-blue-900/30 shrink-0 bg-[#0a1128] z-20">
-            <h3 className="text-sm font-black uppercase tracking-widest text-blue-100 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_10px_#34d399]"></span> Live SOC Feed
+          <div className="p-6 border-b border-cyan-900/30 shrink-0 bg-[#0a1128] z-20">
+            <h3 className="text-sm font-black uppercase tracking-widest text-cyan-100 flex items-center gap-2">
+              Enterprise Support
             </h3>
           </div>
-          <div className="flex-1 overflow-y-auto p-6 space-y-4 pb-20">
-             {alerts.length === 0 ? (
-                <div className="text-center text-blue-400/50 text-xs py-10 font-medium">Monitoring online. No recent alerts.</div>
-             ) : (
-                alerts.map(alert => (
-                  <div key={alert.id} className="p-4 rounded-xl border border-blue-500/20 bg-blue-900/30 text-blue-100 text-sm flex flex-col gap-2">
-                    <p className="font-bold text-[10px] text-blue-300 uppercase tracking-wider">{alert.sender} • {new Date(alert.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
-                    <p className="leading-relaxed">{alert.message}</p>
-                    {alert.image_url && <img src={alert.image_url} alt="Alert Evidence" className="mt-2 rounded-lg w-full h-auto object-contain max-h-48 border border-blue-500/40" />}
-                  </div>
-                ))
-             )}
+          <div className="flex-1 overflow-y-auto p-6 space-y-6 pb-20">
+
+             {/* Dedicated Concierge Card */}
+             <div className="bg-[#0b131e] border border-cyan-500/20 p-5 rounded-2xl shadow-lg">
+               <p className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest mb-4">Your Dedicated Account Manager</p>
+               <div className="flex items-center gap-4 mb-4">
+                 <div className="w-12 h-12 bg-cyan-900/50 rounded-full flex items-center justify-center border border-cyan-500/30 text-xl">
+                   👨‍💼
+                 </div>
+                 <div>
+                   <h4 className="text-white font-bold text-sm">GateGuard Dispatch</h4>
+                   <p className="text-zinc-400 text-xs">Available 24/7</p>
+                 </div>
+               </div>
+               <button className="w-full py-2 bg-cyan-600/20 hover:bg-cyan-600/40 border border-cyan-500/30 text-cyan-300 rounded-lg text-xs font-bold transition-colors">
+                 Schedule Review Call
+               </button>
+             </div>
+
+             {/* Open Jobs / Active Tickets (Placeholders for now!) */}
+             <div>
+                <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-4">Active Work Orders</p>
+                <div className="space-y-3">
+                   {/* Example Ticket 1 */}
+                   <div className="bg-black/40 border border-white/5 p-4 rounded-xl">
+                     <div className="flex justify-between items-start mb-2">
+                       <h5 className="text-sm font-bold text-white">Main Gate Latch Repair</h5>
+                       <span className="px-2 py-1 bg-amber-500/10 text-amber-400 text-[8px] font-black uppercase tracking-widest rounded border border-amber-500/20">In Progress</span>
+                     </div>
+                     <p className="text-xs text-zinc-500">Technician dispatched. Estimated completion: Today by 4:00 PM.</p>
+                   </div>
+                   
+                   {/* Example Ticket 2 */}
+                   <div className="bg-black/40 border border-white/5 p-4 rounded-xl">
+                     <div className="flex justify-between items-start mb-2">
+                       <h5 className="text-sm font-bold text-white">Camera #4 Offline</h5>
+                       <span className="px-2 py-1 bg-blue-500/10 text-blue-400 text-[8px] font-black uppercase tracking-widest rounded border border-blue-500/20">Reviewing</span>
+                     </div>
+                     <p className="text-xs text-zinc-500">SOC team is currently running remote diagnostics on the VMS switch.</p>
+                   </div>
+                </div>
+             </div>
+
           </div>
         </div>
       </div>

@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { createClient } from '@supabase/supabase-js';
 import { useUser } from '@clerk/nextjs';
 
-// ✨ NEW: Imported your Billing component
 import BillingTab from './BillingTab';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
@@ -24,12 +23,13 @@ const HOLIDAYS = [
 
 export default function ClientPortal() {
   const { user, isLoaded: isClerkLoaded } = useUser(); 
-  const [activeTab, setActiveTab] = useState<'systems' | 'billing' | 'rms' | 'support'>('systems');
+  const [activeTab, setActiveTab] = useState<'systems' | 'service' | 'rms' | 'billing'>('systems');
   const [properties, setProperties] = useState<any[]>([]);
   const [selectedPropertyId, setSelectedPropertyId] = useState<string | null>(null);
   const [alerts, setAlerts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  // --- RMS FORM STATE ---
   const defaultRmsData = {
     businessName: '', customerName: '', serviceAddress: '', cityStateZip: '', phone: '', email: '',
     billingName: '', billingAddress: '', billingCityStateZip: '', billingPhone: '', billingEmail: '',
@@ -54,6 +54,7 @@ export default function ClientPortal() {
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState('');
 
+  // --- EFFECTS ---
   useEffect(() => {
     if (!isClerkLoaded) return;
     if (!user || !user.id) { setIsLoading(false); return; }
@@ -64,7 +65,6 @@ export default function ClientPortal() {
         if (data && data.length > 0) { setProperties(data); setSelectedPropertyId(data[0].id); }
       } catch (err) { console.error(err); } finally { setIsLoading(false); }
     }
-    
     fetchProperties(user.id);
   }, [isClerkLoaded, user]);
 
@@ -86,6 +86,7 @@ export default function ClientPortal() {
     }
   }, [selectedPropertyId, properties]);
 
+  // --- RMS FORM HANDLERS ---
   const handleSaveRms = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true); setSaveMessage('');
@@ -116,8 +117,10 @@ export default function ClientPortal() {
   const propertyName = currentProperty?.name || "Unassigned Property";
   const managerName = user?.fullName || user?.firstName || "Property Manager"; 
   
+  // Dynamic URLs from Supabase
   const brivoUrl = currentProperty?.brivo_iframe_url || "https://account.brivo.com/global/index.html?useGlobalLogin=true";
   const eagleEyeUrl = currentProperty?.eagleeye_url || "https://camera.auth.eagleeyenetworks.com/login";
+  const maintainxUrl = currentProperty?.maintainx_url || ""; // <-- ✨ DYNAMIC MAINTAINX LINK ✨
 
   return (
     <main className="bg-[#050505] text-white min-h-screen font-sans selection:bg-cyan-500/30 flex flex-col overflow-hidden">
@@ -155,7 +158,13 @@ export default function ClientPortal() {
           <div className="absolute inset-0 z-0 opacity-[0.04] pointer-events-none" style={{ backgroundImage: "url('/hero-bg.jpg')", backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed' }}></div>
           
           <div className="flex overflow-x-auto border-b border-white/10 bg-[#0a0a0a] px-4 pt-4 shrink-0 z-10 relative">
-            {[{ id: 'systems', label: 'Systems Access', icon: '🔐' }, { id: 'rms', label: 'Service Order Form', icon: '📋' }, { id: 'billing', label: 'Billing & Invoices', icon: '💳' }].map((tab) => (
+            {/* 4 TABS NAVIGATION */}
+            {[
+              { id: 'systems', label: 'Systems', icon: '🔐' }, 
+              { id: 'service', label: 'Request Service', icon: '🛠️' }, 
+              { id: 'rms', label: 'Monitoring Setup', icon: '📋' }, 
+              { id: 'billing', label: 'Billing', icon: '💳' }
+            ].map((tab) => (
               <button key={tab.id} onClick={() => setActiveTab(tab.id as any)} className={`flex items-center gap-2 px-6 py-4 text-xs font-black uppercase tracking-widest transition-all border-b-2 whitespace-nowrap ${ activeTab === tab.id ? 'border-cyan-500 text-cyan-400 bg-cyan-500/10' : 'border-transparent text-zinc-500 hover:text-white' }`}>
                 <span>{tab.icon}</span> {tab.label}
               </button>
@@ -164,11 +173,29 @@ export default function ClientPortal() {
 
           <div className="flex-1 overflow-y-auto p-6 lg:p-10 z-10 relative">
             
-            {/* ✨ THE UPGRADED SYSTEMS DASHBOARD ✨ */}
+            {/* 1. SYSTEMS DASHBOARD */}
             {activeTab === 'systems' && (
               <div className="animate-[fadeIn_0.3s_ease-out] w-full max-w-4xl">
-                 <h2 className="text-2xl font-black mb-1">Security Systems</h2>
-                 <p className="text-xs text-zinc-500 font-medium mb-8">Access your dedicated enterprise security gateways for {propertyName}.</p>
+                 <h2 className="text-2xl font-black mb-1">Systems Overview</h2>
+                 <p className="text-xs text-zinc-500 font-medium mb-8">Live status and access gateways for {propertyName}.</p>
+
+                 <div className="bg-[#0a0a0a] border border-white/10 p-6 rounded-2xl shadow-lg flex items-center justify-between mb-8">
+                   <div className="flex items-center gap-5">
+                     <div className="relative flex h-4 w-4">
+                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                       <span className="relative inline-flex rounded-full h-4 w-4 bg-emerald-500"></span>
+                     </div>
+                     <div>
+                       <h3 className="text-lg font-black text-white tracking-wide">All Systems Operational</h3>
+                       <p className="text-zinc-400 text-xs mt-1">Cameras, gates, and access controls are online.</p>
+                     </div>
+                   </div>
+                   <div className="hidden sm:block">
+                     <span className="px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-lg text-[10px] font-black uppercase tracking-widest">
+                       Live Status
+                     </span>
+                   </div>
+                 </div>
 
                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                    <div className="group relative bg-[#0a0a0a] border border-white/10 p-8 rounded-3xl overflow-hidden hover:border-cyan-500/50 transition-all duration-500 shadow-2xl flex flex-col">
@@ -183,12 +210,7 @@ export default function ClientPortal() {
                        <p className="text-sm text-zinc-400 leading-relaxed mb-8 flex-1">
                          Manage credentials, remote doors, and facility access through the secure Brivo enterprise gateway.
                        </p>
-                       <a
-                         href={brivoUrl}
-                         target="_blank"
-                         rel="noopener noreferrer"
-                         className="flex items-center justify-center gap-2 w-full bg-cyan-600/10 hover:bg-cyan-600 text-cyan-400 hover:text-white border border-cyan-500/30 hover:border-cyan-500 text-xs font-black uppercase tracking-widest py-4 rounded-xl transition-all duration-300"
-                       >
+                       <a href={brivoUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 w-full bg-cyan-600/10 hover:bg-cyan-600 text-cyan-400 hover:text-white border border-cyan-500/30 hover:border-cyan-500 text-xs font-black uppercase tracking-widest py-4 rounded-xl transition-all duration-300">
                          Launch Brivo Gateway <span className="text-lg">→</span>
                        </a>
                      </div>
@@ -206,12 +228,7 @@ export default function ClientPortal() {
                        <p className="text-sm text-zinc-400 leading-relaxed mb-8 flex-1">
                          View live camera feeds and historical surveillance footage via the cloud VMS portal.
                        </p>
-                       <a
-                         href={eagleEyeUrl}
-                         target="_blank"
-                         rel="noopener noreferrer"
-                         className="flex items-center justify-center gap-2 w-full bg-indigo-600/10 hover:bg-indigo-600 text-indigo-400 hover:text-white border border-indigo-500/30 hover:border-indigo-500 text-xs font-black uppercase tracking-widest py-4 rounded-xl transition-all duration-300"
-                       >
+                       <a href={eagleEyeUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 w-full bg-indigo-600/10 hover:bg-indigo-600 text-indigo-400 hover:text-white border border-indigo-500/30 hover:border-indigo-500 text-xs font-black uppercase tracking-widest py-4 rounded-xl transition-all duration-300">
                          Launch Video VMS <span className="text-lg">→</span>
                        </a>
                      </div>
@@ -220,14 +237,39 @@ export default function ClientPortal() {
               </div>
             )}
 
-            {/* 📋 THE FULL RMS FORM */}
+            {/* 2. MAINTAINX IFRAME PORTAL */}
+            {activeTab === 'service' && (
+              <div className="h-full animate-[fadeIn_0.3s_ease-out] flex flex-col">
+                 <div className="mb-6">
+                   <h2 className="text-2xl font-black mb-1">Request Service</h2>
+                   <p className="text-xs text-zinc-500 font-medium">Submit and track maintenance requests via our dedicated support portal.</p>
+                 </div>
+                 
+                 <div className="flex-1 bg-white/5 border border-white/10 rounded-2xl overflow-hidden min-h-[600px] relative shadow-2xl flex items-center justify-center">
+                    {maintainxUrl ? (
+                      <iframe 
+                         src={maintainxUrl} 
+                         className="w-full h-full absolute top-0 left-0 border-0"
+                         title="MaintainX Service Portal"
+                      />
+                    ) : (
+                      <div className="text-center p-8 bg-black/40 rounded-xl border border-white/5">
+                        <span className="text-4xl mb-4 block">🚧</span>
+                        <h3 className="text-white font-bold mb-2">Portal Not Linked</h3>
+                        <p className="text-zinc-500 text-sm max-w-xs mx-auto">The MaintainX portal URL has not been added to Supabase for this property yet.</p>
+                      </div>
+                    )}
+                 </div>
+              </div>
+            )}
+
+            {/* 3. ORIGINAL RMS FORM */}
             {activeTab === 'rms' && (
               <div className="max-w-5xl pb-10">
-                 <h2 className="text-2xl font-black mb-1">Remote Monitoring Service Form</h2>
+                 <h2 className="text-2xl font-black mb-1">Monitoring Setup</h2>
                  <p className="text-xs text-zinc-500 font-medium mb-8">Complete all sections. Data syncs instantly to our live Dispatch Center.</p>
                  
                  <form onSubmit={handleSaveRms} className="space-y-8 mt-6 backdrop-blur-sm">
-                   {/* 1 & 2. CUSTOMER & BILLING */}
                    <div className="bg-black/60 p-6 rounded-2xl border border-white/10 space-y-4">
                      <h3 className="text-sm font-black uppercase tracking-widest text-cyan-500 border-b border-white/10 pb-2 mb-4">Customer & Billing Information</h3>
                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -245,7 +287,6 @@ export default function ClientPortal() {
                      </div>
                    </div>
 
-                   {/* 3 & 4. HOURS OF OPERATION */}
                    <div className="bg-black/60 p-6 rounded-2xl border border-white/10 space-y-4 overflow-x-auto">
                      <h3 className="text-sm font-black uppercase tracking-widest text-cyan-500 border-b border-white/10 pb-2 mb-4">Normal & Monitoring Hours</h3>
                      <div className="min-w-[850px]">
@@ -277,7 +318,6 @@ export default function ClientPortal() {
                      </div>
                    </div>
 
-                   {/* 5. SITE BACKGROUND & CAMERAS */}
                    <div className="bg-black/60 p-6 rounded-2xl border border-white/10 space-y-6">
                      <h3 className="text-sm font-black uppercase tracking-widest text-cyan-500 border-b border-white/10 pb-2">Site Background & Camera Layout</h3>
                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -303,7 +343,6 @@ export default function ClientPortal() {
                      <textarea name="activityDescription" value={rmsData.activityDescription} onChange={handleSimpleChange} placeholder="Describe typical activity across the site..." rows={3} className="w-full mt-2 bg-black border border-zinc-800 rounded-lg px-4 py-2 text-sm text-white focus:border-cyan-500 outline-none resize-none"></textarea>
                    </div>
 
-                   {/* 6 & 7. EMS AND STAFF */}
                    <div className="bg-black/60 p-6 rounded-2xl border border-white/10 space-y-4">
                      <h3 className="text-sm font-black uppercase tracking-widest text-cyan-500 border-b border-white/10 pb-2 mb-4">Additional Contacts: EMS & Staff</h3>
                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -314,7 +353,6 @@ export default function ClientPortal() {
                      </div>
                    </div>
 
-                   {/* 8, 9, 10. CONTACT TABLES */}
                    <div className="bg-black/60 p-6 rounded-2xl border border-white/10 space-y-6">
                      <h3 className="text-sm font-black uppercase tracking-widest text-cyan-500 border-b border-white/10 pb-2 mb-4">Personnel Directories</h3>
                      {[
@@ -341,7 +379,6 @@ export default function ClientPortal() {
                      ))}
                    </div>
 
-                   {/* 11. HOLIDAYS */}
                    <div className="bg-black/60 p-6 rounded-2xl border border-white/10 space-y-4">
                      <h3 className="text-sm font-black uppercase tracking-widest text-cyan-500 border-b border-white/10 pb-2 mb-4">Holidays & Special Hours</h3>
                      <div className="grid grid-cols-3 gap-4 mb-2">
@@ -358,7 +395,6 @@ export default function ClientPortal() {
                      ))}
                    </div>
 
-                   {/* 12. PROCEDURES */}
                    <div className="bg-black/60 p-6 rounded-2xl border border-white/10 space-y-6">
                      <div className="flex justify-between items-center border-b border-white/10 pb-2 mb-4">
                        <h3 className="text-sm font-black uppercase tracking-widest text-cyan-500">Custom Procedures</h3>
@@ -375,13 +411,11 @@ export default function ClientPortal() {
                      </div>
                    </div>
 
-                   {/* 13. SPECIAL NOTES */}
                    <div className="bg-black/60 p-6 rounded-2xl border border-white/10 space-y-4">
                      <h3 className="text-sm font-black uppercase tracking-widest text-cyan-500 border-b border-white/10 pb-2 mb-4">Special Notes</h3>
                      <textarea name="specialNotes" value={rmsData.specialNotes} onChange={handleSimpleChange} placeholder="Enter any overarching site rules or specific warnings here..." rows={6} className="w-full bg-black border border-zinc-800 rounded-lg px-4 py-2 text-sm text-white focus:border-cyan-500 outline-none resize-none"></textarea>
                    </div>
 
-                   {/* SAVE BUTTON */}
                    <div className="flex items-center justify-between sticky bottom-0 bg-[#050505]/90 backdrop-blur-md py-4 border-t border-white/10 z-10">
                      <span className="text-xs text-cyan-500 font-bold">{saveMessage}</span>
                      <button type="submit" disabled={isSaving} className="bg-cyan-600 text-white text-[10px] font-black uppercase tracking-widest px-8 py-3 rounded-lg shadow-[0_0_15px_rgba(6,182,212,0.3)] hover:bg-cyan-500 transition-colors">
@@ -392,15 +426,14 @@ export default function ClientPortal() {
               </div>
             )}
             
-            {/* ✨ NEW: BILLING DASHBOARD ✨ */}
+            {/* 4. BILLING DASHBOARD */}
             {activeTab === 'billing' && (
               <div className="h-full animate-[fadeIn_0.3s_ease-out]">
                  <h2 className="text-2xl font-black mb-4">Financial Overview: {propertyName}</h2>
-                 
-                 {/* This connects your Supabase Data to Make.com! */}
                  <BillingTab qboCustomerId={currentProperty?.qbo_customer_id} />
               </div>
             )}
+
           </div>
         </div>
 

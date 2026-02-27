@@ -59,6 +59,44 @@ export default function ClientPortal() {
     customProcedures: [{ title: 'Procedure #1', details: '' }, { title: 'Procedure #2', details: '' }],
     specialNotes: ''
   };
+  // --- CUSTOM REQUEST FORM STATE ---
+  const [isContactOpen, setIsContactOpen] = useState(false);
+  const [contactForm, setContactForm] = useState({ department: 'Operations', message: '' });
+  const [contactStatus, setContactStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+
+  const handleContactSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setContactStatus('sending');
+    try {
+      // ✨ We will point this to a Make.com webhook in the next step!
+      const makeWebhookUrl = "https://hook.us2.make.com/YOUR_WEBHOOK_URL_HERE"; 
+      
+      const res = await fetch(makeWebhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          property: propertyName,
+          manager: managerName,
+          department: contactForm.department,
+          message: contactForm.message,
+          timestamp: new Date().toISOString()
+        })
+      });
+
+      if (!res.ok) throw new Error('Failed to send');
+      
+      setContactStatus('success');
+      setTimeout(() => {
+        setIsContactOpen(false);
+        setContactStatus('idle');
+        setContactForm({ department: 'Operations', message: '' });
+      }, 3000);
+
+    } catch (err) {
+      console.error(err);
+      setContactStatus('error');
+    }
+  };
 
   const [rmsData, setRmsData] = useState(defaultRmsData);
   const [isSaving, setIsSaving] = useState(false);

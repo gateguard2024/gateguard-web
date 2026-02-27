@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 
 export async function GET(req: Request) {
-  // Grab the locationId from the URL (e.g., ?locationId=852)
   const { searchParams } = new URL(req.url);
   const locationId = searchParams.get('locationId');
 
@@ -15,7 +14,6 @@ export async function GET(req: Request) {
   }
 
   try {
-    // Ping the official MaintainX API to get Work Orders for this specific property
     const response = await fetch(`https://api.getmaintainx.com/v1/workorders?locationId=${locationId}`, {
       method: 'GET',
       headers: {
@@ -25,12 +23,14 @@ export async function GET(req: Request) {
     });
 
     if (!response.ok) {
-      throw new Error("Failed to fetch from MaintainX");
+      // THIS IS THE UPGRADE: We are forcing the server to read the exact error message
+      const errorText = await response.text();
+      console.error(`🔥 MAINTAINX REJECTION: Status ${response.status} | Details:`, errorText);
+      throw new Error(`MaintainX rejected request: Status ${response.status}`);
     }
 
     const data = await response.json();
     
-    // Filter out jobs that are already "DONE" so we only show active ones
     const activeJobs = (data.workOrders || []).filter((job: any) => job.status !== 'DONE' && job.status !== 'COMPLETED');
 
     return NextResponse.json({ activeJobs });

@@ -266,19 +266,19 @@ const handleFormalizeRequest = async () => {
   return (
     <main className="relative text-white min-h-screen font-sans selection:bg-cyan-500/30 overflow-y-auto flex flex-col scroll-smooth">
       
-      {/* 1. ENTERPRISE BACKGROUND */}
-      <div className="fixed inset-0 z-[-2] bg-[#0A0A0C]"></div>
+{/* 1. ENTERPRISE BACKGROUND */}
+      <div className="fixed inset-0 z-[-2] bg-[#12141A]"></div>
       <div className="fixed inset-0 z-[-1] bg-[radial-gradient(#ffffff0a_1px,transparent_1px)] [background-size:24px_24px] opacity-70"></div>
-      <div className="fixed top-[-20%] left-[-10%] w-[50%] h-[50%] bg-cyan-900/10 blur-[150px] rounded-full z-[-1] pointer-events-none"></div>
-      <div className="fixed bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-blue-900/10 blur-[150px] rounded-full z-[-1] pointer-events-none"></div>
+      <div className="fixed top-[-20%] left-[-10%] w-[50%] h-[50%] bg-cyan-900/15 blur-[150px] rounded-full z-[-1] pointer-events-none"></div>
+      <div className="fixed bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-blue-900/15 blur-[150px] rounded-full z-[-1] pointer-events-none"></div>
 
       {/* Header */}
-      <div className="p-6 border-b border-white/5 flex justify-between items-center bg-[#0A0A0C]/80 backdrop-blur-2xl sticky top-0 z-50">
+      <div className="p-6 border-b border-white/5 flex justify-between items-center bg-[#12141A]/90 backdrop-blur-2xl sticky top-0 z-50">
         <div className="flex items-center gap-6">
           <Image src="/logo.png" alt="Gate Guard" width={56} height={56} className="object-contain" />
           <span className="text-zinc-600 text-xl font-light">✕</span>
           <div className="bg-white/5 p-2 rounded-xl border border-white/10">
-            <Image src="/Columbia_logo.png" alt="Radco Properties" width={56} height={56} className="object-contain opacity-90" />
+            <Image src="/Columbia_logo.png" alt="Columbia Property Trust" width={56} height={56} className="object-contain opacity-90" />
           </div>
           <div className="ml-4 border-l border-white/10 pl-6 hidden sm:block">
             <span className="text-xl font-black tracking-tighter uppercase italic block leading-none text-white">Gate Guard</span>
@@ -697,7 +697,7 @@ const handleFormalizeRequest = async () => {
 
         {/* RIGHT 1/3: PORTFOLIO QUOTE & FORMALIZATION */}
         <div className="lg:w-1/3 border-l border-white/5 relative bg-[#0A0A0C]/50 backdrop-blur-3xl shadow-2xl">
-          <div className="sticky top-[160px] max-h-[calc(100vh-180px)] overflow-y-auto [&::-webkit-scrollbar]:hidden p-6 lg:p-10 w-full">
+            <div className="sticky top-[100px] max-h-[calc(100vh-120px)] overflow-y-auto [&::-webkit-scrollbar]:hidden p-6 w-full">
             
             <div className="mb-8 flex items-start justify-between">
               <div>

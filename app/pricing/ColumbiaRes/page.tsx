@@ -242,7 +242,7 @@ export default function RadcoPortfolioCalculator() {
           <Image src="/logo.png" alt="Gate Guard" width={56} height={56} className="object-contain" />
           <span className="text-zinc-600 text-xl font-light">✕</span>
           <div className="bg-white/5 p-2 rounded-xl border border-white/10">
-            <Image src="/radco_logo.png" alt="Radco Properties" width={56} height={56} className="object-contain opacity-90" />
+            <Image src="/Columbia_logo.png" alt="Columbia Properties" width={56} height={56} className="object-contain opacity-90" />
           </div>
           <div className="ml-4 border-l border-white/10 pl-6 hidden sm:block">
             <span className="text-xl font-black tracking-tighter uppercase italic block leading-none text-white">Gate Guard</span>

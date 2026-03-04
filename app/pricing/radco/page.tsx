@@ -53,6 +53,7 @@ export default function RadcoPortfolioCalculator() {
 
   const hasUnnamedSites = sites.some(site => site.name.trim() === '');
 
+  // --- AGGREGATE MATH & TIERED DISCOUNT LOGIC ---
   const MINIMUM_PRICE_PER_SHIFT = 1000;
   
   let totalHardwareFee = 0;
@@ -78,12 +79,51 @@ export default function RadcoPortfolioCalculator() {
     legacyTotal += (site.vehicleGates * 400) + (site.pedGates * 150) + (site.cameras * 150) + (site.conciergeShifts > 0 ? 7200 * site.conciergeShifts : 2500);
   });
 
+  // ENTERPRISE TIER GAMIFICATION MATH
   const totalPortfolioSites = existingSites + sites.length;
   let volumeDiscountPercent = 0;
+  let currentTierName = "Standard Pricing";
+  let nextTierSites: number | null = 5;
+  let nextTierPercent = 0.05;
+  let nextTierName = "Portfolio Tier";
+  let progressBase = 0; 
   
-  if (totalPortfolioSites >= 21) volumeDiscountPercent = 0.15;
-  else if (totalPortfolioSites >= 11) volumeDiscountPercent = 0.10;
-  else if (totalPortfolioSites >= 6) volumeDiscountPercent = 0.05;
+  if (totalPortfolioSites >= 40) {
+    volumeDiscountPercent = 0.20;
+    currentTierName = "Strategic Partner";
+    nextTierSites = null;
+  } else if (totalPortfolioSites >= 20) {
+    volumeDiscountPercent = 0.15;
+    currentTierName = "Enterprise Tier";
+    nextTierSites = 40;
+    nextTierPercent = 0.20;
+    nextTierName = "Strategic Partner";
+    progressBase = 20;
+  } else if (totalPortfolioSites >= 10) {
+    volumeDiscountPercent = 0.10;
+    currentTierName = "Regional Tier";
+    nextTierSites = 20;
+    nextTierPercent = 0.15;
+    nextTierName = "Enterprise Tier";
+    progressBase = 10;
+  } else if (totalPortfolioSites >= 5) {
+    volumeDiscountPercent = 0.05;
+    currentTierName = "Portfolio Tier";
+    nextTierSites = 10;
+    nextTierPercent = 0.10;
+    nextTierName = "Regional Tier";
+    progressBase = 5;
+  } else {
+    volumeDiscountPercent = 0;
+    currentTierName = "Standard Pricing";
+    nextTierSites = 5;
+    nextTierPercent = 0.05;
+    nextTierName = "Portfolio Tier";
+    progressBase = 0;
+  }
+
+  const sitesNeeded = nextTierSites ? nextTierSites - totalPortfolioSites : 0;
+  const progressPercent = nextTierSites ? ((totalPortfolioSites - progressBase) / (nextTierSites - progressBase)) * 100 : 100;
 
   const subtotalNewSites = totalHardwareFee + totalCameraFee + totalConciergeFee;
   const monthlyDiscountAmount = subtotalNewSites * volumeDiscountPercent;
@@ -162,7 +202,6 @@ export default function RadcoPortfolioCalculator() {
             <div id="portfolio" className="scroll-mt-40">
               <h2 className="text-3xl font-black mb-8 tracking-tight">Portfolio <span className="text-cyan-400">Builder</span></h2>
               
-              {/* FIXED ALIGNMENT: items-stretch to force uniform height */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 items-stretch">
                 <div className="bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl p-6 flex flex-col justify-between h-full shadow-2xl">
                   <label className="text-zinc-400 font-bold text-[10px] tracking-widest uppercase block mb-4">Active Sites on Platform</label>
@@ -179,7 +218,7 @@ export default function RadcoPortfolioCalculator() {
                      <span className="text-4xl font-black text-white">{volumeDiscountPercent * 100}%</span>
                      <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">OFF</span>
                   </div>
-                  <p className="text-[9px] text-zinc-500">Based on {totalPortfolioSites} total sites.</p>
+                  <p className="text-[9px] text-zinc-400 font-bold uppercase tracking-widest bg-black/30 px-3 py-1 rounded-full border border-cyan-500/20">{currentTierName}</p>
                 </div>
 
                 <div className="bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl p-6 flex flex-col justify-between items-center text-center h-full shadow-2xl">
@@ -201,7 +240,6 @@ export default function RadcoPortfolioCalculator() {
                   const isUnnamed = site.name.trim() === '';
                   
                   return (
-                    // FIXED ERROR STATE: Softer red borders, not glaring
                     <div key={site.id} className={`bg-white/[0.02] backdrop-blur-xl border rounded-3xl p-8 relative group transition-all shadow-2xl ${isUnnamed ? 'border-red-900/30' : 'border-white/10 hover:border-cyan-500/30 hover:bg-white/[0.04]'}`}>
                       
                       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center border-b border-white/5 pb-4 mb-8 gap-4">
@@ -560,9 +598,8 @@ export default function RadcoPortfolioCalculator() {
           </div>
         </div>
 
-        {/* RIGHT 1/3: PORTFOLIO QUOTE & FORMALIZATION (FIXED STICKY BEHAVIOR) */}
+        {/* RIGHT 1/3: PORTFOLIO QUOTE & FORMALIZATION */}
         <div className="lg:w-1/3 border-l border-white/5 relative bg-[#0A0A0C]/50 backdrop-blur-3xl shadow-2xl">
-          {/* Internal Sticky Container with explicit offset and max-height for scrolling safety */}
           <div className="sticky top-[160px] max-h-[calc(100vh-180px)] overflow-y-auto [&::-webkit-scrollbar]:hidden p-6 lg:p-10 w-full">
             
             <div className="mb-8 flex items-start justify-between">
@@ -586,7 +623,6 @@ export default function RadcoPortfolioCalculator() {
                     <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Base Fee</span>
                   </div>
 
-                  {/* FIXED TYPOGRAPHY PADDING */}
                   <div className="space-y-5 mb-6">
                     <div className="relative group flex justify-between items-start cursor-default py-1">
                       <p className="text-sm font-bold text-white/90 hover:text-cyan-400 transition-colors flex items-center pr-2">
@@ -624,9 +660,40 @@ export default function RadcoPortfolioCalculator() {
                     )}
                   </div>
 
+                  {/* ------------------------------------------ */}
+                  {/* NEW GAMIFIED DISCOUNT PROGRESS BAR UI      */}
+                  {/* ------------------------------------------ */}
+                  {nextTierSites !== null ? (
+                    <div className="bg-cyan-900/10 border border-cyan-500/20 rounded-xl p-4 mb-6 shadow-inner relative overflow-hidden">
+                      <div className="absolute left-0 top-0 h-full w-1 bg-cyan-500 shadow-[0_0_10px_#22d3ee]"></div>
+                      <div className="flex justify-between items-end mb-2">
+                        <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
+                          Unlock <span className="text-cyan-400">{nextTierPercent * 100}% {nextTierName}</span>
+                        </p>
+                        <span className="text-[10px] text-zinc-500 font-mono">{totalPortfolioSites} / {nextTierSites} Sites</span>
+                      </div>
+                      
+                      <div className="w-full h-1.5 bg-black/50 rounded-full overflow-hidden mb-2 border border-white/5">
+                        <div className="h-full bg-gradient-to-r from-cyan-600 to-cyan-400 rounded-full transition-all duration-500" style={{ width: `${progressPercent}%` }}></div>
+                      </div>
+                      
+                      <p className="text-[9px] text-zinc-500">
+                        Add <strong className="text-white">{sitesNeeded} more site{sitesNeeded > 1 ? 's' : ''}</strong> to unlock this tier.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="bg-cyan-900/10 border border-cyan-500/20 rounded-xl p-4 mb-6 shadow-inner flex items-center justify-between">
+                       <div>
+                         <span className="text-[10px] font-bold uppercase tracking-widest text-cyan-400 block mb-1">Max Discount Unlocked</span>
+                         <span className="text-xs font-black text-white">{currentTierName} ({volumeDiscountPercent * 100}%)</span>
+                       </div>
+                       <div className="w-8 h-8 rounded-full bg-cyan-500/20 flex items-center justify-center text-cyan-400">✓</div>
+                    </div>
+                  )}
+
                   {volumeDiscountPercent > 0 && (
-                    <div className="bg-cyan-500/10 rounded-xl p-3 border border-cyan-500/20 flex justify-between items-center mb-6 shadow-inner">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-cyan-400">Volume Discount ({volumeDiscountPercent * 100}%)</span>
+                    <div className="flex justify-between items-center mb-6 px-2">
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-cyan-400">Current Discount ({volumeDiscountPercent * 100}%)</span>
                       <span className="text-sm font-black text-cyan-400 font-mono">- ${monthlyDiscountAmount.toLocaleString()}</span>
                     </div>
                   )}
@@ -641,27 +708,21 @@ export default function RadcoPortfolioCalculator() {
                     <span className="text-[10px] font-bold text-zinc-400 font-mono">${totalSetupFee.toLocaleString()}</span>
                   </div>
 
-                  {/* FIXED CHART ALIGNMENT & CONTRAST */}
+                  {/* ROI DATA CHART */}
                   <div className="border-t border-white/5 pt-6 mt-2">
                      <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 mb-4 text-center">Estimated OpEx Comparison</p>
                      <div className="flex items-end justify-center gap-6 h-32 px-4">
-                        
-                        {/* Legacy Bar */}
                         <div className="flex-1 flex flex-col items-center justify-end gap-1.5 h-full group">
-                          {/* Text moved ABOVE the bar for perfect contrast */}
                           <span className="text-[9px] text-zinc-400 font-bold font-mono transition-colors group-hover:text-zinc-200">~${legacyTotal.toLocaleString()}</span>
                           <div className="w-full bg-red-900/30 border border-red-500/20 rounded-t-md transition-all group-hover:bg-red-900/50" style={{height: `${legacyBarHeight}%`}}></div>
                           <span className="text-[8px] font-bold text-zinc-500 uppercase tracking-widest mt-2">Legacy</span>
                         </div>
                         
-                        {/* New Gate Guard Bar */}
                         <div className="flex-1 flex flex-col items-center justify-end gap-1.5 h-full">
-                          {/* Text moved ABOVE the bar for perfect contrast */}
                           <span className="text-[11px] text-cyan-400 font-black font-mono">${finalMonthlyNewSites.toLocaleString()}</span>
                           <div className="w-full bg-cyan-500 rounded-t-md shadow-[0_0_15px_rgba(6,182,212,0.4)]" style={{height: `${newOpExBarHeight}%`}}></div>
                           <span className="text-[8px] font-bold text-cyan-400 uppercase tracking-widest mt-2">Gate Guard</span>
                         </div>
-                        
                      </div>
                   </div>
 

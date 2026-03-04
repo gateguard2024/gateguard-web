@@ -714,7 +714,7 @@ const handleFormalizeRequest = async () => {
                 <p className="text-zinc-500 text-[11px] font-light leading-relaxed">Quote for adding {sites.length} new site(s) to the master agreement.</p>
               </div>
               <div className="bg-white/5 p-2 rounded-xl border border-white/10 shrink-0 ml-4 shadow-xl hidden lg:block">
-                <Image src="/radco_logo.png" alt="Radco" width={40} height={40} className="object-contain opacity-90" />
+                <Image src="/Columbia_logo.png" alt="Radco" width={40} height={40} className="object-contain opacity-90" />
               </div>
             </div>
 

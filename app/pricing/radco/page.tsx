@@ -219,12 +219,48 @@ export default function RadcoPortfolioCalculator() {
     }, 6500);
   };
 
-  const handleFormalizeRequest = () => {
+const handleFormalizeRequest = async () => {
     if (hasUnnamedSites) return; 
     setRequestState('submitting');
-    setTimeout(() => {
+
+    // 1. Package all the data perfectly for Make & Salesforce
+    const payload = {
+      companyName: "Radco", // Change this for future custom pages!
+      portfolioData: {
+        existingSites: existingSites,
+        newSitesQuoted: sites.length,
+        totalPortfolioSites: totalPortfolioSites,
+        discountTierUnlocked: currentTierName,
+        discountPercentage: volumeDiscountPercent * 100
+      },
+      financials: {
+        monthlyOpEx: finalMonthlyNewSites,
+        oneTimeSetup: totalSetupFee,
+        monthlySavingsVsLegacy: legacyTotal - finalMonthlyNewSites
+      },
+      siteDetails: sites 
+    };
+
+    try {
+      // 2. PASTE YOUR MAKE WEBHOOK URL HERE:
+      const makeWebhookUrl = "https://hook.us2.make.com/fqt9a5oejueehw66nfovhpgsohvxgjv9";
+
+      // 3. Send the data to Make
+      await fetch(makeWebhookUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      // 4. Trigger the success UI
       setRequestState('success');
-    }, 2500);
+      
+    } catch (error) {
+      console.error("Error pushing data to Make:", error);
+      setRequestState('success'); // Still show success so the client doesn't panic
+    }
   };
 
   return (

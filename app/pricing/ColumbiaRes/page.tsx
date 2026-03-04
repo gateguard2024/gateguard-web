@@ -35,7 +35,9 @@ export default function RadcoPortfolioCalculator() {
   ];
 
   const isGateOpen = brivoStatus === 'granted' || visitorView === 'granted';
-  const clientName = "Columbia Property Trust";
+  
+  // Client Name Variable for the PDF
+  const clientName = "Columbia Properties";
 
   // --- SAVE & SHARE LOGIC (URL ENCODING) ---
   useEffect(() => {
@@ -69,6 +71,8 @@ export default function RadcoPortfolioCalculator() {
     window.history.replaceState(null, '', window.location.pathname);
   };
 
+
+  // --- MULTI-SITE CRUD HANDLERS ---
   const handleAddSite = () => {
     const newId = Date.now().toString();
     setSites([...sites, { 
@@ -86,12 +90,22 @@ export default function RadcoPortfolioCalculator() {
   const handleUpdateSite = (id: string, field: keyof SiteConfig, value: string | number) => {
     setSites(sites.map(site => {
       if (site.id !== id) return site;
+      
       const updatedSite = { ...site, [field]: value };
       
-      if (field === 'vehicleGates' && updatedSite.vehicleGatesRepair > updatedSite.vehicleGates) updatedSite.vehicleGatesRepair = updatedSite.vehicleGates;
-      if (field === 'vehicleGatesRepair' && updatedSite.vehicleGatesRepair > updatedSite.vehicleGates) updatedSite.vehicleGatesRepair = updatedSite.vehicleGates;
-      if (field === 'pedGates' && updatedSite.pedGatesRepair > updatedSite.pedGates) updatedSite.pedGatesRepair = updatedSite.pedGates;
-      if (field === 'pedGatesRepair' && updatedSite.pedGatesRepair > updatedSite.pedGates) updatedSite.pedGatesRepair = updatedSite.pedGates;
+      // Safety checks: You can't have more "Repair Needed" than "Total Needed"
+      if (field === 'vehicleGates' && updatedSite.vehicleGatesRepair > updatedSite.vehicleGates) {
+        updatedSite.vehicleGatesRepair = updatedSite.vehicleGates;
+      }
+      if (field === 'vehicleGatesRepair' && updatedSite.vehicleGatesRepair > updatedSite.vehicleGates) {
+         updatedSite.vehicleGatesRepair = updatedSite.vehicleGates;
+      }
+      if (field === 'pedGates' && updatedSite.pedGatesRepair > updatedSite.pedGates) {
+        updatedSite.pedGatesRepair = updatedSite.pedGates;
+      }
+      if (field === 'pedGatesRepair' && updatedSite.pedGatesRepair > updatedSite.pedGates) {
+         updatedSite.pedGatesRepair = updatedSite.pedGates;
+      }
 
       return updatedSite;
     }));
@@ -101,6 +115,7 @@ export default function RadcoPortfolioCalculator() {
 
   // --- AGGREGATE MATH & TIERED DISCOUNT LOGIC ---
   const MINIMUM_PRICE_PER_SHIFT = 1000;
+  
   let totalHardwareFee = 0;
   let totalCameraFee = 0;
   let totalConciergeFee = 0;
@@ -110,13 +125,18 @@ export default function RadcoPortfolioCalculator() {
 
   sites.forEach(site => {
     totalUnits += site.units;
+    
+    // Working vs Broken Math
     const vWorking = site.vehicleGates - site.vehicleGatesRepair;
     const vRepair = site.vehicleGatesRepair;
     const pWorking = site.pedGates - site.pedGatesRepair;
     const pRepair = site.pedGatesRepair;
 
+    // Monthly Base Hardware + $250 surcharge for each item needing repair
     totalHardwareFee += (site.vehicleGates * 150) + (site.pedGates * 125) + ((vRepair + pRepair) * 250);
     totalCameraFee += (site.cameras * 85);
+    
+    // Setup Fees: $500 for working, $6750 for non-working
     totalSetupFee += ((vWorking + pWorking) * 500) + ((vRepair + pRepair) * 6750);
 
     if (site.conciergeShifts > 0) {
@@ -125,9 +145,11 @@ export default function RadcoPortfolioCalculator() {
         (site.units * 3) + (site.units * 1 * (site.conciergeShifts - 1))
       );
     }
+
     legacyTotal += (site.vehicleGates * 400) + (site.pedGates * 150) + (site.cameras * 150) + (site.conciergeShifts > 0 ? 7200 * site.conciergeShifts : 2500);
   });
 
+  // ENTERPRISE TIER GAMIFICATION MATH
   const totalPortfolioSites = existingSites + sites.length;
   let volumeDiscountPercent = 0;
   let currentTierName = "Standard Pricing";
@@ -137,19 +159,42 @@ export default function RadcoPortfolioCalculator() {
   let progressBase = 0; 
   
   if (totalPortfolioSites >= 40) {
-    volumeDiscountPercent = 0.20; currentTierName = "Strategic Partner"; nextTierSites = null;
+    volumeDiscountPercent = 0.30;
+    currentTierName = "Strategic Partner";
+    nextTierSites = null;
   } else if (totalPortfolioSites >= 20) {
-    volumeDiscountPercent = 0.15; currentTierName = "Enterprise Tier"; nextTierSites = 40; nextTierPercent = 0.20; nextTierName = "Strategic Partner"; progressBase = 20;
+    volumeDiscountPercent = 0.20;
+    currentTierName = "Enterprise Tier";
+    nextTierSites = 40;
+    nextTierPercent = 0.20;
+    nextTierName = "Strategic Partner";
+    progressBase = 20;
   } else if (totalPortfolioSites >= 10) {
-    volumeDiscountPercent = 0.10; currentTierName = "Regional Tier"; nextTierSites = 20; nextTierPercent = 0.15; nextTierName = "Enterprise Tier"; progressBase = 10;
+    volumeDiscountPercent = 0.15;
+    currentTierName = "Regional Tier";
+    nextTierSites = 20;
+    nextTierPercent = 0.15;
+    nextTierName = "Enterprise Tier";
+    progressBase = 10;
   } else if (totalPortfolioSites >= 5) {
-    volumeDiscountPercent = 0.05; currentTierName = "Portfolio Tier"; nextTierSites = 10; nextTierPercent = 0.10; nextTierName = "Regional Tier"; progressBase = 5;
+    volumeDiscountPercent = 0.1;
+    currentTierName = "Portfolio Tier";
+    nextTierSites = 10;
+    nextTierPercent = 0.10;
+    nextTierName = "Regional Tier";
+    progressBase = 5;
   } else {
-    volumeDiscountPercent = 0; currentTierName = "Standard Pricing"; nextTierSites = 5; nextTierPercent = 0.05; nextTierName = "Portfolio Tier"; progressBase = 0;
+    volumeDiscountPercent = 0;
+    currentTierName = "Standard Pricing";
+    nextTierSites = 5;
+    nextTierPercent = 0.05;
+    nextTierName = "Portfolio Tier";
+    progressBase = 0;
   }
 
   const sitesNeeded = nextTierSites ? nextTierSites - totalPortfolioSites : 0;
   const progressPercent = nextTierSites ? ((totalPortfolioSites - progressBase) / (nextTierSites - progressBase)) * 100 : 100;
+
   const subtotalNewSites = totalHardwareFee + totalCameraFee + totalConciergeFee;
   const monthlyDiscountAmount = subtotalNewSites * volumeDiscountPercent;
   const finalMonthlyNewSites = subtotalNewSites - monthlyDiscountAmount;
@@ -159,23 +204,65 @@ export default function RadcoPortfolioCalculator() {
   const legacyBarHeight = maxChartValue > 0 ? (legacyTotal / maxChartValue) * 100 : 0;
   const newOpExBarHeight = maxChartValue > 0 ? (finalMonthlyNewSites / maxChartValue) * 100 : 0;
 
+  const handleBrivoTap = () => {
+    if (brivoStatus !== 'idle') return;
+    setBrivoStatus('loading');
+    setTimeout(() => setBrivoStatus('granted'), 1200);
+    setTimeout(() => setBrivoStatus('idle'), 5500); 
+  };
+
+  const handleResidentCall = (name: string) => {
+    setCallingName(name);
+    setVisitorView('calling');
+    setTimeout(() => setVisitorView('granted'), 2500);
+    setTimeout(() => {
+      setVisitorView('home');
+      setCallingName('');
+      setSearchQuery('');
+    }, 6500);
+  };
+
   const handleFormalizeRequest = async () => {
     if (hasUnnamedSites) return; 
     setRequestState('submitting');
+
+    // 1. Package all the data perfectly for Make & Salesforce
     const payload = {
-      companyName: clientName,
-      portfolioData: { existingSites, newSitesQuoted: sites.length, totalPortfolioSites, discountTierUnlocked: currentTierName, discountPercentage: volumeDiscountPercent * 100 },
-      financials: { monthlyOpEx: finalMonthlyNewSites, oneTimeSetup: totalSetupFee, monthlySavingsVsLegacy: legacyTotal - finalMonthlyNewSites },
+      companyName: "Columbia Residential", // Change this for future custom pages!
+      portfolioData: {
+        existingSites: existingSites,
+        newSitesQuoted: sites.length,
+        totalPortfolioSites: totalPortfolioSites,
+        discountTierUnlocked: currentTierName,
+        discountPercentage: volumeDiscountPercent * 100
+      },
+      financials: {
+        monthlyOpEx: finalMonthlyNewSites,
+        oneTimeSetup: totalSetupFee,
+        monthlySavingsVsLegacy: legacyTotal - finalMonthlyNewSites
+      },
       siteDetails: sites 
     };
+
     try {
-      // REPLACE WITH YOUR MAKE.COM WEBHOOK URL
-      const makeWebhookUrl = "https://hook.us1.make.com/YOUR_UNIQUE_ID_HERE";
-      await fetch(makeWebhookUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      // 2. PASTE YOUR MAKE WEBHOOK URL HERE:
+      const makeWebhookUrl = "https://hook.us2.make.com/fqt9a5oejueehw66nfovhpgsohvxgjv9";
+
+      // 3. Send the data to Make
+      await fetch(makeWebhookUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      // 4. Trigger the success UI
       setRequestState('success');
+      
     } catch (error) {
       console.error("Error pushing data to Make:", error);
-      setRequestState('success'); 
+      setRequestState('success'); // Still show success so the client doesn't panic
     }
   };
 
@@ -279,25 +366,24 @@ export default function RadcoPortfolioCalculator() {
         </div>
       </div>
 
-
       {/* ========================================================= */}
       {/* 2. WEB APP VIEW (HIDDEN ON PRINT EXPORT)                  */}
       {/* ========================================================= */}
       <main className="relative text-white min-h-screen font-sans selection:bg-cyan-500/30 overflow-y-auto flex flex-col scroll-smooth print:hidden">
         
-        {/* ENTERPRISE BACKGROUND */}
-        <div className="fixed inset-0 z-[-2] bg-[#12141A]"></div>
+        {/* 1. ENTERPRISE BACKGROUND */}
+        <div className="fixed inset-0 z-[-2] bg-[#0A0A0C]"></div>
         <div className="fixed inset-0 z-[-1] bg-[radial-gradient(#ffffff0a_1px,transparent_1px)] [background-size:24px_24px] opacity-70"></div>
-        <div className="fixed top-[-20%] left-[-10%] w-[50%] h-[50%] bg-cyan-900/15 blur-[150px] rounded-full z-[-1] pointer-events-none"></div>
-        <div className="fixed bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-blue-900/15 blur-[150px] rounded-full z-[-1] pointer-events-none"></div>
+        <div className="fixed top-[-20%] left-[-10%] w-[50%] h-[50%] bg-cyan-900/10 blur-[150px] rounded-full z-[-1] pointer-events-none"></div>
+        <div className="fixed bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-blue-900/10 blur-[150px] rounded-full z-[-1] pointer-events-none"></div>
 
         {/* Header */}
-        <div className="p-6 border-b border-white/5 flex justify-between items-center bg-[#12141A]/90 backdrop-blur-2xl sticky top-0 z-50">
+        <div className="p-6 border-b border-white/5 flex justify-between items-center bg-[#0A0A0C]/80 backdrop-blur-2xl sticky top-0 z-50">
           <div className="flex items-center gap-6">
             <Image src="/logo.png" alt="Gate Guard" width={56} height={56} className="object-contain" />
             <span className="text-zinc-600 text-xl font-light">✕</span>
             <div className="bg-white/5 p-2 rounded-xl border border-white/10">
-              <Image src="/Columbia_logo.png" alt={clientName} width={56} height={56} className="object-contain opacity-90" />
+              <Image src="/Columbia_logo.png" alt="Columbia Properties" width={56} height={56} className="object-contain opacity-90" />
             </div>
             <div className="ml-4 border-l border-white/10 pl-6 hidden sm:block">
               <span className="text-xl font-black tracking-tighter uppercase italic block leading-none text-white">Gate Guard</span>
@@ -308,9 +394,9 @@ export default function RadcoPortfolioCalculator() {
 
         {/* Sticky Navigation Tabs */}
         <div className="bg-white/[0.02] border-b border-white/5 backdrop-blur-md sticky top-[105px] z-40 hidden md:flex px-8 py-4 gap-10 text-[10px] font-bold uppercase tracking-widest text-zinc-500 shadow-xl">
-           <a href="#portfolio" className="hover:text-cyan-400 transition-colors flex items-center gap-2"><span>01.</span> Portfolio Builder</a>
-           <a href="#simulation" className="hover:text-cyan-400 transition-colors flex items-center gap-2"><span>02.</span> Live Simulation</a>
-           <a href="#slas" className="hover:text-cyan-400 transition-colors flex items-center gap-2"><span>03.</span> Service SLAs</a>
+          <a href="#portfolio" className="hover:text-cyan-400 transition-colors flex items-center gap-2"><span>01.</span> Portfolio Builder</a>
+          <a href="#simulation" className="hover:text-cyan-400 transition-colors flex items-center gap-2"><span>02.</span> Live Simulation</a>
+          <a href="#slas" className="hover:text-cyan-400 transition-colors flex items-center gap-2"><span>03.</span> Service SLAs</a>
         </div>
 
         <div className="flex-1 flex flex-col lg:flex-row max-w-[1800px] mx-auto w-full relative">
@@ -319,6 +405,7 @@ export default function RadcoPortfolioCalculator() {
           <div className="lg:w-2/3 p-8 lg:p-12 pb-32">
             <div className="max-w-4xl mx-auto space-y-20">
               
+              {/* 01. PORTFOLIO SCALE & CONFIG BUILDER */}
               <div id="portfolio" className="scroll-mt-40">
                 <h2 className="text-3xl font-black mb-8 tracking-tight">Portfolio <span className="text-cyan-400">Builder</span></h2>
                 
@@ -335,8 +422,8 @@ export default function RadcoPortfolioCalculator() {
                     <div className="absolute top-0 left-0 w-full h-1 bg-cyan-400 shadow-[0_0_15px_#22d3ee]"></div>
                     <h3 className="text-cyan-400 text-[10px] font-bold uppercase tracking-widest mb-2 mt-1">Volume Discount Tier</h3>
                     <div className="flex items-center justify-center gap-1 my-2">
-                       <span className="text-4xl font-black text-white">{volumeDiscountPercent * 100}%</span>
-                       <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">OFF</span>
+                      <span className="text-4xl font-black text-white">{volumeDiscountPercent * 100}%</span>
+                      <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">OFF</span>
                     </div>
                     <p className="text-[9px] text-zinc-400 font-bold uppercase tracking-widest bg-black/30 px-3 py-1 rounded-full border border-cyan-500/20">{currentTierName}</p>
                   </div>
@@ -344,7 +431,7 @@ export default function RadcoPortfolioCalculator() {
                   <div className="bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl p-6 flex flex-col justify-between items-center text-center h-full shadow-2xl">
                     <h3 className="text-zinc-400 text-[10px] font-bold uppercase tracking-widest mb-2">Blended Predictable OpEx</h3>
                     <div className="flex items-end justify-center gap-1 my-2">
-                       <span className="text-4xl font-black text-white">${avgPerUnitMonthly}</span>
+                      <span className="text-4xl font-black text-white">${avgPerUnitMonthly}</span>
                     </div>
                     <p className="text-[9px] text-zinc-500">Avg per unit / month across quoted sites.</p>
                   </div>
@@ -373,12 +460,18 @@ export default function RadcoPortfolioCalculator() {
                               value={site.name} 
                               onChange={(e) => handleUpdateSite(site.id, 'name', e.target.value)}
                               className={`bg-transparent text-xl font-bold outline-none border-b-2 pb-1 w-56 sm:w-72 transition-all ${
-                                isUnnamed ? 'border-red-500/30 text-white placeholder:text-zinc-600' : 'border-transparent text-white focus:border-cyan-500'
+                                isUnnamed 
+                                  ? 'border-red-500/30 text-white placeholder:text-zinc-600' 
+                                  : 'border-transparent text-white focus:border-cyan-500'
                               }`}
                             />
                           </div>
+                          
                           {sites.length > 1 && (
-                            <button onClick={() => handleRemoveSite(site.id)} className="text-zinc-500 hover:text-red-500 transition-colors text-xs font-bold uppercase tracking-widest flex items-center gap-1 bg-black/30 px-3 py-1.5 rounded-lg border border-white/5 hover:border-red-500/30">
+                            <button 
+                              onClick={() => handleRemoveSite(site.id)}
+                              className="text-zinc-500 hover:text-red-500 transition-colors text-xs font-bold uppercase tracking-widest flex items-center gap-1 bg-black/30 px-3 py-1.5 rounded-lg border border-white/5 hover:border-red-500/30"
+                            >
                               <span>✕ Remove</span>
                             </button>
                           )}
@@ -393,6 +486,7 @@ export default function RadcoPortfolioCalculator() {
                             <input type="range" min="50" max="1000" step="10" value={site.units} onChange={(e) => handleUpdateSite(site.id, 'units', Number(e.target.value))} className="w-full h-2 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-cyan-500" />
                           </div>
                           
+                          {/* REFINED: Total Needed vs Needs Repairs for Vehicle Gates */}
                           <div>
                             <label className="text-zinc-400 font-bold text-[10px] tracking-widest uppercase block mb-3">Vehicle Gates</label>
                             <div className="flex gap-4">
@@ -407,6 +501,7 @@ export default function RadcoPortfolioCalculator() {
                             </div>
                           </div>
                           
+                          {/* REFINED: Total Needed vs Needs Repairs for Pedestrian Doors */}
                           <div>
                             <label className="text-zinc-400 font-bold text-[10px] tracking-widest uppercase block mb-3">Pedestrian Doors</label>
                             <div className="flex gap-4">
@@ -441,13 +536,16 @@ export default function RadcoPortfolioCalculator() {
                   })}
                 </div>
 
-                <button onClick={handleAddSite} className="mt-8 w-full py-6 bg-white/[0.01] border-2 border-dashed border-white/10 hover:border-cyan-500/50 hover:bg-cyan-500/5 rounded-3xl text-zinc-500 hover:text-cyan-400 transition-all flex items-center justify-center gap-3 group">
+                <button 
+                  onClick={handleAddSite}
+                  className="mt-8 w-full py-6 bg-white/[0.01] border-2 border-dashed border-white/10 hover:border-cyan-500/50 hover:bg-cyan-500/5 rounded-3xl text-zinc-500 hover:text-cyan-400 transition-all flex items-center justify-center gap-3 group"
+                >
                   <div className="w-8 h-8 rounded-full bg-black/50 group-hover:bg-cyan-500/20 flex items-center justify-center text-xl font-light transition-all border border-white/5">+</div>
                   <span className="font-bold uppercase tracking-widest text-xs">Add Another Site To Quote</span>
                 </button>
               </div>
 
-              {/* INTERACTIVE DEMO */}
+              {/* 02. INTERACTIVE DEMO */}
               <div id="simulation" className="pt-20 border-t border-white/10 scroll-mt-20">
                 <h2 className="text-3xl font-black mb-2 tracking-tight">Live <span className="text-cyan-400">Simulation</span></h2>
                 <p className="text-zinc-500 text-sm mb-12">Test the resident and visitor experience in real-time.</p>
@@ -470,9 +568,13 @@ export default function RadcoPortfolioCalculator() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-10 justify-items-center">
+                  {/* BRIVO SIMULATION */}
                   <div className="flex flex-col items-center">
                     <p className="text-[10px] font-bold tracking-widest text-zinc-500 uppercase mb-4">Resident Mobile Pass</p>
-                    <div onClick={handleBrivoTap} className="relative w-64 h-[550px] bg-black rounded-[3rem] border-[6px] border-[#1a1a1c] shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden cursor-pointer transform transition-transform hover:-translate-y-2">
+                    <div 
+                      onClick={handleBrivoTap} 
+                      className="relative w-64 h-[550px] bg-black rounded-[3rem] border-[6px] border-[#1a1a1c] shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden cursor-pointer transform transition-transform hover:-translate-y-2"
+                    >
                       <Image src="/app-brivo.png" alt="Brivo" fill className="object-cover opacity-90" />
                       {brivoStatus === 'idle' && (
                         <div className="absolute top-[68%] left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center">
@@ -498,6 +600,7 @@ export default function RadcoPortfolioCalculator() {
                     </div>
                   </div>
 
+                  {/* VISITOR CALLBOX APP */}
                   <div className="flex flex-col items-center">
                     <p className="text-[10px] font-bold tracking-widest text-zinc-500 uppercase mb-4">Visitor Callbox Intercom</p>
                     <div className="relative w-64 h-[550px] bg-[#050505] rounded-[3rem] border-[6px] border-[#1a1a1c] shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden text-white font-sans">
@@ -551,7 +654,9 @@ export default function RadcoPortfolioCalculator() {
                       {visitorView === 'directory' && (
                         <div className="absolute inset-0 bg-[#050505] flex flex-col pt-12 pb-6 px-4 z-20">
                           <div className="flex items-center mb-6 relative">
-                            <button onClick={() => setVisitorView('home')} className="w-8 h-8 bg-zinc-900 rounded-full flex items-center justify-center hover:bg-zinc-800 transition-colors absolute left-0"><span className="text-zinc-400 text-sm">←</span></button>
+                            <button onClick={() => setVisitorView('home')} className="w-8 h-8 bg-zinc-900 rounded-full flex items-center justify-center hover:bg-zinc-800 transition-colors absolute left-0">
+                              <span className="text-zinc-400 text-sm">←</span>
+                            </button>
                             <div className="flex-1 text-center">
                               <h3 className="text-blue-500 font-black text-[9px] uppercase tracking-widest italic leading-none">Directory</h3>
                               <span className="text-[7px] text-zinc-500 uppercase tracking-widest">Elevate Eagles</span>
@@ -559,16 +664,28 @@ export default function RadcoPortfolioCalculator() {
                           </div>
                           <div className="bg-[#111] border border-zinc-800 rounded-xl p-3 mb-2 flex items-center gap-3 shadow-inner focus-within:border-blue-500/50 transition-colors">
                             <svg className="w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                            <input type="text" placeholder="Search Residents..." className="bg-transparent outline-none text-white text-xs w-full placeholder:text-zinc-600" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+                            <input 
+                              type="text" 
+                              placeholder="Search Residents..." 
+                              className="bg-transparent outline-none text-white text-xs w-full placeholder:text-zinc-600" 
+                              value={searchQuery}
+                              onChange={(e) => setSearchQuery(e.target.value)}
+                            />
                           </div>
                           <p className="text-center text-[7px] font-bold text-zinc-600 uppercase tracking-widest italic mb-6">Search by first or last name</p>
                           <div className="flex-1 overflow-y-auto space-y-2 pr-1 [&::-webkit-scrollbar]:hidden">
                             {searchQuery.length < 3 ? (
-                              <div className="text-center text-zinc-600 mt-10"><p className="text-[10px] uppercase tracking-widest">Type 3 letters to search</p></div>
+                              <div className="text-center text-zinc-600 mt-10">
+                                <p className="text-[10px] uppercase tracking-widest">Type 3 letters to search</p>
+                              </div>
                             ) : (
                               mockDirectory.filter(n => n.toLowerCase().includes(searchQuery.toLowerCase())).length > 0 ? (
                                 mockDirectory.filter(n => n.toLowerCase().includes(searchQuery.toLowerCase())).map((name) => (
-                                  <div key={name} onClick={() => handleResidentCall(name)} className="p-3 bg-[#0a0a0a] rounded-xl border border-zinc-800 hover:border-blue-500/50 cursor-pointer flex justify-between items-center transition-all group">
+                                  <div 
+                                    key={name} 
+                                    onClick={() => handleResidentCall(name)}
+                                    className="p-3 bg-[#0a0a0a] rounded-xl border border-zinc-800 hover:border-blue-500/50 cursor-pointer flex justify-between items-center transition-all group"
+                                  >
                                     <span className="text-white text-xs font-medium">{name}</span>
                                     <span className="text-blue-400 text-[8px] uppercase font-black tracking-widest bg-blue-500/10 px-3 py-1.5 rounded-full group-hover:bg-blue-500 group-hover:text-white transition-colors">Call</span>
                                   </div>
@@ -583,7 +700,9 @@ export default function RadcoPortfolioCalculator() {
                       {visitorView === 'packages' && (
                         <div className="absolute inset-0 bg-[#050505] flex flex-col pt-12 px-4 z-20">
                           <div className="flex items-center mb-10 relative">
-                            <button onClick={() => setVisitorView('home')} className="w-8 h-8 bg-zinc-900 rounded-full flex items-center justify-center hover:bg-zinc-800 transition-colors absolute left-0"><span className="text-zinc-400 text-sm">←</span></button>
+                            <button onClick={() => setVisitorView('home')} className="w-8 h-8 bg-zinc-900 rounded-full flex items-center justify-center hover:bg-zinc-800 transition-colors absolute left-0">
+                              <span className="text-zinc-400 text-sm">←</span>
+                            </button>
                             <div className="flex-1 text-center">
                               <h3 className="text-blue-500 font-black text-[9px] uppercase tracking-widest italic leading-none">Packages</h3>
                               <span className="text-[7px] text-zinc-500 uppercase tracking-widest">Elevate Eagles</span>
@@ -601,7 +720,9 @@ export default function RadcoPortfolioCalculator() {
                       {visitorView === 'emergency' && (
                         <div className="absolute inset-0 bg-[#050505] flex flex-col pt-12 px-4 z-20">
                           <div className="flex items-center mb-10 relative">
-                            <button onClick={() => setVisitorView('home')} className="w-8 h-8 bg-zinc-900 rounded-full flex items-center justify-center hover:bg-zinc-800 transition-colors absolute left-0"><span className="text-zinc-400 text-sm">←</span></button>
+                            <button onClick={() => setVisitorView('home')} className="w-8 h-8 bg-zinc-900 rounded-full flex items-center justify-center hover:bg-zinc-800 transition-colors absolute left-0">
+                              <span className="text-zinc-400 text-sm">←</span>
+                            </button>
                             <div className="flex-1 text-center">
                               <h3 className="text-red-500 font-black text-[9px] uppercase tracking-widest italic leading-none">Emergency</h3>
                               <span className="text-[7px] text-zinc-500 uppercase tracking-widest">Elevate Eagles</span>
@@ -640,7 +761,7 @@ export default function RadcoPortfolioCalculator() {
                 </div>
               </div>
 
-              {/* SERVICE SLA GLOSSARY */}
+              {/* 03. SERVICE SLA GLOSSARY */}
               <div id="slas" className="pt-20 pb-20 border-t border-white/10 scroll-mt-20">
                  <h2 className="text-3xl font-black mb-10 tracking-tight">Service <span className="text-cyan-400">SLAs</span></h2>
                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -680,28 +801,32 @@ export default function RadcoPortfolioCalculator() {
           </div>
 
           {/* RIGHT 1/3: PORTFOLIO QUOTE & FORMALIZATION */}
-          <div className="lg:w-1/3 border-l border-white/5 relative bg-[#12141A]/50 backdrop-blur-3xl shadow-2xl">
-            <div className="sticky top-[100px] max-h-[calc(100vh-120px)] overflow-y-auto [&::-webkit-scrollbar]:hidden p-6 w-full">
+          <div className="lg:w-1/3 border-l border-white/5 relative bg-[#0A0A0C]/50 backdrop-blur-3xl shadow-2xl">
+            <div className="sticky top-[160px] max-h-[calc(100vh-180px)] overflow-y-auto [&::-webkit-scrollbar]:hidden p-6 lg:p-10 w-full">
               
-              <div className="mb-6 flex items-start justify-between">
+              <div className="mb-8 flex items-start justify-between">
                 <div>
-                  <div className="flex items-center gap-4 mb-1">
+                  <div className="flex items-center gap-4 mb-2">
                     <h3 className="text-2xl font-bold tracking-tight">Addendum Quote</h3>
-                    <button onClick={handleStartOver} className="text-[8px] uppercase tracking-widest text-zinc-500 hover:text-red-400 transition-colors bg-white/5 hover:bg-white/10 px-2 py-1 rounded border border-white/10 flex items-center gap-1">
+                    {/* START OVER BUTTON */}
+                    <button 
+                      onClick={handleStartOver} 
+                      className="text-[8px] uppercase tracking-widest text-zinc-500 hover:text-red-400 transition-colors bg-white/5 hover:bg-white/10 px-2 py-1 rounded border border-white/10 flex items-center gap-1"
+                    >
                       <span>⟲</span> Clear
                     </button>
                   </div>
-                  <p className="text-zinc-500 text-[10px] font-light leading-relaxed">Quote for adding {sites.length} new site(s) to the master agreement.</p>
+                  <p className="text-zinc-500 text-[11px] font-light leading-relaxed">Quote for adding {sites.length} new site(s) to the master agreement.</p>
                 </div>
                 <div className="bg-white/5 p-2 rounded-xl border border-white/10 shrink-0 ml-4 shadow-xl hidden lg:block">
-                  <Image src="/Columbia_logo.png" alt={clientName} width={40} height={40} className="object-contain opacity-90" />
+                  <Image src="/Columbia_logo.png" alt="Columbia Residential" width={40} height={40} className="object-contain opacity-90" />
                 </div>
               </div>
 
               {requestState === 'idle' && (
                 <div className="animate-[fadeIn_0.5s_ease-out]">
                   
-                  <div className="bg-white/[0.03] backdrop-blur-xl rounded-3xl border border-white/10 p-5 shadow-[0_20px_50px_rgba(0,0,0,0.5)] mb-4">
+                  <div className="bg-white/[0.03] backdrop-blur-xl rounded-3xl border border-white/10 p-6 shadow-[0_20px_50px_rgba(0,0,0,0.5)] mb-6">
                     <div className="flex justify-between items-end border-b border-white/5 pb-4 mb-4">
                       <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Aggregated Services</span>
                       <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Base Fee</span>
@@ -753,9 +878,11 @@ export default function RadcoPortfolioCalculator() {
                           </p>
                           <span className="text-[10px] text-zinc-500 font-mono">{totalPortfolioSites} / {nextTierSites} Sites</span>
                         </div>
+                        
                         <div className="w-full h-1.5 bg-black/50 rounded-full overflow-hidden mb-2 border border-white/5">
                           <div className="h-full bg-gradient-to-r from-cyan-600 to-cyan-400 rounded-full transition-all duration-500" style={{ width: `${progressPercent}%` }}></div>
                         </div>
+                        
                         <p className="text-[9px] text-zinc-500">
                           Add <strong className="text-white">{sitesNeeded} more site{sitesNeeded > 1 ? 's' : ''}</strong> to unlock this tier.
                         </p>
@@ -809,10 +936,19 @@ export default function RadcoPortfolioCalculator() {
                     onClick={handleFormalizeRequest} 
                     disabled={hasUnnamedSites}
                     className={`w-full py-4 font-black rounded-xl transition-all uppercase tracking-widest text-[10px] flex items-center justify-center gap-2 mb-4 ${
-                      hasUnnamedSites ? 'bg-white/5 text-zinc-500 cursor-not-allowed border border-white/10' : 'bg-white text-[#0A0A0C] hover:bg-zinc-200 shadow-[0_0_30px_rgba(255,255,255,0.2)]'
+                      hasUnnamedSites 
+                        ? 'bg-white/5 text-zinc-500 cursor-not-allowed border border-white/10' 
+                        : 'bg-white text-[#0A0A0C] hover:bg-zinc-200 shadow-[0_0_30px_rgba(255,255,255,0.2)]'
                     }`}
                   >
-                    {hasUnnamedSites ? <span>Please Name All Sites Above</span> : <><span>Request Contract Addendum</span><span>→</span></>}
+                    {hasUnnamedSites ? (
+                      <span>Please Name All Sites Above</span>
+                    ) : (
+                      <>
+                        <span>Request Contract Addendum</span>
+                        <span>→</span>
+                      </>
+                    )}
                   </button>
 
                   {/* COPY LINK / EXPORT ACTIONS */}
@@ -822,11 +958,20 @@ export default function RadcoPortfolioCalculator() {
                        Export PDF
                      </button>
                      
-                     <button onClick={handleCopyLink} className={`flex-1 py-3 font-bold rounded-xl transition-all uppercase tracking-widest text-[8px] flex justify-center items-center gap-2 border ${linkCopied ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400' : 'bg-white/[0.03] hover:bg-white/[0.05] border-white/10 text-zinc-300'}`}>
+                     <button 
+                       onClick={handleCopyLink} 
+                       className={`flex-1 py-3 font-bold rounded-xl transition-all uppercase tracking-widest text-[8px] flex justify-center items-center gap-2 border ${linkCopied ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400' : 'bg-white/[0.03] hover:bg-white/[0.05] border-white/10 text-zinc-300'}`}
+                     >
                        {linkCopied ? (
-                         <><svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg> Copied!</>
+                         <>
+                           <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                           Copied!
+                         </>
                        ) : (
-                         <><svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg> Copy Link</>
+                         <>
+                           <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
+                           Copy Link
+                         </>
                        )}
                      </button>
                   </div>
@@ -846,7 +991,7 @@ export default function RadcoPortfolioCalculator() {
                   <p className="text-cyan-400 font-bold uppercase tracking-widest text-[10px] mb-2 animate-pulse">Drafting Addendum...</p>
                   <div className="space-y-2 text-center text-[9px] text-zinc-500 font-mono">
                      <p>✓ Locking in {volumeDiscountPercent * 100}% Discount...</p>
-                     <p>✓ Updating {clientName} Master MSA...</p>
+                     <p>✓ Updating Columbia Master MSA...</p>
                      <p className="text-zinc-400">⟳ Routing to Account Exec...</p>
                   </div>
                 </div>
@@ -859,7 +1004,14 @@ export default function RadcoPortfolioCalculator() {
                   <p className="text-xs text-emerald-100/70 font-light leading-relaxed mb-8">
                     Your dedicated Gate Guard rep has been notified. We are drafting the addendum for the <strong>{sites.length} new site(s)</strong> at the <strong>{volumeDiscountPercent * 100}% volume tier</strong>.
                   </p>
-                  <button onClick={() => { setRequestState('idle'); setExistingSites(existingSites + sites.length); setSites([{ id: Date.now().toString(), name: '', units: 250, vehicleGates: 2, vehicleGatesRepair: 0, pedGates: 2, pedGatesRepair: 0, cameras: 4, conciergeShifts: 0 }]); }} className="w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-[#0A0A0C] font-black rounded-xl transition-all uppercase tracking-widest text-[10px] shadow-[0_0_20px_rgba(16,185,129,0.3)]">
+                  <button 
+                    onClick={() => {
+                      setRequestState('idle');
+                      setExistingSites(existingSites + sites.length);
+                      setSites([{ id: Date.now().toString(), name: '', units: 250, vehicleGates: 2, vehicleGatesRepair: 0, pedGates: 2, pedGatesRepair: 0, cameras: 4, conciergeShifts: 0 }]);
+                    }} 
+                    className="w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-[#0A0A0C] font-black rounded-xl transition-all uppercase tracking-widest text-[10px] shadow-[0_0_20px_rgba(16,185,129,0.3)]"
+                  >
                     Start Another Quote
                   </button>
                 </div>

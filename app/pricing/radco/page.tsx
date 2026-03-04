@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 
-// Define what a "Site" looks like in our data
 type SiteConfig = {
   id: string;
   name: string;
@@ -17,7 +16,7 @@ export default function RadcoPortfolioCalculator() {
   // 1. Portfolio State
   const [existingSites, setExistingSites] = useState(3);
   
-  // 2. Multi-Site Configuration State (Name starts blank to force input!)
+  // 2. Multi-Site Configuration State
   const [sites, setSites] = useState<SiteConfig[]>([
     { id: '1', name: '', units: 250, vehicleGates: 2, pedGates: 2, cameras: 4, conciergeShifts: 0 }
   ]);
@@ -25,7 +24,7 @@ export default function RadcoPortfolioCalculator() {
   // 3. Formalization State
   const [requestState, setRequestState] = useState<'idle' | 'submitting' | 'success'>('idle');
 
-  // 4. Interactive Phone & Gate State (Unchanged)
+  // 4. Interactive Phone & Gate State
   const [brivoStatus, setBrivoStatus] = useState('idle'); 
   const [visitorView, setVisitorView] = useState<'home' | 'directory' | 'packages' | 'emergency' | 'calling' | 'granted'>('home');
   const [searchQuery, setSearchQuery] = useState('');
@@ -43,13 +42,13 @@ export default function RadcoPortfolioCalculator() {
     const newId = Date.now().toString();
     setSites([...sites, { 
       id: newId, 
-      name: '', // Starts blank so they MUST type a name
+      name: '', 
       units: 250, vehicleGates: 2, pedGates: 2, cameras: 4, conciergeShifts: 0 
     }]);
   };
 
   const handleRemoveSite = (idToRemove: string) => {
-    if (sites.length === 1) return; // Prevent deleting the very last site
+    if (sites.length === 1) return; 
     setSites(sites.filter(site => site.id !== idToRemove));
   };
 
@@ -57,10 +56,7 @@ export default function RadcoPortfolioCalculator() {
     setSites(sites.map(site => site.id === id ? { ...site, [field]: value } : site));
   };
 
-  // --- VALIDATION LOGIC ---
-  // Checks if ANY site in our array currently has a blank name
   const hasUnnamedSites = sites.some(site => site.name.trim() === '');
-
 
   // --- AGGREGATE MATH & DISCOUNT LOGIC ---
   const MINIMUM_PRICE_PER_SHIFT = 1000;
@@ -70,10 +66,11 @@ export default function RadcoPortfolioCalculator() {
   let totalConciergeFee = 0;
   let totalSetupFee = 0;
   let totalUnits = 0;
+  let legacyTotal = 0; // For our OpEx Comparison Chart
 
-  // Loop through every site to calculate the heavy math
   sites.forEach(site => {
     totalUnits += site.units;
+    // "Your Gate Guard" proactive maintenance fee mapping
     totalHardwareFee += (site.vehicleGates * 150) + (site.pedGates * 125);
     totalCameraFee += (site.cameras * 85);
     totalSetupFee += ((site.vehicleGates + site.pedGates) * 500);
@@ -84,9 +81,11 @@ export default function RadcoPortfolioCalculator() {
         (site.units * 3) + (site.units * 1 * (site.conciergeShifts - 1))
       );
     }
+
+    // Rough Legacy Cost Estimates for the ROI Chart
+    legacyTotal += (site.vehicleGates * 400) + (site.pedGates * 150) + (site.cameras * 150) + (site.conciergeShifts > 0 ? 7200 * site.conciergeShifts : 2500);
   });
 
-  // Calculate Volume Discounts
   const totalPortfolioSites = existingSites + sites.length;
   let volumeDiscountPercent = 0;
   
@@ -94,13 +93,14 @@ export default function RadcoPortfolioCalculator() {
   else if (totalPortfolioSites >= 11) volumeDiscountPercent = 0.10;
   else if (totalPortfolioSites >= 6) volumeDiscountPercent = 0.05;
 
-  // Final Subtotals
   const subtotalNewSites = totalHardwareFee + totalCameraFee + totalConciergeFee;
   const monthlyDiscountAmount = subtotalNewSites * volumeDiscountPercent;
   const finalMonthlyNewSites = subtotalNewSites - monthlyDiscountAmount;
-  
-  // Average Per Unit (across all quoted sites)
   const avgPerUnitMonthly = totalUnits > 0 ? (finalMonthlyNewSites / totalUnits).toFixed(2) : "0.00";
+
+  // Calculate chart bar heights (Max 100%)
+  const legacyBarHeight = 100;
+  const newOpExBarHeight = Math.max((finalMonthlyNewSites / legacyTotal) * 100, 15); // Ensure it doesn't disappear completely
 
   // --- DEMO APP HANDLERS ---
   const handleBrivoTap = () => {
@@ -122,7 +122,7 @@ export default function RadcoPortfolioCalculator() {
   };
 
   const handleFormalizeRequest = () => {
-    if (hasUnnamedSites) return; // Extra safeguard
+    if (hasUnnamedSites) return; 
     setRequestState('submitting');
     setTimeout(() => {
       setRequestState('success');
@@ -130,15 +130,22 @@ export default function RadcoPortfolioCalculator() {
   };
 
   return (
-    <main className="bg-[#050505] text-white min-h-screen font-sans selection:bg-cyan-500/30 overflow-y-auto flex flex-col">
+    <main className="relative text-white min-h-screen font-sans selection:bg-cyan-500/30 overflow-y-auto flex flex-col scroll-smooth">
       
+      {/* 1. ENTERPRISE BACKGROUND: Micro-dot grid with radial spotlights */}
+      <div className="fixed inset-0 z-[-2] bg-[#0A0A0C]"></div>
+      <div className="fixed inset-0 z-[-1] bg-[radial-gradient(#ffffff0a_1px,transparent_1px)] [background-size:24px_24px] opacity-70"></div>
+      <div className="fixed top-[-20%] left-[-10%] w-[50%] h-[50%] bg-cyan-900/20 blur-[150px] rounded-full z-[-1] pointer-events-none"></div>
+      <div className="fixed bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-blue-900/20 blur-[150px] rounded-full z-[-1] pointer-events-none"></div>
+
       {/* Header */}
-      <div className="p-6 border-b border-white/5 flex justify-between items-center bg-black/50 backdrop-blur-xl sticky top-0 z-50">
+      <div className="p-6 border-b border-white/5 flex justify-between items-center bg-[#0A0A0C]/80 backdrop-blur-2xl sticky top-0 z-50">
         <div className="flex items-center gap-6">
-          <Image src="/logo.png" alt="Gate Guard" width={64} height={64} className="object-contain" />
+          <Image src="/logo.png" alt="Gate Guard" width={56} height={56} className="object-contain" />
           <span className="text-zinc-600 text-xl font-light">✕</span>
-          <Image src="/radco_logo.png" alt="Radco Properties" width={64} height={64} className="object-contain" />
-          
+          <div className="bg-white/5 p-2 rounded-xl border border-white/10">
+            <Image src="/radco_logo.png" alt="Radco Properties" width={56} height={56} className="object-contain opacity-90" />
+          </div>
           <div className="ml-4 border-l border-white/10 pl-6 hidden sm:block">
             <span className="text-xl font-black tracking-tighter uppercase italic block leading-none text-white">Gate Guard</span>
             <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-cyan-500">Asset Manager Portal</span>
@@ -146,28 +153,33 @@ export default function RadcoPortfolioCalculator() {
         </div>
       </div>
 
-      <div className="flex-1 flex flex-col lg:flex-row">
+      {/* Sticky Navigation Tabs */}
+      <div className="bg-white/[0.02] border-b border-white/5 backdrop-blur-md sticky top-[105px] z-40 hidden md:flex px-8 py-3 gap-8 text-[10px] font-bold uppercase tracking-widest text-zinc-500 shadow-xl">
+         <a href="#portfolio" className="hover:text-cyan-400 transition-colors flex items-center gap-2"><span>01.</span> Portfolio Builder</a>
+         <a href="#simulation" className="hover:text-cyan-400 transition-colors flex items-center gap-2"><span>02.</span> Live Simulation</a>
+         <a href="#slas" className="hover:text-cyan-400 transition-colors flex items-center gap-2"><span>03.</span> Service SLAs</a>
+      </div>
+
+      <div className="flex-1 flex flex-col lg:flex-row max-w-[1800px] mx-auto w-full">
         
-        {/* LEFT 2/3: THE CALCULATOR & LIVE DEMO */}
-        <div className="lg:w-2/3 p-8 lg:p-12 overflow-y-auto border-r border-white/5 bg-gradient-to-br from-[#050505] to-[#0a0f1a]">
-          <div className="max-w-4xl mx-auto space-y-12">
+        {/* LEFT 2/3: MAIN CONTENT AREA */}
+        <div className="lg:w-2/3 p-8 lg:p-12 overflow-y-auto">
+          <div className="max-w-4xl mx-auto space-y-20">
             
-            {/* 1. Portfolio Scale Summary */}
-            <div>
-              <h2 className="text-3xl font-black mb-8 tracking-tight">Portfolio <span className="text-cyan-400">Scale</span></h2>
+            {/* 01. PORTFOLIO SCALE & CONFIG BUILDER */}
+            <div id="portfolio" className="scroll-mt-40">
+              <h2 className="text-3xl font-black mb-8 tracking-tight">Portfolio <span className="text-cyan-400">Builder</span></h2>
               
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                {/* Active Sites Input */}
-                <div className="bg-zinc-900/40 border border-white/10 rounded-2xl p-6 flex flex-col justify-center">
-                  <label className="text-zinc-400 font-bold text-[10px] tracking-widest uppercase block mb-3">Active Sites on Gate Guard</label>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                <div className="bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl p-6 flex flex-col justify-center shadow-2xl">
+                  <label className="text-zinc-400 font-bold text-[10px] tracking-widest uppercase block mb-3">Active Sites on Platform</label>
                   <div className="flex items-center gap-3">
-                    <input type="number" min="0" value={existingSites} onChange={(e) => setExistingSites(Number(e.target.value))} className="w-20 bg-zinc-900 border border-white/10 rounded-xl p-2 text-white font-bold outline-none focus:border-cyan-500 text-center" />
+                    <input type="number" min="0" value={existingSites} onChange={(e) => setExistingSites(Number(e.target.value))} className="w-20 bg-black/50 border border-white/10 rounded-xl p-2 text-white font-bold outline-none focus:border-cyan-500 text-center" />
                     <span className="text-xs font-bold text-zinc-500">Sites</span>
                   </div>
                 </div>
 
-                {/* Discount Tier Display */}
-                <div className="bg-cyan-900/10 border border-cyan-500/30 rounded-2xl p-6 flex flex-col justify-center items-center text-center relative overflow-hidden">
+                <div className="bg-cyan-900/10 backdrop-blur-xl border border-cyan-500/30 rounded-2xl p-6 flex flex-col justify-center items-center text-center relative overflow-hidden shadow-2xl">
                   <div className="absolute top-0 left-0 w-full h-1 bg-cyan-400 shadow-[0_0_15px_#22d3ee]"></div>
                   <h3 className="text-cyan-400 text-[10px] font-bold uppercase tracking-widest mb-1">Volume Discount Tier</h3>
                   <div className="flex items-center justify-center gap-1">
@@ -177,22 +189,18 @@ export default function RadcoPortfolioCalculator() {
                   <p className="text-[9px] text-zinc-500 mt-2">Based on {totalPortfolioSites} total sites.</p>
                 </div>
 
-                {/* Blended Avg OpEx */}
-                <div className="bg-zinc-900/40 border border-white/10 rounded-2xl p-6 flex flex-col justify-center items-center text-center">
+                <div className="bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl p-6 flex flex-col justify-center items-center text-center shadow-2xl">
                   <h3 className="text-zinc-400 text-[10px] font-bold uppercase tracking-widest mb-1">Blended Predictable OpEx</h3>
                   <div className="flex items-end justify-center gap-1">
                      <span className="text-4xl font-black text-white">${avgPerUnitMonthly}</span>
                   </div>
-                  <p className="text-[9px] text-zinc-500 mt-2">Average per unit / month across {sites.length} quoted sites.</p>
+                  <p className="text-[9px] text-zinc-500 mt-2">Avg per unit / month across quoted sites.</p>
                 </div>
               </div>
-            </div>
 
-            {/* 2. Multi-Site Configuration List */}
-            <div>
               <div className="flex justify-between items-end mb-8">
-                <h2 className="text-3xl font-black tracking-tight">Site <span className="text-cyan-400">Configurations</span></h2>
-                <span className="text-zinc-500 text-sm font-bold bg-zinc-900 px-4 py-2 rounded-full border border-white/10">Quoting {sites.length} Sites</span>
+                <h3 className="text-xl font-bold tracking-tight text-white/90">Site Configurations</h3>
+                <span className="text-zinc-500 text-xs font-bold bg-black/50 px-4 py-2 rounded-full border border-white/10">Quoting {sites.length} Sites</span>
               </div>
 
               <div className="space-y-8">
@@ -200,16 +208,13 @@ export default function RadcoPortfolioCalculator() {
                   const isUnnamed = site.name.trim() === '';
                   
                   return (
-                    <div key={site.id} className={`bg-black/40 border rounded-3xl p-8 relative group transition-all ${isUnnamed ? 'border-red-900/50 shadow-[0_0_20px_rgba(239,68,68,0.05)]' : 'border-white/10 hover:border-cyan-500/30'}`}>
+                    <div key={site.id} className={`bg-white/[0.02] backdrop-blur-xl border rounded-3xl p-8 relative group transition-all shadow-2xl ${isUnnamed ? 'border-red-900/50 shadow-[0_0_30px_rgba(239,68,68,0.05)]' : 'border-white/10 hover:border-cyan-500/30 hover:bg-white/[0.04]'}`}>
                       
-                      {/* Site Header & Delete Button */}
                       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center border-b border-white/5 pb-4 mb-6 gap-4">
                         <div className="flex items-center gap-4">
-                          <div className={`w-8 h-8 rounded-full flex items-center justify-center font-black text-sm ${isUnnamed ? 'bg-red-500/10 text-red-500' : 'bg-cyan-500/10 text-cyan-400'}`}>
+                          <div className={`w-8 h-8 rounded-full flex items-center justify-center font-black text-sm ${isUnnamed ? 'bg-red-500/10 text-red-500 border border-red-500/30' : 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/30'}`}>
                             {index + 1}
                           </div>
-                          
-                          {/* REQUIRED NAME INPUT */}
                           <input 
                             type="text" 
                             placeholder="⚠️ Enter Property Name..."
@@ -226,15 +231,14 @@ export default function RadcoPortfolioCalculator() {
                         {sites.length > 1 && (
                           <button 
                             onClick={() => handleRemoveSite(site.id)}
-                            className="text-zinc-600 hover:text-red-500 transition-colors text-xs font-bold uppercase tracking-widest flex items-center gap-1 self-start sm:self-auto"
+                            className="text-zinc-500 hover:text-red-500 transition-colors text-xs font-bold uppercase tracking-widest flex items-center gap-1 bg-black/30 px-3 py-1.5 rounded-lg border border-white/5 hover:border-red-500/30"
                           >
                             <span>✕ Remove</span>
                           </button>
                         )}
                       </div>
 
-                      {/* Site Inputs */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-8">
                         <div className="md:col-span-2">
                           <div className="flex justify-between mb-2">
                             <label className="text-zinc-400 font-bold text-[10px] tracking-widest uppercase block">Property Scale (Units)</label>
@@ -245,22 +249,22 @@ export default function RadcoPortfolioCalculator() {
                         
                         <div>
                           <label className="text-zinc-400 font-bold text-[10px] tracking-widest uppercase block mb-2">Vehicle Gates</label>
-                          <input type="number" min="0" value={site.vehicleGates} onChange={(e) => handleUpdateSite(site.id, 'vehicleGates', Number(e.target.value))} className="w-full bg-zinc-900/50 border border-white/10 rounded-xl p-3 text-white font-bold outline-none focus:border-cyan-500 transition-all" />
+                          <input type="number" min="0" value={site.vehicleGates} onChange={(e) => handleUpdateSite(site.id, 'vehicleGates', Number(e.target.value))} className="w-full bg-black/50 border border-white/10 rounded-xl p-3 text-white font-bold outline-none focus:border-cyan-500 transition-all focus:bg-white/[0.05]" />
                         </div>
                         
                         <div>
                           <label className="text-zinc-400 font-bold text-[10px] tracking-widest uppercase block mb-2">Pedestrian Doors</label>
-                          <input type="number" min="0" value={site.pedGates} onChange={(e) => handleUpdateSite(site.id, 'pedGates', Number(e.target.value))} className="w-full bg-zinc-900/50 border border-white/10 rounded-xl p-3 text-white font-bold outline-none focus:border-cyan-500 transition-all" />
+                          <input type="number" min="0" value={site.pedGates} onChange={(e) => handleUpdateSite(site.id, 'pedGates', Number(e.target.value))} className="w-full bg-black/50 border border-white/10 rounded-xl p-3 text-white font-bold outline-none focus:border-cyan-500 transition-all focus:bg-white/[0.05]" />
                         </div>
                         
                         <div>
                           <label className="text-zinc-400 font-bold text-[10px] tracking-widest uppercase block mb-2">Camera Monitoring</label>
-                          <input type="number" min="0" value={site.cameras} onChange={(e) => handleUpdateSite(site.id, 'cameras', Number(e.target.value))} className="w-full bg-zinc-900/50 border border-white/10 rounded-xl p-3 text-white font-bold outline-none focus:border-cyan-500 transition-all" />
+                          <input type="number" min="0" value={site.cameras} onChange={(e) => handleUpdateSite(site.id, 'cameras', Number(e.target.value))} className="w-full bg-black/50 border border-white/10 rounded-xl p-3 text-white font-bold outline-none focus:border-cyan-500 transition-all focus:bg-white/[0.05]" />
                         </div>
                         
                         <div>
-                          <label className="text-zinc-400 font-bold text-[10px] tracking-widest uppercase block mb-2">2-Way Video Concierge</label>
-                          <select value={site.conciergeShifts} onChange={(e) => handleUpdateSite(site.id, 'conciergeShifts', Number(e.target.value))} className="w-full bg-zinc-900/50 border border-white/10 rounded-xl p-3 text-white font-bold outline-none focus:border-cyan-500 appearance-none transition-all">
+                          <label className="text-zinc-400 font-bold text-[10px] tracking-widest uppercase block mb-2">Live Video Concierge</label>
+                          <select value={site.conciergeShifts} onChange={(e) => handleUpdateSite(site.id, 'conciergeShifts', Number(e.target.value))} className="w-full bg-black/50 border border-white/10 rounded-xl p-3 text-white font-bold outline-none focus:border-cyan-500 appearance-none transition-all focus:bg-white/[0.05]">
                             <option value="0">Self-Managed (App Only)</option>
                             <option value="1">Night Shift Only</option>
                             <option value="2">2 Shifts</option>
@@ -273,34 +277,32 @@ export default function RadcoPortfolioCalculator() {
                 })}
               </div>
 
-              {/* Add New Site Button */}
               <button 
                 onClick={handleAddSite}
-                className="mt-8 w-full py-6 border-2 border-dashed border-zinc-800 hover:border-cyan-500/50 hover:bg-cyan-500/5 rounded-3xl text-zinc-500 hover:text-cyan-400 transition-all flex items-center justify-center gap-3 group"
+                className="mt-8 w-full py-6 bg-white/[0.01] border-2 border-dashed border-white/10 hover:border-cyan-500/50 hover:bg-cyan-500/5 rounded-3xl text-zinc-500 hover:text-cyan-400 transition-all flex items-center justify-center gap-3 group"
               >
-                <div className="w-8 h-8 rounded-full bg-zinc-900 group-hover:bg-cyan-500/20 flex items-center justify-center text-xl font-light transition-all">+</div>
+                <div className="w-8 h-8 rounded-full bg-black/50 group-hover:bg-cyan-500/20 flex items-center justify-center text-xl font-light transition-all border border-white/5">+</div>
                 <span className="font-bold uppercase tracking-widest text-xs">Add Another Site To Quote</span>
               </button>
             </div>
 
-            {/* 3. Interactive App Demo Section */}
-            <div className="pt-10 border-t border-white/10">
-              <h2 className="text-2xl font-black mb-2 tracking-tight">Interactive <span className="text-cyan-400">Simulation</span></h2>
-              <p className="text-zinc-500 text-sm mb-8">Test the resident and visitor experience in real-time.</p>
+            {/* 02. INTERACTIVE DEMO */}
+            <div id="simulation" className="pt-20 border-t border-white/10 scroll-mt-20">
+              <h2 className="text-3xl font-black mb-2 tracking-tight">Live <span className="text-cyan-400">Simulation</span></h2>
+              <p className="text-zinc-500 text-sm mb-12">Test the resident and visitor experience in real-time.</p>
               
-              {/* LIVE GATE CAMERA FEED */}
-              <div className="relative w-full h-64 sm:h-80 rounded-3xl overflow-hidden mb-12 border border-white/10 shadow-2xl group">
+              <div className="relative w-full h-64 sm:h-80 rounded-3xl overflow-hidden mb-12 border border-white/10 shadow-[0_30px_60px_rgba(0,0,0,0.5)] group">
                 <Image src="/gate-closed.jpg" alt="Main Gate Closed" fill className="object-cover" />
                 <div className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${isGateOpen ? 'opacity-100' : 'opacity-0'}`}>
                    <Image src="/gate-open.jpg" alt="Main Gate Open" fill className="object-cover" />
                 </div>
-                <div className="absolute top-4 left-4 flex items-center gap-2 bg-black/50 backdrop-blur-md px-3 py-1.5 rounded-full">
-                    <div className={`w-2 h-2 rounded-full ${isGateOpen ? 'bg-red-500 animate-pulse' : 'bg-emerald-500'}`}></div>
-                    <p className="text-[8px] font-bold uppercase tracking-widest text-white">LIVE CAM 01 • MAIN ENTRY</p>
+                <div className="absolute top-4 left-4 flex items-center gap-2 bg-black/60 backdrop-blur-md px-4 py-2 rounded-full border border-white/10">
+                    <div className={`w-2 h-2 rounded-full ${isGateOpen ? 'bg-red-500 animate-pulse' : 'bg-emerald-500 shadow-[0_0_10px_#10b981]'}`}></div>
+                    <p className="text-[9px] font-bold uppercase tracking-widest text-white">LIVE CAM 01 • MAIN ENTRY</p>
                 </div>
-                 <div className="absolute bottom-4 left-4 bg-black/80 backdrop-blur-xl p-4 rounded-2xl border border-white/10">
-                    <p className="text-[8px] uppercase tracking-widest text-zinc-400 mb-1">System Status</p>
-                    <p className={`text-lg font-black uppercase tracking-tight transition-colors duration-300 ${isGateOpen ? 'text-emerald-400' : 'text-white'}`}>
+                 <div className="absolute bottom-4 left-4 bg-black/80 backdrop-blur-xl p-5 rounded-2xl border border-white/10">
+                    <p className="text-[9px] uppercase tracking-widest text-zinc-400 mb-1">System Status</p>
+                    <p className={`text-xl font-black uppercase tracking-tight transition-colors duration-300 ${isGateOpen ? 'text-emerald-400 shadow-emerald-400/50' : 'text-white'}`}>
                         {isGateOpen ? '✓ GATE OPENING' : 'SECURE & CLOSED'}
                     </p>
                 </div>
@@ -310,10 +312,10 @@ export default function RadcoPortfolioCalculator() {
                 
                 {/* BRIVO SIMULATION */}
                 <div className="flex flex-col items-center">
-                  <p className="text-[10px] font-bold tracking-widest text-zinc-400 uppercase mb-4">Resident Mobile Pass</p>
+                  <p className="text-[10px] font-bold tracking-widest text-zinc-500 uppercase mb-4">Resident Mobile Pass</p>
                   <div 
                     onClick={handleBrivoTap} 
-                    className="relative w-64 h-[550px] bg-black rounded-[3rem] border-[6px] border-[#1a1a1c] shadow-2xl overflow-hidden cursor-pointer transform transition-transform hover:scale-[1.02]"
+                    className="relative w-64 h-[550px] bg-black rounded-[3rem] border-[6px] border-[#1a1a1c] shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden cursor-pointer transform transition-transform hover:-translate-y-2"
                   >
                     <Image src="/app-brivo.png" alt="Brivo" fill className="object-cover opacity-90" />
                     
@@ -321,21 +323,21 @@ export default function RadcoPortfolioCalculator() {
                       <div className="absolute top-[68%] left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center">
                         <div className="absolute w-28 h-28 border-[1px] border-blue-400/30 rounded-full animate-[ping_2.5s_cubic-bezier(0,0,0.2,1)_infinite]"></div>
                         <div className="absolute w-20 h-20 border-[2px] border-blue-400/50 rounded-full animate-[ping_2.5s_cubic-bezier(0,0,0.2,1)_infinite_500ms]"></div>
-                        <div className="w-14 h-14 bg-blue-500/10 rounded-full shadow-[0_0_40px_rgba(59,130,246,0.6)] cursor-pointer"></div>
+                        <div className="w-14 h-14 bg-blue-500/20 rounded-full shadow-[0_0_40px_rgba(59,130,246,0.6)] backdrop-blur-sm cursor-pointer border border-blue-400/30"></div>
                       </div>
                     )}
 
                     {brivoStatus === 'loading' && (
-                      <div className="absolute inset-0 bg-[#0f1423]/80 backdrop-blur-sm flex flex-col items-center justify-center z-20">
-                        <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+                      <div className="absolute inset-0 bg-[#0A0A0C]/90 backdrop-blur-md flex flex-col items-center justify-center z-20">
+                        <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4"></div>
                         <p className="text-blue-400 text-xs font-bold uppercase tracking-widest animate-pulse">Authenticating...</p>
                       </div>
                     )}
 
                     {brivoStatus === 'granted' && (
-                      <div className="absolute inset-0 bg-emerald-500/90 backdrop-blur-md flex flex-col items-center justify-center z-30 transition-all duration-300">
-                        <div className="w-14 h-14 bg-white rounded-full flex items-center justify-center mb-4 shadow-xl">
-                          <span className="text-emerald-500 text-2xl font-black">✓</span>
+                      <div className="absolute inset-0 bg-emerald-500/95 backdrop-blur-md flex flex-col items-center justify-center z-30 transition-all duration-300">
+                        <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-4 shadow-2xl">
+                          <span className="text-emerald-500 text-3xl font-black">✓</span>
                         </div>
                         <p className="text-white text-base font-black uppercase tracking-wider shadow-sm">Access Granted</p>
                       </div>
@@ -345,20 +347,20 @@ export default function RadcoPortfolioCalculator() {
 
                 {/* THE 100% CODE-DRIVEN VISITOR CALLBOX APP */}
                 <div className="flex flex-col items-center">
-                  <p className="text-[10px] font-bold tracking-widest text-zinc-400 uppercase mb-4">Visitor Callbox Intercom</p>
-                  <div className="relative w-64 h-[550px] bg-[#050505] rounded-[3rem] border-[6px] border-[#1a1a1c] shadow-2xl overflow-hidden text-white font-sans">
+                  <p className="text-[10px] font-bold tracking-widest text-zinc-500 uppercase mb-4">Visitor Callbox Intercom</p>
+                  <div className="relative w-64 h-[550px] bg-[#050505] rounded-[3rem] border-[6px] border-[#1a1a1c] shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden text-white font-sans">
                     
                     {/* View 1: Home Screen */}
                     {visitorView === 'home' && (
                       <div className="absolute inset-0 flex flex-col pt-10 px-4">
                         <div className="flex flex-col items-center mb-6">
-                           <div className="w-16 h-16 bg-[#0a0a0a] rounded-xl flex items-center justify-center mb-4 border border-white/10 shadow-lg">
+                           <div className="w-16 h-16 bg-[#0a0a0a] rounded-2xl flex items-center justify-center mb-4 border border-white/10 shadow-lg">
                              <Image src="/logo.png" alt="Logo" width={32} height={32} />
                            </div>
                            <p className="text-[8px] font-bold uppercase tracking-[0.2em] text-zinc-500 mb-1">Welcome To</p>
                            <h4 className="text-base font-black uppercase tracking-wider mb-1">Elevate Eagles</h4>
                            <p className="text-[8px] text-zinc-500 font-medium tracking-wider mb-4">123 MAIN ST, DALL ORDLHO, GA</p>
-                           <div className="bg-blue-500/10 border border-blue-500/30 px-3 py-1 rounded-full flex items-center gap-1.5">
+                           <div className="bg-blue-500/10 border border-blue-500/30 px-3 py-1 rounded-full flex items-center gap-1.5 shadow-[0_0_15px_rgba(59,130,246,0.2)]">
                              <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse"></div>
                              <span className="text-[7px] font-bold uppercase tracking-widest text-blue-400">System Active</span>
                            </div>
@@ -495,12 +497,12 @@ export default function RadcoPortfolioCalculator() {
 
                     {/* View 5: Calling State */}
                     {visitorView === 'calling' && (
-                      <div className="absolute inset-0 bg-[#0a0a0a] flex flex-col items-center justify-center z-30">
+                      <div className="absolute inset-0 bg-[#0A0A0C] flex flex-col items-center justify-center z-30">
                         <div className="w-20 h-20 rounded-full bg-blue-500/10 flex items-center justify-center mb-6 relative">
                           <div className="absolute inset-0 border border-blue-500/30 rounded-full animate-ping"></div>
                           <svg className="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
                         </div>
-                        <p className="text-blue-500 text-[10px] font-black uppercase tracking-[0.2em] mb-2 animate-pulse">Dialing Over Secure Network</p>
+                        <p className="text-blue-500 text-[10px] font-black uppercase tracking-[0.2em] mb-2 animate-pulse">Dialing Secure Network</p>
                         <p className="text-white font-black text-xl tracking-tight">{callingName}</p>
                       </div>
                     )}
@@ -520,82 +522,167 @@ export default function RadcoPortfolioCalculator() {
               </div>
             </div>
 
+            {/* 03. SERVICE SLA GLOSSARY */}
+            <div id="slas" className="pt-20 pb-20 border-t border-white/10 scroll-mt-20">
+               <h2 className="text-3xl font-black mb-10 tracking-tight">Service <span className="text-cyan-400">SLAs</span></h2>
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                 
+                 <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-8 hover:bg-white/[0.04] transition-colors">
+                   <div className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 mb-4">
+                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" /></svg>
+                   </div>
+                   <h3 className="text-white font-bold mb-2 uppercase tracking-wide text-sm">Hardware & App Infrastructure</h3>
+                   <p className="text-xs text-zinc-400 font-light leading-relaxed">End-to-end access control infrastructure powered by cloud-native controllers. Includes full resident mobile app provisioning (Bluetooth/NFC credentialing) and secure visitor callbox integration. Covers ongoing firmware maintenance, over-the-air (OTA) updates, and 99.99% guaranteed system uptime.</p>
+                 </div>
+
+                 <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-8 hover:bg-white/[0.04] transition-colors">
+                   <div className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 mb-4">
+                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                   </div>
+                   <h3 className="text-white font-bold mb-2 uppercase tracking-wide text-sm">Proactive Camera Monitoring</h3>
+                   <p className="text-xs text-zinc-400 font-light leading-relaxed">Active, real-time surveillance utilizing your property's existing camera infrastructure, with optional LPR (License Plate Recognition) enhancements available. Incidents are identified and reported in real-time, with comprehensive, time-stamped incident reports immediately logged and dispatched to your on-site staff.</p>
+                 </div>
+
+                 <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-8 hover:bg-white/[0.04] transition-colors">
+                   <div className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 mb-4">
+                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+                   </div>
+                   <h3 className="text-white font-bold mb-2 uppercase tracking-wide text-sm">Live Video Concierge</h3>
+                   <p className="text-xs text-zinc-400 font-light leading-relaxed">Highly trained remote security professionals intercept visitor and courier calls via 2-way HD video in under 15 seconds. Guards verify credentials against the live property directory and visual feeds before granting or denying access, effectively replacing costly on-site legacy guard forces.</p>
+                 </div>
+
+                 <div className="bg-white/[0.02] border border-cyan-500/20 rounded-3xl p-8 hover:bg-white/[0.04] transition-colors relative overflow-hidden">
+                   <div className="absolute top-0 right-0 p-4"><div className="bg-cyan-500/20 text-cyan-400 text-[8px] font-bold uppercase tracking-widest px-2 py-1 rounded-sm border border-cyan-500/30">High ROI</div></div>
+                   <div className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 mb-4">
+                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                   </div>
+                   <h3 className="text-white font-bold mb-2 uppercase tracking-wide text-sm">"Your Gate Guard" (Maintenance & Uptime)</h3>
+                   <p className="text-xs text-zinc-400 font-light leading-relaxed">A comprehensive, proactive repair and maintenance program for your property gates and access hardware. Billed at a predictable monthly rate, covering all ongoing labor and parts to maintain over 90% system uptime—eliminating random CapEx spikes. Consistent gate operation delivers cascading portfolio benefits: reduced crime, decreased illegal dumping, improved resident accountability, and the strategic ability to secure the perimeter to turn over problematic tenancies and attract high-value residents.</p>
+                 </div>
+
+               </div>
+            </div>
+
           </div>
         </div>
 
-        {/* RIGHT 1/3: PORTFOLIO QUOTE & FORMALIZATION */}
-        <div className="lg:w-1/3 p-8 lg:p-12 bg-[#050505] border-l border-white/5 flex flex-col relative">
-          <div className="max-w-sm mx-auto w-full sticky top-10">
+        {/* RIGHT 1/3: PORTFOLIO QUOTE & FORMALIZATION (Sticky panel) */}
+        <div className="lg:w-1/3 p-6 lg:p-10 border-l border-white/5 relative bg-black/20 backdrop-blur-3xl">
+          <div className="max-w-sm mx-auto w-full sticky top-40">
             
             <div className="mb-8 flex items-start justify-between">
               <div>
-                <h3 className="text-2xl font-bold mb-2">Addendum Quote</h3>
-                <p className="text-zinc-500 text-xs font-light leading-relaxed">Quote for adding {sites.length} new site(s) to the master agreement.</p>
+                <h3 className="text-2xl font-bold mb-2 tracking-tight">Addendum Quote</h3>
+                <p className="text-zinc-500 text-[11px] font-light leading-relaxed">Quote for adding {sites.length} new site(s) to the master agreement.</p>
               </div>
-              <div className="bg-white/5 p-2 rounded-lg border border-white/10 shrink-0 ml-4">
-                <Image src="/radco_logo.png" alt="Radco" width={48} height={48} className="object-contain opacity-80" />
+              <div className="bg-white/5 p-2 rounded-xl border border-white/10 shrink-0 ml-4 shadow-xl">
+                <Image src="/radco_logo.png" alt="Radco" width={40} height={40} className="object-contain opacity-90" />
               </div>
             </div>
 
             {/* Request Flow States */}
             {requestState === 'idle' && (
               <div className="animate-[fadeIn_0.5s_ease-out]">
-                {/* Real-time Invoice Block */}
-                <div className="bg-[#0a0a0a] rounded-2xl border border-zinc-800 p-6 shadow-2xl mb-6">
-                  <div className="flex justify-between items-end border-b border-zinc-800 pb-4 mb-4">
+                
+                {/* Real-time Invoice Block - Glassmorphism */}
+                <div className="bg-white/[0.03] backdrop-blur-xl rounded-3xl border border-white/10 p-6 shadow-[0_20px_50px_rgba(0,0,0,0.5)] mb-6">
+                  <div className="flex justify-between items-end border-b border-white/5 pb-4 mb-4">
                     <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Aggregated Services</span>
                     <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Base Fee</span>
                   </div>
 
                   <div className="space-y-4 mb-6">
-                    <div className="flex justify-between items-start">
-                      <p className="text-sm font-bold text-white">Hardware & App Infrastructure</p>
-                      <span className="text-sm font-medium text-white">${totalHardwareFee.toLocaleString()}</span>
+                    {/* Tooltip List Items */}
+                    <div className="relative group flex justify-between items-start cursor-default">
+                      <p className="text-sm font-bold text-white/90 hover:text-cyan-400 transition-colors flex items-center gap-1">
+                        "Your Gate Guard" Infrastructure & Maintenance
+                        <span className="text-zinc-600 text-[10px] bg-white/5 rounded-full w-4 h-4 flex items-center justify-center border border-white/10">i</span>
+                      </p>
+                      <span className="text-sm font-medium text-white/90 font-mono">${totalHardwareFee.toLocaleString()}</span>
+                      <div className="absolute left-0 top-full mt-2 hidden group-hover:block w-64 bg-[#111] p-3 rounded-xl text-[10px] text-zinc-400 z-50 shadow-2xl border border-white/10 font-light leading-relaxed">
+                        Covers all hardware, app provisioning, and proactive gate/hardware repairs to guarantee 90%+ uptime and eliminate CapEx spikes.
+                      </div>
                     </div>
-                    <div className="flex justify-between items-start">
-                      <p className="text-sm font-bold text-white">Camera Monitoring</p>
-                      <span className="text-sm font-medium text-white">${totalCameraFee.toLocaleString()}</span>
+
+                    <div className="relative group flex justify-between items-start cursor-default">
+                      <p className="text-sm font-bold text-white/90 hover:text-cyan-400 transition-colors flex items-center gap-1">
+                        Proactive Camera Monitoring
+                        <span className="text-zinc-600 text-[10px] bg-white/5 rounded-full w-4 h-4 flex items-center justify-center border border-white/10">i</span>
+                      </p>
+                      <span className="text-sm font-medium text-white/90 font-mono">${totalCameraFee.toLocaleString()}</span>
+                      <div className="absolute left-0 top-full mt-2 hidden group-hover:block w-64 bg-[#111] p-3 rounded-xl text-[10px] text-zinc-400 z-50 shadow-2xl border border-white/10 font-light leading-relaxed">
+                        Active surveillance via existing infrastructure with real-time incident reporting directly to your staff.
+                      </div>
                     </div>
+
                     {totalConciergeFee > 0 && (
-                      <div className="flex justify-between items-start">
-                        <p className="text-sm font-bold text-white">Live Video Concierge</p>
-                        <span className="text-sm font-medium text-white">${totalConciergeFee.toLocaleString()}</span>
+                      <div className="relative group flex justify-between items-start cursor-default">
+                        <p className="text-sm font-bold text-white/90 hover:text-cyan-400 transition-colors flex items-center gap-1">
+                          Live Video Concierge
+                          <span className="text-zinc-600 text-[10px] bg-white/5 rounded-full w-4 h-4 flex items-center justify-center border border-white/10">i</span>
+                        </p>
+                        <span className="text-sm font-medium text-white/90 font-mono">${totalConciergeFee.toLocaleString()}</span>
+                        <div className="absolute left-0 top-full mt-2 hidden group-hover:block w-64 bg-[#111] p-3 rounded-xl text-[10px] text-zinc-400 z-50 shadow-2xl border border-white/10 font-light leading-relaxed">
+                          Trained remote guards processing visitors in under 15 seconds via 2-way HD video.
+                        </div>
                       </div>
                     )}
                   </div>
 
                   {/* Volume Discount Line Item */}
                   {volumeDiscountPercent > 0 && (
-                    <div className="bg-cyan-500/10 rounded-xl p-3 border border-cyan-500/20 flex justify-between items-center mb-4">
+                    <div className="bg-cyan-500/10 rounded-xl p-3 border border-cyan-500/20 flex justify-between items-center mb-6 shadow-inner">
                       <span className="text-[10px] font-bold uppercase tracking-widest text-cyan-400">Volume Discount ({volumeDiscountPercent * 100}%)</span>
-                      <span className="text-sm font-black text-cyan-400">- ${monthlyDiscountAmount.toLocaleString()}</span>
+                      <span className="text-sm font-black text-cyan-400 font-mono">- ${monthlyDiscountAmount.toLocaleString()}</span>
                     </div>
                   )}
 
                   {/* Total Block */}
-                  <div className="bg-zinc-900 rounded-xl p-4 border border-zinc-800 flex justify-between items-center mb-4">
-                    <span className="text-xs font-black uppercase tracking-widest text-zinc-400">Added Monthly</span>
-                    <span className="text-2xl font-black text-white">${finalMonthlyNewSites.toLocaleString()}</span>
+                  <div className="bg-white/[0.05] rounded-xl p-4 border border-white/10 flex justify-between items-center mb-2 shadow-inner">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Total Predictable OpEx</span>
+                    <span className="text-2xl font-black text-white font-mono">${finalMonthlyNewSites.toLocaleString()}</span>
                   </div>
 
-                  <div className="flex justify-between items-center px-2">
-                    <span className="text-[10px] text-zinc-500 font-medium">Estimated Hardware Setup Total</span>
-                    <span className="text-[10px] font-bold text-zinc-300">${totalSetupFee.toLocaleString()}</span>
+                  <div className="flex justify-between items-center px-2 mb-8">
+                    <span className="text-[9px] text-zinc-500 font-medium">Est. Turnkey Hardware Setup (One-Time)</span>
+                    <span className="text-[10px] font-bold text-zinc-400 font-mono">${totalSetupFee.toLocaleString()}</span>
                   </div>
+
+                  {/* ROI DATA CHART */}
+                  <div className="border-t border-white/5 pt-6 mt-2">
+                     <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 mb-4 text-center">Estimated OpEx Comparison</p>
+                     <div className="flex items-end justify-center gap-6 h-28 px-4">
+                        {/* Legacy Bar */}
+                        <div className="flex-1 flex flex-col items-center justify-end gap-2 h-full group">
+                          <div className="w-full bg-red-500/20 border border-red-500/30 rounded-t-md relative flex items-start justify-center pt-2 transition-all group-hover:bg-red-500/30" style={{height: `${legacyBarHeight}%`}}>
+                            <span className="text-[9px] text-red-300 font-bold font-mono">~${legacyTotal.toLocaleString()}</span>
+                          </div>
+                          <span className="text-[8px] font-bold text-zinc-500 uppercase tracking-widest">Legacy OpEx</span>
+                        </div>
+                        {/* New Gate Guard Bar */}
+                        <div className="flex-1 flex flex-col items-center justify-end gap-2 h-full">
+                          <div className="w-full bg-cyan-500 rounded-t-md relative flex items-start justify-center pt-2 shadow-[0_0_15px_rgba(6,182,212,0.4)]" style={{height: `${newOpExBarHeight}%`}}>
+                            <span className="text-[9px] text-[#0A0A0C] font-black font-mono">${finalMonthlyNewSites.toLocaleString()}</span>
+                          </div>
+                          <span className="text-[8px] font-bold text-cyan-400 uppercase tracking-widest">Gate Guard</span>
+                        </div>
+                     </div>
+                  </div>
+
                 </div>
 
-                {/* THE SUBMIT BUTTON - NOW LOCKED IF NAMES ARE MISSING */}
+                {/* Submit Button */}
                 <button 
                   onClick={handleFormalizeRequest} 
                   disabled={hasUnnamedSites}
-                  className={`w-full py-4 font-black rounded-xl transition-all uppercase tracking-widest text-[10px] flex items-center justify-center gap-2 ${
+                  className={`w-full py-4 font-black rounded-xl transition-all uppercase tracking-widest text-[10px] flex items-center justify-center gap-2 mb-4 ${
                     hasUnnamedSites 
-                      ? 'bg-zinc-800 text-zinc-500 cursor-not-allowed border border-zinc-700' 
-                      : 'bg-gradient-to-r from-cyan-600 to-blue-700 hover:from-cyan-500 hover:to-blue-600 text-white shadow-[0_0_20px_rgba(6,182,212,0.3)]'
+                      ? 'bg-white/5 text-zinc-500 cursor-not-allowed border border-white/10' 
+                      : 'bg-white text-[#0A0A0C] hover:bg-zinc-200 shadow-[0_0_30px_rgba(255,255,255,0.2)]'
                   }`}
                 >
                   {hasUnnamedSites ? (
-                    <span>Please Name All Sites</span>
+                    <span>Please Name All Sites Above</span>
                   ) : (
                     <>
                       <span>Request Contract Addendum</span>
@@ -603,38 +690,57 @@ export default function RadcoPortfolioCalculator() {
                     </>
                   )}
                 </button>
+
+                {/* Secondary Actions */}
+                <div className="flex gap-4 mb-8">
+                   <button onClick={() => window.print()} className="flex-1 py-3 bg-white/[0.03] hover:bg-white/[0.05] border border-white/10 text-zinc-300 font-bold rounded-xl transition-all uppercase tracking-widest text-[8px] flex justify-center items-center gap-2">
+                     <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                     Export PDF
+                   </button>
+                   <button onClick={() => alert("Quote link copied to clipboard!")} className="flex-1 py-3 bg-white/[0.03] hover:bg-white/[0.05] border border-white/10 text-zinc-300 font-bold rounded-xl transition-all uppercase tracking-widest text-[8px] flex justify-center items-center gap-2">
+                     <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
+                     Copy Link
+                   </button>
+                </div>
+
+                {/* Enterprise Trust Signals */}
+                <div className="flex justify-center items-center gap-4 text-zinc-500">
+                   <span className="flex items-center gap-1 text-[8px] uppercase font-bold tracking-widest"><svg className="w-3 h-3 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg> SOC-2 Type II</span>
+                   <span className="w-1 h-1 bg-zinc-700 rounded-full"></span>
+                   <span className="flex items-center gap-1 text-[8px] uppercase font-bold tracking-widest">99.99% Uptime SLA</span>
+                </div>
+
               </div>
             )}
 
             {/* Submitting State */}
             {requestState === 'submitting' && (
-              <div className="flex flex-col items-center justify-center py-20 animate-[fadeIn_0.3s_ease-out]">
-                <div className="w-16 h-16 border-4 border-cyan-500/30 border-t-cyan-500 rounded-full animate-spin mb-6"></div>
-                <p className="text-cyan-400 font-bold uppercase tracking-widest text-xs mb-2 animate-pulse">Drafting Addendum...</p>
-                <div className="space-y-2 text-center text-[10px] text-zinc-500 font-mono">
+              <div className="flex flex-col items-center justify-center py-20 animate-[fadeIn_0.3s_ease-out] bg-white/[0.02] border border-white/5 rounded-3xl">
+                <div className="w-12 h-12 border-4 border-cyan-500/30 border-t-cyan-500 rounded-full animate-spin mb-6"></div>
+                <p className="text-cyan-400 font-bold uppercase tracking-widest text-[10px] mb-2 animate-pulse">Drafting Addendum...</p>
+                <div className="space-y-2 text-center text-[9px] text-zinc-500 font-mono">
                    <p>✓ Locking in {volumeDiscountPercent * 100}% Discount...</p>
                    <p>✓ Updating Radco Master MSA...</p>
-                   <p className="text-zinc-300">⟳ Routing to Account Exec...</p>
+                   <p className="text-zinc-400">⟳ Routing to Account Exec...</p>
                 </div>
               </div>
             )}
 
             {/* Success State */}
             {requestState === 'success' && (
-              <div className="animate-[fadeIn_0.5s_ease-out] bg-emerald-900/20 border border-emerald-500/30 p-8 rounded-3xl text-center">
-                <div className="w-20 h-20 bg-emerald-500/20 rounded-full flex items-center justify-center text-emerald-400 text-4xl mx-auto mb-6">✓</div>
-                <h3 className="text-xl font-black text-white mb-2">Request Received</h3>
-                <p className="text-sm text-zinc-400 font-light leading-relaxed mb-6">
+              <div className="animate-[fadeIn_0.5s_ease-out] bg-emerald-900/20 backdrop-blur-xl border border-emerald-500/30 p-8 rounded-3xl text-center shadow-[0_0_50px_rgba(16,185,129,0.1)]">
+                <div className="w-16 h-16 bg-emerald-500/20 rounded-full flex items-center justify-center text-emerald-400 text-3xl mx-auto mb-6 shadow-inner">✓</div>
+                <h3 className="text-xl font-black text-white mb-2 tracking-tight">Request Received</h3>
+                <p className="text-xs text-emerald-100/70 font-light leading-relaxed mb-8">
                   Your dedicated Gate Guard rep has been notified. We are drafting the addendum for the <strong>{sites.length} new site(s)</strong> at the <strong>{volumeDiscountPercent * 100}% volume tier</strong>.
                 </p>
                 <button 
                   onClick={() => {
                     setRequestState('idle');
                     setExistingSites(existingSites + sites.length);
-                    // Reset back to 1 default site with a blank name
                     setSites([{ id: Date.now().toString(), name: '', units: 250, vehicleGates: 2, pedGates: 2, cameras: 4, conciergeShifts: 0 }]);
                   }} 
-                  className="w-full py-3 bg-zinc-900 hover:bg-zinc-800 text-white font-black rounded-xl transition-all uppercase tracking-widest text-[10px]"
+                  className="w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-[#0A0A0C] font-black rounded-xl transition-all uppercase tracking-widest text-[10px] shadow-[0_0_20px_rgba(16,185,129,0.3)]"
                 >
                   Start Another Quote
                 </button>

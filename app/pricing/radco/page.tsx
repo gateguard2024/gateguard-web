@@ -6,10 +6,10 @@ type SiteConfig = {
   id: string;
   name: string;
   units: number;
-  workingVehicleGates: number;
-  nonWorkingVehicleGates: number;
-  workingPedGates: number;
-  nonWorkingPedGates: number;
+  vehicleGates: number;
+  vehicleGatesRepair: number;
+  pedGates: number;
+  pedGatesRepair: number;
   cameras: number;
   conciergeShifts: number;
 };
@@ -18,13 +18,12 @@ export default function RadcoPortfolioCalculator() {
   const [existingSites, setExistingSites] = useState(3);
   
   const [sites, setSites] = useState<SiteConfig[]>([
-    { id: '1', name: '', units: 250, workingVehicleGates: 2, nonWorkingVehicleGates: 0, workingPedGates: 2, nonWorkingPedGates: 0, cameras: 4, conciergeShifts: 0 }
+    { id: '1', name: '', units: 250, vehicleGates: 2, vehicleGatesRepair: 0, pedGates: 2, pedGatesRepair: 0, cameras: 4, conciergeShifts: 0 }
   ]);
   
   const [requestState, setRequestState] = useState<'idle' | 'submitting' | 'success'>('idle');
   const [linkCopied, setLinkCopied] = useState(false);
 
-  // 4. Interactive Phone & Gate State
   const [brivoStatus, setBrivoStatus] = useState('idle'); 
   const [visitorView, setVisitorView] = useState<'home' | 'directory' | 'packages' | 'emergency' | 'calling' | 'granted'>('home');
   const [searchQuery, setSearchQuery] = useState('');
@@ -39,7 +38,6 @@ export default function RadcoPortfolioCalculator() {
 
   // --- SAVE & SHARE LOGIC (URL ENCODING) ---
   useEffect(() => {
-    // On load, check if there is a "?quote=" in the URL
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
       const quoteStr = params.get('quote');
@@ -66,8 +64,7 @@ export default function RadcoPortfolioCalculator() {
 
   const handleStartOver = () => {
     setExistingSites(3);
-    setSites([{ id: Date.now().toString(), name: '', units: 250, workingVehicleGates: 2, nonWorkingVehicleGates: 0, workingPedGates: 2, nonWorkingPedGates: 0, cameras: 4, conciergeShifts: 0 }]);
-    // Strip the quote parameter from the URL to truly start fresh
+    setSites([{ id: Date.now().toString(), name: '', units: 250, vehicleGates: 2, vehicleGatesRepair: 0, pedGates: 2, pedGatesRepair: 0, cameras: 4, conciergeShifts: 0 }]);
     window.history.replaceState(null, '', window.location.pathname);
   };
 
@@ -78,7 +75,7 @@ export default function RadcoPortfolioCalculator() {
     setSites([...sites, { 
       id: newId, 
       name: '', 
-      units: 250, workingVehicleGates: 2, nonWorkingVehicleGates: 0, workingPedGates: 2, nonWorkingPedGates: 0, cameras: 4, conciergeShifts: 0 
+      units: 250, vehicleGates: 2, vehicleGatesRepair: 0, pedGates: 2, pedGatesRepair: 0, cameras: 4, conciergeShifts: 0 
     }]);
   };
 
@@ -88,7 +85,27 @@ export default function RadcoPortfolioCalculator() {
   };
 
   const handleUpdateSite = (id: string, field: keyof SiteConfig, value: string | number) => {
-    setSites(sites.map(site => site.id === id ? { ...site, [field]: value } : site));
+    setSites(sites.map(site => {
+      if (site.id !== id) return site;
+      
+      const updatedSite = { ...site, [field]: value };
+      
+      // Safety checks: You can't have more "Repair Needed" than "Total Needed"
+      if (field === 'vehicleGates' && updatedSite.vehicleGatesRepair > updatedSite.vehicleGates) {
+        updatedSite.vehicleGatesRepair = updatedSite.vehicleGates;
+      }
+      if (field === 'vehicleGatesRepair' && updatedSite.vehicleGatesRepair > updatedSite.vehicleGates) {
+         updatedSite.vehicleGatesRepair = updatedSite.vehicleGates;
+      }
+      if (field === 'pedGates' && updatedSite.pedGatesRepair > updatedSite.pedGates) {
+        updatedSite.pedGatesRepair = updatedSite.pedGates;
+      }
+      if (field === 'pedGatesRepair' && updatedSite.pedGatesRepair > updatedSite.pedGates) {
+         updatedSite.pedGatesRepair = updatedSite.pedGates;
+      }
+
+      return updatedSite;
+    }));
   };
 
   const hasUnnamedSites = sites.some(site => site.name.trim() === '');
@@ -106,15 +123,18 @@ export default function RadcoPortfolioCalculator() {
   sites.forEach(site => {
     totalUnits += site.units;
     
-    // Monthly Maintenance & Infra Fees (Applies to both working and non-working once active)
-    const totalVehicles = site.workingVehicleGates + site.nonWorkingVehicleGates;
-    const totalPeds = site.workingPedGates + site.nonWorkingPedGates;
-    
-    totalHardwareFee += (totalVehicles * 150) + (totalPeds * 125);
+    // Working vs Broken Math
+    const vWorking = site.vehicleGates - site.vehicleGatesRepair;
+    const vRepair = site.vehicleGatesRepair;
+    const pWorking = site.pedGates - site.pedGatesRepair;
+    const pRepair = site.pedGatesRepair;
+
+    // Monthly Base Hardware + $250 surcharge for each item needing repair
+    totalHardwareFee += (site.vehicleGates * 150) + (site.pedGates * 125) + ((vRepair + pRepair) * 250);
     totalCameraFee += (site.cameras * 85);
     
-    // Differentiated Setup Fees
-    totalSetupFee += ((site.workingVehicleGates + site.workingPedGates) * 500) + ((site.nonWorkingVehicleGates + site.nonWorkingPedGates) * 6750);
+    // Setup Fees: $500 for working, $6750 for non-working
+    totalSetupFee += ((vWorking + pWorking) * 500) + ((vRepair + pRepair) * 6750);
 
     if (site.conciergeShifts > 0) {
       totalConciergeFee += Math.max(
@@ -123,7 +143,7 @@ export default function RadcoPortfolioCalculator() {
       );
     }
 
-    legacyTotal += (totalVehicles * 400) + (totalPeds * 150) + (site.cameras * 150) + (site.conciergeShifts > 0 ? 7200 * site.conciergeShifts : 2500);
+    legacyTotal += (site.vehicleGates * 400) + (site.pedGates * 150) + (site.cameras * 150) + (site.conciergeShifts > 0 ? 7200 * site.conciergeShifts : 2500);
   });
 
   // ENTERPRISE TIER GAMIFICATION MATH
@@ -325,32 +345,32 @@ export default function RadcoPortfolioCalculator() {
                           <input type="range" min="50" max="1000" step="10" value={site.units} onChange={(e) => handleUpdateSite(site.id, 'units', Number(e.target.value))} className="w-full h-2 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-cyan-500" />
                         </div>
                         
-                        {/* UPDATED: Working vs Non-Working Vehicle Gates */}
+                        {/* REFINED: Total Needed vs Needs Repairs for Vehicle Gates */}
                         <div>
                           <label className="text-zinc-400 font-bold text-[10px] tracking-widest uppercase block mb-3">Vehicle Gates</label>
                           <div className="flex gap-4">
                             <div className="flex-1">
-                              <span className="text-[8px] text-emerald-400/80 font-bold uppercase tracking-widest mb-1.5 block">Working</span>
-                              <input type="number" min="0" value={site.workingVehicleGates} onChange={(e) => handleUpdateSite(site.id, 'workingVehicleGates', Number(e.target.value))} className="w-full bg-black/50 border border-white/10 rounded-xl p-3 text-white font-bold outline-none focus:border-cyan-500 transition-all focus:bg-white/[0.05]" />
+                              <span className="text-[8px] text-zinc-400 font-bold uppercase tracking-widest mb-1.5 block">Total Needed</span>
+                              <input type="number" min="0" value={site.vehicleGates} onChange={(e) => handleUpdateSite(site.id, 'vehicleGates', Number(e.target.value))} className="w-full bg-black/50 border border-white/10 rounded-xl p-3 text-white font-bold outline-none focus:border-cyan-500 transition-all focus:bg-white/[0.05]" />
                             </div>
                             <div className="flex-1">
-                              <span className="text-[8px] text-red-400/80 font-bold uppercase tracking-widest mb-1.5 block flex items-center gap-1">Repair Needed</span>
-                              <input type="number" min="0" value={site.nonWorkingVehicleGates} onChange={(e) => handleUpdateSite(site.id, 'nonWorkingVehicleGates', Number(e.target.value))} className="w-full bg-red-900/10 border border-red-500/20 rounded-xl p-3 text-red-100 font-bold outline-none focus:border-red-500 transition-all focus:bg-red-900/20" />
+                              <span className="text-[8px] text-red-400/80 font-bold uppercase tracking-widest mb-1.5 block flex items-center gap-1">Needs Repairs</span>
+                              <input type="number" min="0" max={site.vehicleGates} value={site.vehicleGatesRepair} onChange={(e) => handleUpdateSite(site.id, 'vehicleGatesRepair', Number(e.target.value))} className="w-full bg-red-900/10 border border-red-500/20 rounded-xl p-3 text-red-100 font-bold outline-none focus:border-red-500 transition-all focus:bg-red-900/20" />
                             </div>
                           </div>
                         </div>
                         
-                        {/* UPDATED: Working vs Non-Working Pedestrian Doors */}
+                        {/* REFINED: Total Needed vs Needs Repairs for Pedestrian Doors */}
                         <div>
                           <label className="text-zinc-400 font-bold text-[10px] tracking-widest uppercase block mb-3">Pedestrian Doors</label>
                           <div className="flex gap-4">
                             <div className="flex-1">
-                              <span className="text-[8px] text-emerald-400/80 font-bold uppercase tracking-widest mb-1.5 block">Working</span>
-                              <input type="number" min="0" value={site.workingPedGates} onChange={(e) => handleUpdateSite(site.id, 'workingPedGates', Number(e.target.value))} className="w-full bg-black/50 border border-white/10 rounded-xl p-3 text-white font-bold outline-none focus:border-cyan-500 transition-all focus:bg-white/[0.05]" />
+                              <span className="text-[8px] text-zinc-400 font-bold uppercase tracking-widest mb-1.5 block">Total Needed</span>
+                              <input type="number" min="0" value={site.pedGates} onChange={(e) => handleUpdateSite(site.id, 'pedGates', Number(e.target.value))} className="w-full bg-black/50 border border-white/10 rounded-xl p-3 text-white font-bold outline-none focus:border-cyan-500 transition-all focus:bg-white/[0.05]" />
                             </div>
                             <div className="flex-1">
-                              <span className="text-[8px] text-red-400/80 font-bold uppercase tracking-widest mb-1.5 block">Repair Needed</span>
-                              <input type="number" min="0" value={site.nonWorkingPedGates} onChange={(e) => handleUpdateSite(site.id, 'nonWorkingPedGates', Number(e.target.value))} className="w-full bg-red-900/10 border border-red-500/20 rounded-xl p-3 text-red-100 font-bold outline-none focus:border-red-500 transition-all focus:bg-red-900/20" />
+                              <span className="text-[8px] text-red-400/80 font-bold uppercase tracking-widest mb-1.5 block flex items-center gap-1">Needs Repairs</span>
+                              <input type="number" min="0" max={site.pedGates} value={site.pedGatesRepair} onChange={(e) => handleUpdateSite(site.id, 'pedGatesRepair', Number(e.target.value))} className="w-full bg-red-900/10 border border-red-500/20 rounded-xl p-3 text-red-100 font-bold outline-none focus:border-red-500 transition-all focus:bg-red-900/20" />
                             </div>
                           </div>
                         </div>
@@ -679,7 +699,7 @@ export default function RadcoPortfolioCalculator() {
                       </p>
                       <span className="text-sm font-medium text-white/90 font-mono">${totalHardwareFee.toLocaleString()}</span>
                       <div className="absolute left-0 top-full mt-2 hidden group-hover:block w-64 bg-[#111] p-3 rounded-xl text-[10px] text-zinc-400 z-50 shadow-2xl border border-white/10 font-light leading-relaxed">
-                        Covers all hardware, app provisioning, and proactive gate/hardware repairs to guarantee 90%+ uptime and eliminate CapEx spikes.
+                        Covers all hardware, app provisioning, and proactive gate/hardware repairs to guarantee 90%+ uptime. Includes $250/mo surcharge for adopted hardware repairs.
                       </div>
                     </div>
 
@@ -847,7 +867,7 @@ export default function RadcoPortfolioCalculator() {
                   onClick={() => {
                     setRequestState('idle');
                     setExistingSites(existingSites + sites.length);
-                    setSites([{ id: Date.now().toString(), name: '', units: 250, workingVehicleGates: 2, nonWorkingVehicleGates: 0, workingPedGates: 2, nonWorkingPedGates: 0, cameras: 4, conciergeShifts: 0 }]);
+                    setSites([{ id: Date.now().toString(), name: '', units: 250, vehicleGates: 2, vehicleGatesRepair: 0, pedGates: 2, pedGatesRepair: 0, cameras: 4, conciergeShifts: 0 }]);
                   }} 
                   className="w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-[#0A0A0C] font-black rounded-xl transition-all uppercase tracking-widest text-[10px] shadow-[0_0_20px_rgba(16,185,129,0.3)]"
                 >

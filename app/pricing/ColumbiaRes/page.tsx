@@ -156,25 +156,25 @@ export default function RadcoPortfolioCalculator() {
   let progressBase = 0; 
   
   if (totalPortfolioSites >= 40) {
-    volumeDiscountPercent = 0.20;
+    volumeDiscountPercent = 0.30;
     currentTierName = "Strategic Partner";
     nextTierSites = null;
   } else if (totalPortfolioSites >= 20) {
-    volumeDiscountPercent = 0.15;
+    volumeDiscountPercent = 0.20;
     currentTierName = "Enterprise Tier";
     nextTierSites = 40;
     nextTierPercent = 0.20;
     nextTierName = "Strategic Partner";
     progressBase = 20;
   } else if (totalPortfolioSites >= 10) {
-    volumeDiscountPercent = 0.10;
+    volumeDiscountPercent = 0.15;
     currentTierName = "Regional Tier";
     nextTierSites = 20;
     nextTierPercent = 0.15;
     nextTierName = "Enterprise Tier";
     progressBase = 10;
   } else if (totalPortfolioSites >= 5) {
-    volumeDiscountPercent = 0.05;
+    volumeDiscountPercent = 0.1;
     currentTierName = "Portfolio Tier";
     nextTierSites = 10;
     nextTierPercent = 0.10;
@@ -219,12 +219,48 @@ export default function RadcoPortfolioCalculator() {
     }, 6500);
   };
 
-  const handleFormalizeRequest = () => {
+const handleFormalizeRequest = async () => {
     if (hasUnnamedSites) return; 
     setRequestState('submitting');
-    setTimeout(() => {
+
+    // 1. Package all the data perfectly for Make & Salesforce
+    const payload = {
+      companyName: "Radco", // Change this for future custom pages!
+      portfolioData: {
+        existingSites: existingSites,
+        newSitesQuoted: sites.length,
+        totalPortfolioSites: totalPortfolioSites,
+        discountTierUnlocked: currentTierName,
+        discountPercentage: volumeDiscountPercent * 100
+      },
+      financials: {
+        monthlyOpEx: finalMonthlyNewSites,
+        oneTimeSetup: totalSetupFee,
+        monthlySavingsVsLegacy: legacyTotal - finalMonthlyNewSites
+      },
+      siteDetails: sites 
+    };
+
+    try {
+      // 2. PASTE YOUR MAKE WEBHOOK URL HERE:
+      const makeWebhookUrl = "https://hook.us2.make.com/fqt9a5oejueehw66nfovhpgsohvxgjv9";
+
+      // 3. Send the data to Make
+      await fetch(makeWebhookUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      // 4. Trigger the success UI
       setRequestState('success');
-    }, 2500);
+      
+    } catch (error) {
+      console.error("Error pushing data to Make:", error);
+      setRequestState('success'); // Still show success so the client doesn't panic
+    }
   };
 
   return (
@@ -242,7 +278,7 @@ export default function RadcoPortfolioCalculator() {
           <Image src="/logo.png" alt="Gate Guard" width={56} height={56} className="object-contain" />
           <span className="text-zinc-600 text-xl font-light">✕</span>
           <div className="bg-white/5 p-2 rounded-xl border border-white/10">
-            <Image src="/Columbia_logo.png" alt="Columbia Properties" width={56} height={56} className="object-contain opacity-90" />
+            <Image src="/Columbia_logo.png" alt="Radco Properties" width={56} height={56} className="object-contain opacity-90" />
           </div>
           <div className="ml-4 border-l border-white/10 pl-6 hidden sm:block">
             <span className="text-xl font-black tracking-tighter uppercase italic block leading-none text-white">Gate Guard</span>

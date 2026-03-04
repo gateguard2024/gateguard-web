@@ -68,13 +68,21 @@ export default function RadcoPortfolioCalculator() {
   return (
     <main className="bg-[#050505] text-white min-h-screen font-sans selection:bg-cyan-500/30 overflow-y-auto flex flex-col">
       
-      {/* Header */}
+{/* Header */}
       <div className="p-6 border-b border-white/5 flex justify-between items-center bg-black/50 backdrop-blur-xl sticky top-0 z-50">
-        <div className="flex items-center gap-3">
-          <Image src="/logo.png" alt="Gate Guard" width={40} height={40} className="object-contain" />
-          <div>
-            <span className="text-lg font-black tracking-tighter uppercase italic block leading-none">Gate Guard</span>
-            <span className="text-[8px] font-bold tracking-[0.3em] uppercase text-cyan-500">Radco Asset Manager Portal</span>
+        <div className="flex items-center gap-4">
+          {/* Your Logo */}
+          <Image src="/logo.png" alt="Gate Guard" width={32} height={32} className="object-contain" />
+          
+          {/* Co-brand Divider */}
+          <span className="text-zinc-700 text-sm font-light">✕</span>
+          
+          {/* Radco Logo */}
+          <Image src="/radco_logo.png" alt="Radco Properties" width={100} height={32} className="object-contain" />
+          
+          <div className="ml-2 border-l border-white/10 pl-4 hidden sm:block">
+            <span className="text-lg font-black tracking-tighter uppercase italic block leading-none text-white">Gate Guard</span>
+            <span className="text-[8px] font-bold tracking-[0.3em] uppercase text-cyan-500">Asset Manager Portal</span>
           </div>
         </div>
       </div>

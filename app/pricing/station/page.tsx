@@ -56,7 +56,7 @@ export default function PricingStationCalculator() {
   const opt4_gateMonthly = 250;
   
   const opt4_pedSetup = 750;
-  const opt4_pedMonthly = 315;
+  const opt4_pedMonthly = 180;
   
   const opt4_callboxConvertSetup = 350;
 

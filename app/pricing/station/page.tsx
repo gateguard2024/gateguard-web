@@ -50,13 +50,13 @@ export default function PricingStationCalculator() {
   ]);
   
   // Base Pricing Assumptions
-  const costRemoveHardware = 150;
-  const costPushbarWithPlates = 500;
-  const costRimLockWithCover = 350;
-  const costSetEgress = 150;
-  const costSetEgressApp = 500; // Hardware for App Access Control
-  const costConvertCallbox = 500; // Hardware/Labor to switch to app
-  const costCallBoxTest = 150;
+  const costRemoveHardware = 500;
+  const costPushbarWithPlates = 700;
+  const costRimLockWithCover = 550;
+  const costSetEgress = 750;
+  const costSetEgressApp = 800; // Hardware for App Access Control
+  const costConvertCallbox = 250; // Hardware/Labor to switch to app
+  const costCallBoxTest = 200;
   const doorkingMonthlyFee = 160;
 
   // --- CRUD HANDLERS ---

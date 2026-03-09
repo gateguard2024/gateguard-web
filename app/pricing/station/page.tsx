@@ -91,7 +91,7 @@ export default function PricingStationCalculator() {
   // --- GATE GUARD (OPT 1) SPECIFIC PRICING ---
   const opt1_gateSetupWorking = 500;
   const opt1_gateSetupRepair = 750;
-  const opt1_gateMonthly = 250;
+  const opt1_gateMonthly = 200;
   
   const opt1_pedSetup = 750; // Covers Hardware (Pushbars) + App Provisioning
   const opt1_pedMonthly = 150; 

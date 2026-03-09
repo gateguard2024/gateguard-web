@@ -41,7 +41,7 @@ export default function PricingStationCalculator() {
 
   const [buildings, setBuildings] = useState<BuildingConfig[]>([
     { 
-      id: '1', buildingNumber: '', units: 250, 
+      id: '1', buildingNumber: '', units: 150, 
       vehicleGates: 2, vehicleGatesRepair: 0, 
       
       opt1_removeHardware: 0, opt1_pushbars: 0, opt1_pushbarsWithRimLock: 0, opt1_maglockCovers: 0, opt1_maglocksToReplace: 0, opt1_callboxes: 1,
@@ -55,12 +55,15 @@ export default function PricingStationCalculator() {
   const opt1_costRemove = 500;
   const opt1_costPushbar = 700;
   const opt1_costRimLockAddOn = 550;
-  const opt1_costMaglockCover = 350; // Assumed base cost for the steel cover
+  const opt1_costMaglockCover = 350; 
   const opt1_costMaglockReplace = 550;
   
   // --- GENERAL PRICING ASSUMPTIONS ---
-  const costPushbarWithPlates = 500; // Used for Opt 2-4 currently
-  const costRimLockWithCover = 350;  // Used for Opt 2-4 currently
+  const costGateTestLegacy = 200; // Legacy Option CapEx
+  const costGateRepairLegacy = 1200; // Legacy Option CapEx
+  
+  const costPushbarWithPlates = 500; 
+  const costRimLockWithCover = 350;  
   const costSetEgress = 150;
   const costSetEgressApp = 500; 
   const costConvertCallbox = 500; 
@@ -70,7 +73,7 @@ export default function PricingStationCalculator() {
   // --- CRUD HANDLERS ---
   const handleAddBuilding = () => {
     setBuildings([...buildings, { 
-      id: Date.now().toString(), buildingNumber: '', units: 250, 
+      id: Date.now().toString(), buildingNumber: '', units: 150, 
       vehicleGates: 2, vehicleGatesRepair: 0, 
       opt1_removeHardware: 0, opt1_pushbars: 0, opt1_pushbarsWithRimLock: 0, opt1_maglockCovers: 0, opt1_maglocksToReplace: 0, opt1_callboxes: 1,
       opt2_pushbars: 0, opt2_rimLocks: 0, opt2_setEgress: 0, opt2_callboxes: 1,
@@ -106,8 +109,7 @@ export default function PricingStationCalculator() {
   };
 
   // --- AGGREGATE MATH FOR THE 4 OPTIONS ---
-  let legacyVehSetup = 0;
-  let legacyVehMonthly = 0;
+  let totalUnits = 0;
   
   let opt1CapEx = 0, opt1OpEx = 0;
   let opt2CapEx = 0, opt2OpEx = 0;
@@ -115,37 +117,49 @@ export default function PricingStationCalculator() {
   let opt4CapEx = 0, opt4OpEx = 0;
 
   buildings.forEach(b => {
+    totalUnits += b.units;
+
     const vWorking = b.vehicleGates - b.vehicleGatesRepair;
     const vRepair = b.vehicleGatesRepair;
 
-    // Standard Vehicle Costs
-    const vehSetup = (vWorking * 500) + (vRepair * 6750);
-    const vehMonthly = (b.vehicleGates * 150) + (vRepair * 250);
-    legacyVehSetup += vehSetup;
-    legacyVehMonthly += vehMonthly;
+    // --- LEGACY VEHICLE COSTS (Opt 1, 2, 3) ---
+    // Total count tested at $200 each. Broken gates repaired at $1200 each. No OPEX.
+    const legacyVehSetup = (b.vehicleGates * costGateTestLegacy) + (vRepair * costGateRepairLegacy);
+    const legacyVehMonthly = 0;
 
-    // OPTION 1: Simplify & Remove (Updated Math)
-    opt1CapEx += vehSetup + 
+    // --- GATE GUARD VEHICLE COSTS (Opt 4) ---
+    const opt4VehSetup = (vWorking * 500) + (vRepair * 6750);
+    const opt4VehMonthly = (b.vehicleGates * 150) + (vRepair * 250);
+
+    // OPTION 1: Simplify & Remove
+    opt1CapEx += legacyVehSetup + 
                  (b.opt1_removeHardware * opt1_costRemove) + 
                  (b.opt1_pushbars * opt1_costPushbar) + 
                  (b.opt1_pushbarsWithRimLock * opt1_costRimLockAddOn) + 
                  (b.opt1_maglockCovers * opt1_costMaglockCover) +
                  (b.opt1_maglocksToReplace * opt1_costMaglockReplace) +
                  (b.opt1_callboxes * costCallBoxTest);
-    opt1OpEx += vehMonthly + (b.opt1_callboxes * doorkingMonthlyFee);
+    opt1OpEx += legacyVehMonthly + (b.opt1_callboxes * doorkingMonthlyFee);
 
     // OPTION 2
-    opt2CapEx += vehSetup + (b.opt2_pushbars * costPushbarWithPlates) + (b.opt2_rimLocks * costRimLockWithCover) + (b.opt2_setEgress * costSetEgress) + (b.opt2_callboxes * costCallBoxTest);
-    opt2OpEx += vehMonthly + (b.opt2_callboxes * doorkingMonthlyFee);
+    opt2CapEx += legacyVehSetup + (b.opt2_pushbars * costPushbarWithPlates) + (b.opt2_rimLocks * costRimLockWithCover) + (b.opt2_setEgress * costSetEgress) + (b.opt2_callboxes * costCallBoxTest);
+    opt2OpEx += legacyVehMonthly + (b.opt2_callboxes * doorkingMonthlyFee);
 
     // OPTION 3
-    opt3CapEx += vehSetup + (b.opt3_pushbars * costPushbarWithPlates) + (b.opt3_rimLocks * costRimLockWithCover) + (b.opt3_setEgress * costSetEgress) + (b.opt3_callboxes * costCallBoxTest);
-    opt3OpEx += vehMonthly + (b.opt3_callboxes * doorkingMonthlyFee);
+    opt3CapEx += legacyVehSetup + (b.opt3_pushbars * costPushbarWithPlates) + (b.opt3_rimLocks * costRimLockWithCover) + (b.opt3_setEgress * costSetEgress) + (b.opt3_callboxes * costCallBoxTest);
+    opt3OpEx += legacyVehMonthly + (b.opt3_callboxes * doorkingMonthlyFee);
 
     // OPTION 4 (Gate Guard App)
-    opt4CapEx += vehSetup + (b.opt4_pushbars * costPushbarWithPlates) + (b.opt4_rimLocks * costRimLockWithCover) + (b.opt4_egressWithApp * costSetEgressApp) + (b.opt4_convertCallbox * costConvertCallbox);
-    opt4OpEx += vehMonthly + (b.opt4_egressWithApp * 125); 
+    opt4CapEx += opt4VehSetup + (b.opt4_pushbars * costPushbarWithPlates) + (b.opt4_rimLocks * costRimLockWithCover) + (b.opt4_egressWithApp * costSetEgressApp) + (b.opt4_convertCallbox * costConvertCallbox);
+    opt4OpEx += opt4VehMonthly + (b.opt4_egressWithApp * 125); 
   });
+
+  // Calculate CPU (Cost Per Unit)
+  const safeUnits = totalUnits > 0 ? totalUnits : 1;
+  const opt1CPU = (opt1OpEx / safeUnits).toFixed(2);
+  const opt2CPU = (opt2OpEx / safeUnits).toFixed(2);
+  const opt3CPU = (opt3OpEx / safeUnits).toFixed(2);
+  const opt4CPU = (opt4OpEx / safeUnits).toFixed(2);
 
   return (
     <main className="min-h-screen bg-[#0A0A0C] text-zinc-100 font-sans selection:bg-cyan-500/30">
@@ -208,7 +222,8 @@ export default function PricingStationCalculator() {
                           <label className="text-zinc-400 font-bold text-[10px] tracking-widest uppercase">Total Units</label>
                           <span className="text-cyan-400 font-black text-sm">{b.units}</span>
                         </div>
-                        <input type="range" min="10" max="1000" step="10" value={b.units} onChange={(e) => handleUpdateBuilding(b.id, 'units', Number(e.target.value))} className="w-full h-2 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-cyan-500" />
+                        {/* Max changed to 300, step to 1 */}
+                        <input type="range" min="1" max="300" step="1" value={b.units} onChange={(e) => handleUpdateBuilding(b.id, 'units', Number(e.target.value))} className="w-full h-2 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-cyan-500" />
                       </div>
                       
                       <div className="bg-black/40 p-4 rounded-xl border border-white/5">
@@ -237,7 +252,7 @@ export default function PricingStationCalculator() {
 
                       <div className="p-4">
                         
-                        {/* REFINED OPTION 1 INPUTS */}
+                        {/* OPTION 1 INPUTS */}
                         {activeScopeTab === 'opt1' && (
                           <div className="animate-[fadeIn_0.2s_ease-out] space-y-5">
                             <div className="border-b border-white/5 pb-2">
@@ -288,10 +303,10 @@ export default function PricingStationCalculator() {
                           </div>
                         )}
 
-                        {/* OTHER OPTIONS RETAINED AS BEFORE FOR BREVITY */}
-                        {activeScopeTab === 'opt2' && (<div className="text-zinc-500 text-sm p-4 text-center border border-dashed border-white/10 rounded-xl">Option 2 specific scope items go here (Retained from previous code).</div>)}
-                        {activeScopeTab === 'opt3' && (<div className="text-zinc-500 text-sm p-4 text-center border border-dashed border-white/10 rounded-xl">Option 3 specific scope items go here (Retained from previous code).</div>)}
-                        {activeScopeTab === 'opt4' && (<div className="text-cyan-500/50 text-sm p-4 text-center border border-dashed border-cyan-500/20 rounded-xl">Option 4 specific scope items go here (Retained from previous code).</div>)}
+                        {/* OTHER OPTIONS RETAINED FOR BREVITY */}
+                        {activeScopeTab === 'opt2' && (<div className="text-zinc-500 text-sm p-4 text-center border border-dashed border-white/10 rounded-xl">Option 2 specific scope items go here.</div>)}
+                        {activeScopeTab === 'opt3' && (<div className="text-zinc-500 text-sm p-4 text-center border border-dashed border-white/10 rounded-xl">Option 3 specific scope items go here.</div>)}
+                        {activeScopeTab === 'opt4' && (<div className="text-cyan-500/50 text-sm p-4 text-center border border-dashed border-cyan-500/20 rounded-xl">Option 4 specific scope items go here.</div>)}
 
                       </div>
                     </div>
@@ -330,7 +345,8 @@ export default function PricingStationCalculator() {
                   <div className="text-right">
                     <p className="text-[9px] uppercase tracking-widest text-zinc-500 font-bold">Monthly OpEx</p>
                     <p className="text-xl font-mono font-black text-white">${opt1OpEx.toLocaleString()}</p>
-                    <p className="text-[9px] text-zinc-500 font-medium mt-1">Includes DoorKing fees</p>
+                    <p className="text-[10px] text-zinc-400 font-medium mt-1">CPU: ${opt1CPU}/unit</p>
+                    <p className="text-[8px] text-zinc-500 italic mt-0.5">Includes DoorKing fees</p>
                   </div>
                 </div>
                 <div className="bg-red-900/10 p-3 text-center border-t border-red-900/30">
@@ -353,6 +369,7 @@ export default function PricingStationCalculator() {
                   <div className="text-right">
                     <p className="text-[10px] uppercase tracking-widest text-cyan-500/70 font-bold">Predictable Monthly</p>
                     <p className="text-2xl font-mono font-black text-cyan-400">${opt4OpEx.toLocaleString()}</p>
+                    <p className="text-[10px] text-cyan-500/70 font-medium mt-1">CPU: ${opt4CPU}/unit</p>
                   </div>
                 </div>
                 <div className="bg-emerald-900/20 text-emerald-400 p-3 text-center border-t border-emerald-500/30">
@@ -390,7 +407,6 @@ export default function PricingStationCalculator() {
                 </div>
               )}
               
-              {/* Add brief placeholders for Opt 2 and Opt 3 */}
               {(activeScopeTab === 'opt2' || activeScopeTab === 'opt3') && (
                  <p className="text-[11px] text-zinc-500 italic">Select Option 1 or Option 4 for detailed strategy notes...</p>
               )}

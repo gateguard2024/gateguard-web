@@ -9,11 +9,8 @@ type BuildingConfig = {
   vehicleGates: number;
   vehicleGatesRepair: number;
   
-  // Option 1: Your Gate Guard (SaaS / Full Mgmt)
-  opt1_pushbars: number;
-  opt1_pushbarsWithRimLock: number;
-  opt1_maglockCovers: number;
-  opt1_maglocksToReplace: number;
+  // Option 1: Your Gate Guard (SaaS / Full Mgmt - Simplified)
+  opt1_pedDoors: number; // Replaces granular pushbar/maglock inputs
   opt1_convertCallbox: number;
 
   // Option 2: Re-Structure
@@ -49,7 +46,7 @@ export default function PricingStationCalculator() {
       id: '1', buildingNumber: '', units: 150, 
       vehicleGates: 2, vehicleGatesRepair: 0, 
       
-      opt1_pushbars: 0, opt1_pushbarsWithRimLock: 0, opt1_maglockCovers: 0, opt1_maglocksToReplace: 0, opt1_convertCallbox: 1,
+      opt1_pedDoors: 0, opt1_convertCallbox: 1,
       opt2_pushbars: 0, opt2_pushbarsWithRimLock: 0, opt2_maglockCovers: 0, opt2_maglocksToReplace: 0, opt2_callboxes: 1,
       opt3_pushbars: 0, opt3_pushbarsWithRimLock: 0, opt3_maglockCovers: 0, opt3_maglocksToReplace: 0, opt3_setEgress: 0, opt3_callboxes: 1,
       opt4_removeHardware: 0, opt4_pushbars: 0, opt4_pushbarsWithRimLock: 0, opt4_maglockCovers: 0, opt4_maglocksToReplace: 0, opt4_callboxes: 1,
@@ -96,9 +93,9 @@ export default function PricingStationCalculator() {
   const opt1_gateSetupRepair = 750;
   const opt1_gateMonthly = 250;
   
-  const opt1_pedSetup = 750; // Setup fee per App Access Door
-  const opt1_pedMonthly = 150; // Per active app door
-  const opt1_callboxConvertSetup = 0; // Removed conversion fee
+  const opt1_pedSetup = 750; // Covers Hardware (Pushbars) + App Provisioning
+  const opt1_pedMonthly = 150; 
+  const opt1_callboxConvertSetup = 0; // Included
 
   // --- LEGACY VEHICLE PRICING (OPT 2-4) ---
   const costGateTestLegacy = 200; 
@@ -109,7 +106,7 @@ export default function PricingStationCalculator() {
     setBuildings([...buildings, { 
       id: Date.now().toString(), buildingNumber: '', units: 150, 
       vehicleGates: 2, vehicleGatesRepair: 0, 
-      opt1_pushbars: 0, opt1_pushbarsWithRimLock: 0, opt1_maglockCovers: 0, opt1_maglocksToReplace: 0, opt1_convertCallbox: 1,
+      opt1_pedDoors: 0, opt1_convertCallbox: 1,
       opt2_pushbars: 0, opt2_pushbarsWithRimLock: 0, opt2_maglockCovers: 0, opt2_maglocksToReplace: 0, opt2_callboxes: 1,
       opt3_pushbars: 0, opt3_pushbarsWithRimLock: 0, opt3_maglockCovers: 0, opt3_maglocksToReplace: 0, opt3_setEgress: 0, opt3_callboxes: 1,
       opt4_removeHardware: 0, opt4_pushbars: 0, opt4_pushbarsWithRimLock: 0, opt4_maglockCovers: 0, opt4_maglocksToReplace: 0, opt4_callboxes: 1,
@@ -130,7 +127,7 @@ export default function PricingStationCalculator() {
       if (field === 'vehicleGates' && updated.vehicleGatesRepair > updated.vehicleGates) updated.vehicleGatesRepair = updated.vehicleGates;
       if (field === 'vehicleGatesRepair' && updated.vehicleGatesRepair > updated.vehicleGates) updated.vehicleGatesRepair = updated.vehicleGates;
       
-      // Safety Checks for Pedestrian Add-ons 
+      // Safety Checks for Legacy Pedestrian Add-ons (Opt 2-4)
       if (field.includes('pushbars') && !field.includes('RimLock')) {
         const scope = field.split('_')[0];
         // @ts-ignore
@@ -162,18 +159,13 @@ export default function PricingStationCalculator() {
     // --- OPTION 1: YOUR GATE GUARD (SaaS/Managed) ---
     const opt1VehSetup = (vWorking * opt1_gateSetupWorking) + (vRepair * opt1_gateSetupRepair);
     const opt1VehMonthly = (b.vehicleGates * opt1_gateMonthly);
-    const activeAppDoors = b.opt1_pushbarsWithRimLock + b.opt1_maglockCovers;
 
     opt1CapEx += opt1VehSetup + 
-                 (b.opt1_pushbars * costPushbar) + 
-                 (b.opt1_pushbarsWithRimLock * costRimLock) + 
-                 (b.opt1_maglockCovers * costMaglockCover) + 
-                 (b.opt1_maglocksToReplace * costMaglockReplace) + 
-                 (activeAppDoors * opt1_pedSetup) + // $750 Setup per app access door
-                 (b.opt1_convertCallbox * opt1_callboxConvertSetup); // Currently $0
+                 (b.opt1_pedDoors * opt1_pedSetup) + 
+                 (b.opt1_convertCallbox * opt1_callboxConvertSetup); // Setup is $0
     
-    // Monthly OpEx = Vehicles + ($150 per active door)
-    opt1OpEx += opt1VehMonthly + (activeAppDoors * opt1_pedMonthly);
+    // Monthly OpEx = Vehicles + ($150 per active app door)
+    opt1OpEx += opt1VehMonthly + (b.opt1_pedDoors * opt1_pedMonthly);
 
     // --- LEGACY VEHICLE COSTS (Opt 2, 3, 4) ---
     const legacyVehSetup = (b.vehicleGates * costGateTestLegacy) + (vRepair * costGateRepairLegacy);
@@ -407,7 +399,6 @@ export default function PricingStationCalculator() {
 
                         <div className="p-4">
                           
-                          {/* REUSABLE HARDWARE INPUTS */}
                           <div className="animate-[fadeIn_0.2s_ease-out] space-y-5">
                             <div className="border-b border-white/5 pb-2">
                               <span className="text-sm font-bold text-white block">
@@ -420,70 +411,77 @@ export default function PricingStationCalculator() {
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                               
-                              {/* General Removals / Configurations */}
-                              <div className="space-y-4">
-                                {activeScopeTab === 'opt4' && (
-                                  <div>
-                                    <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest mb-1.5 block">Remove Existing Hardware (${costRemoveHardware})</span>
-                                    <input type="number" min="0" value={b.opt4_removeHardware} onChange={(e) => handleUpdateBuilding(b.id, 'opt4_removeHardware', Number(e.target.value))} className="w-full bg-[#1A1A24] border border-white/5 rounded-lg p-2.5 text-white font-bold outline-none focus:border-cyan-500" />
+                              {/* --- OPTION 1 (GATE GUARD) SIMPLIFIED INPUTS --- */}
+                              {activeScopeTab === 'opt1' && (
+                                <>
+                                  <div className="space-y-4">
+                                    <div>
+                                      <span className="text-[10px] text-cyan-400/80 font-bold uppercase tracking-widest mb-1.5 block">Pedestrian Gates (${opt1_pedSetup} Setup)</span>
+                                      <p className="text-[8px] text-zinc-500 mb-1.5">Includes Pushbar & App Access</p>
+                                      <input type="number" min="0" value={b.opt1_pedDoors} onChange={(e) => handleUpdateBuilding(b.id, 'opt1_pedDoors', Number(e.target.value))} className="w-full bg-[#1A1A24] border border-white/5 rounded-lg p-2.5 text-white font-bold outline-none focus:border-cyan-500" />
+                                    </div>
                                   </div>
-                                )}
-                                
-                                {activeScopeTab === 'opt3' && (
-                                  <div>
-                                    <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest mb-1.5 block">Set Door as Egress Only (${costSetEgress})</span>
-                                    <input type="number" min="0" value={b.opt3_setEgress} onChange={(e) => handleUpdateBuilding(b.id, 'opt3_setEgress', Number(e.target.value))} className="w-full bg-[#1A1A24] border border-white/5 rounded-lg p-2.5 text-white font-bold outline-none focus:border-cyan-500" />
+                                  <div className="space-y-4">
+                                    <div>
+                                      <span className="text-[10px] text-cyan-400/80 font-bold uppercase tracking-widest mb-1.5 block">Convert Callbox to App (Included)</span>
+                                      <input type="number" min="0" value={b.opt1_convertCallbox} onChange={(e) => handleUpdateBuilding(b.id, 'opt1_convertCallbox', Number(e.target.value))} className="w-full bg-[#1A1A24] border border-white/5 rounded-lg p-2.5 text-white font-bold outline-none focus:border-cyan-500" />
+                                    </div>
                                   </div>
-                                )}
+                                </>
+                              )}
 
-                                {activeScopeTab === 'opt1' ? (
-                                  <div>
-                                    <span className="text-[10px] text-cyan-400/80 font-bold uppercase tracking-widest mb-1.5 block">Convert Callbox to App (Included)</span>
-                                    <input type="number" min="0" value={b.opt1_convertCallbox} onChange={(e) => handleUpdateBuilding(b.id, 'opt1_convertCallbox', Number(e.target.value))} className="w-full bg-[#1A1A24] border border-white/5 rounded-lg p-2.5 text-white font-bold outline-none focus:border-cyan-500" />
-                                  </div>
-                                ) : (
-                                  <div>
-                                    <span className="text-[10px] text-blue-400/80 font-bold uppercase tracking-widest mb-1.5 block">Callboxes to Test (${costCallBoxTest})</span>
-                                    <input type="number" min="0" value={b[`${activeScopeTab}_callboxes` as keyof BuildingConfig]} onChange={(e) => handleUpdateBuilding(b.id, `${activeScopeTab}_callboxes` as keyof BuildingConfig, Number(e.target.value))} className="w-full bg-[#1A1A24] border border-white/5 rounded-lg p-2.5 text-white font-bold outline-none focus:border-cyan-500" />
-                                  </div>
-                                )}
-                              </div>
+                              {/* --- LEGACY OPTIONS (2, 3, 4) INPUTS --- */}
+                              {activeScopeTab !== 'opt1' && (
+                                <>
+                                  {/* General Removals / Configurations */}
+                                  <div className="space-y-4">
+                                    {activeScopeTab === 'opt4' && (
+                                      <div>
+                                        <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest mb-1.5 block">Remove Existing Hardware (${costRemoveHardware})</span>
+                                        <input type="number" min="0" value={b.opt4_removeHardware} onChange={(e) => handleUpdateBuilding(b.id, 'opt4_removeHardware', Number(e.target.value))} className="w-full bg-[#1A1A24] border border-white/5 rounded-lg p-2.5 text-white font-bold outline-none focus:border-cyan-500" />
+                                      </div>
+                                    )}
+                                    
+                                    {activeScopeTab === 'opt3' && (
+                                      <div>
+                                        <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest mb-1.5 block">Set Door as Egress Only (${costSetEgress})</span>
+                                        <input type="number" min="0" value={b.opt3_setEgress} onChange={(e) => handleUpdateBuilding(b.id, 'opt3_setEgress', Number(e.target.value))} className="w-full bg-[#1A1A24] border border-white/5 rounded-lg p-2.5 text-white font-bold outline-none focus:border-cyan-500" />
+                                      </div>
+                                    )}
 
-                              {/* Egress Strategy */}
-                              <div className="space-y-4 bg-white/[0.02] p-3 rounded-xl border border-white/5">
-                                <div>
-                                  <span className="text-[10px] text-emerald-400/80 font-bold uppercase tracking-widest mb-1.5 block">Add Pushbar & Plate (${costPushbar})</span>
-                                  <input type="number" min="0" value={b[`${activeScopeTab}_pushbars` as keyof BuildingConfig]} onChange={(e) => handleUpdateBuilding(b.id, `${activeScopeTab}_pushbars` as keyof BuildingConfig, Number(e.target.value))} className="w-full bg-[#1A1A24] border border-white/5 rounded-lg p-2.5 text-white font-bold outline-none focus:border-emerald-500" />
-                                </div>
-                                <div className="pl-4 border-l-2 border-emerald-500/20">
-                                  <span className="text-[9px] text-zinc-500 font-bold uppercase tracking-widest mb-1.5 block">
-                                    {activeScopeTab === 'opt1' 
-                                      ? `↳ Add Rim Lock & App Access ($${costRimLock} HDW + $${opt1_pedSetup} Setup)` 
-                                      : `↳ Add Rim Lock for Access ($${costRimLock})`
-                                    }
-                                  </span>
-                                  <input type="number" min="0" max={b[`${activeScopeTab}_pushbars` as keyof BuildingConfig]} value={b[`${activeScopeTab}_pushbarsWithRimLock` as keyof BuildingConfig]} onChange={(e) => handleUpdateBuilding(b.id, `${activeScopeTab}_pushbarsWithRimLock` as keyof BuildingConfig, Number(e.target.value))} className="w-full bg-[#1A1A24] border border-white/5 rounded-lg p-2 text-white font-bold outline-none focus:border-emerald-500" />
-                                </div>
-                              </div>
+                                    <div>
+                                      <span className="text-[10px] text-blue-400/80 font-bold uppercase tracking-widest mb-1.5 block">Callboxes to Test (${costCallBoxTest})</span>
+                                      <input type="number" min="0" value={b[`${activeScopeTab}_callboxes` as keyof BuildingConfig]} onChange={(e) => handleUpdateBuilding(b.id, `${activeScopeTab}_callboxes` as keyof BuildingConfig, Number(e.target.value))} className="w-full bg-[#1A1A24] border border-white/5 rounded-lg p-2.5 text-white font-bold outline-none focus:border-cyan-500" />
+                                    </div>
+                                  </div>
 
-                              {/* Maglock Strategy */}
-                              <div className="space-y-4 bg-white/[0.02] p-3 rounded-xl border border-white/5 md:col-span-2">
-                                <div className="grid grid-cols-2 gap-4">
-                                  <div>
-                                    <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest mb-1.5 block">
-                                      {activeScopeTab === 'opt1' 
-                                        ? `Keep Maglock, Cover & App Access ($${costMaglockCover} HDW + $${opt1_pedSetup} Setup)` 
-                                        : `Keep Maglock + Add Cover ($${costMaglockCover})`
-                                      }
-                                    </span>
-                                    <input type="number" min="0" value={b[`${activeScopeTab}_maglockCovers` as keyof BuildingConfig]} onChange={(e) => handleUpdateBuilding(b.id, `${activeScopeTab}_maglockCovers` as keyof BuildingConfig, Number(e.target.value))} className="w-full bg-[#1A1A24] border border-white/5 rounded-lg p-2.5 text-white font-bold outline-none focus:border-cyan-500" />
+                                  {/* Egress Strategy */}
+                                  <div className="space-y-4 bg-white/[0.02] p-3 rounded-xl border border-white/5">
+                                    <div>
+                                      <span className="text-[10px] text-emerald-400/80 font-bold uppercase tracking-widest mb-1.5 block">Add Pushbar & Plate (${costPushbar})</span>
+                                      <input type="number" min="0" value={b[`${activeScopeTab}_pushbars` as keyof BuildingConfig]} onChange={(e) => handleUpdateBuilding(b.id, `${activeScopeTab}_pushbars` as keyof BuildingConfig, Number(e.target.value))} className="w-full bg-[#1A1A24] border border-white/5 rounded-lg p-2.5 text-white font-bold outline-none focus:border-emerald-500" />
+                                    </div>
+                                    <div className="pl-4 border-l-2 border-emerald-500/20">
+                                      <span className="text-[9px] text-zinc-500 font-bold uppercase tracking-widest mb-1.5 block">↳ Add Rim Lock for Access (${costRimLock})</span>
+                                      <input type="number" min="0" max={b[`${activeScopeTab}_pushbars` as keyof BuildingConfig]} value={b[`${activeScopeTab}_pushbarsWithRimLock` as keyof BuildingConfig]} onChange={(e) => handleUpdateBuilding(b.id, `${activeScopeTab}_pushbarsWithRimLock` as keyof BuildingConfig, Number(e.target.value))} className="w-full bg-[#1A1A24] border border-white/5 rounded-lg p-2 text-white font-bold outline-none focus:border-emerald-500" />
+                                    </div>
                                   </div>
-                                  <div>
-                                    <span className="text-[10px] text-red-400/80 font-bold uppercase tracking-widest mb-1.5 block">Needs Maglock Replace (+${costMaglockReplace})</span>
-                                    <input type="number" min="0" max={b[`${activeScopeTab}_maglockCovers` as keyof BuildingConfig]} value={b[`${activeScopeTab}_maglocksToReplace` as keyof BuildingConfig]} onChange={(e) => handleUpdateBuilding(b.id, `${activeScopeTab}_maglocksToReplace` as keyof BuildingConfig, Number(e.target.value))} className="w-full bg-red-900/10 border border-red-500/20 rounded-lg p-2.5 text-red-100 font-bold outline-none focus:border-red-500" />
+
+                                  {/* Maglock Strategy */}
+                                  <div className="space-y-4 bg-white/[0.02] p-3 rounded-xl border border-white/5 md:col-span-2">
+                                    <div className="grid grid-cols-2 gap-4">
+                                      <div>
+                                        <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest mb-1.5 block">Keep Maglock + Add Cover (${costMaglockCover})</span>
+                                        <input type="number" min="0" value={b[`${activeScopeTab}_maglockCovers` as keyof BuildingConfig]} onChange={(e) => handleUpdateBuilding(b.id, `${activeScopeTab}_maglockCovers` as keyof BuildingConfig, Number(e.target.value))} className="w-full bg-[#1A1A24] border border-white/5 rounded-lg p-2.5 text-white font-bold outline-none focus:border-cyan-500" />
+                                      </div>
+                                      <div>
+                                        <span className="text-[10px] text-red-400/80 font-bold uppercase tracking-widest mb-1.5 block">Needs Maglock Replace (+${costMaglockReplace})</span>
+                                        <input type="number" min="0" max={b[`${activeScopeTab}_maglockCovers` as keyof BuildingConfig]} value={b[`${activeScopeTab}_maglocksToReplace` as keyof BuildingConfig]} onChange={(e) => handleUpdateBuilding(b.id, `${activeScopeTab}_maglocksToReplace` as keyof BuildingConfig, Number(e.target.value))} className="w-full bg-red-900/10 border border-red-500/20 rounded-lg p-2.5 text-red-100 font-bold outline-none focus:border-red-500" />
+                                      </div>
+                                    </div>
                                   </div>
-                                </div>
-                              </div>
+                                </>
+                              )}
 
                             </div>
                           </div>
@@ -506,24 +504,36 @@ export default function PricingStationCalculator() {
           <div className="lg:w-1/2 bg-[#050505] p-8 lg:p-12 relative">
             <div className="sticky top-[100px] space-y-8 max-h-[calc(100vh-120px)] overflow-y-auto [&::-webkit-scrollbar]:hidden pb-20">
               
-              {/* ACTION BAR: Print & Share */}
-              <div className="flex justify-between items-center border-b border-white/5 pb-6">
+              {/* ACTION BAR: Print, Share & Total Unit Display */}
+              <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center border-b border-white/5 pb-6 gap-6">
                 <div>
-                  <h2 className="text-3xl font-black tracking-tight text-white mb-1">Comparison Matrix</h2>
-                  <p className="text-zinc-500 text-xs">Review the 4 deployment strategies.</p>
+                  <h2 className="text-3xl font-black tracking-tight text-white mb-3">Comparison Matrix</h2>
+                  {/* NEW TOTAL UNITS DISPLAY */}
+                  <div className="flex gap-4">
+                     <div className="bg-white/5 border border-white/10 px-4 py-2 rounded-xl">
+                       <p className="text-[9px] uppercase tracking-widest text-zinc-500 font-bold">Total Buildings</p>
+                       <p className="text-lg font-black text-white">{buildings.length}</p>
+                     </div>
+                     <div className="bg-cyan-900/20 border border-cyan-500/30 px-4 py-2 rounded-xl">
+                       <p className="text-[9px] uppercase tracking-widest text-cyan-500 font-bold">Total Units</p>
+                       <p className="text-lg font-black text-white">{totalUnits}</p>
+                     </div>
+                  </div>
                 </div>
-                <div className="flex gap-3">
-                   <button onClick={() => window.print()} className="py-2 px-4 bg-white/[0.03] hover:bg-white/[0.08] border border-white/10 text-white font-bold rounded-lg transition-all uppercase tracking-widest text-[9px] flex items-center gap-2 shadow-sm">
-                     <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+                
+                {/* LARGER BUTTONS */}
+                <div className="flex gap-3 w-full xl:w-auto">
+                   <button onClick={() => window.print()} className="flex-1 xl:flex-none justify-center py-3 px-6 bg-white/[0.03] hover:bg-white/[0.08] border border-white/10 text-white font-bold rounded-xl transition-all uppercase tracking-widest text-xs flex items-center gap-2 shadow-sm">
+                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
                      PDF
                    </button>
-                   <button onClick={handleCopyLink} className={`py-2 px-4 font-bold rounded-lg transition-all uppercase tracking-widest text-[9px] flex items-center gap-2 border shadow-sm ${linkCopied ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400' : 'bg-cyan-900/30 hover:bg-cyan-800/40 border-cyan-500/30 text-cyan-400'}`}>
+                   <button onClick={handleCopyLink} className={`flex-1 xl:flex-none justify-center py-3 px-6 font-bold rounded-xl transition-all uppercase tracking-widest text-xs flex items-center gap-2 border shadow-sm ${linkCopied ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400' : 'bg-cyan-900/30 hover:bg-cyan-800/40 border-cyan-500/30 text-cyan-400'}`}>
                      {linkCopied ? (
                        <>✓ Copied!</>
                      ) : (
                        <>
-                         <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
-                         Save / Share
+                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
+                         Share Link
                        </>
                      )}
                    </button>
@@ -700,7 +710,7 @@ export default function PricingStationCalculator() {
                       <img src="https://www.tymetal.com/wp-content/uploads/2024/04/2150-style-b-banner_450x.jpg" alt="Maglock Cover" className="object-contain w-full h-full" />
                     </div>
                     <div>
-                      <h4 className="text-white text-xs font-bold uppercase tracking-widest">Keep Mag Lock</h4>
+                      <h4 className="text-white text-xs font-bold uppercase tracking-widest">Keep Mag Lock (Options 2-4)</h4>
                       <p className="text-[11px] text-zinc-400 mt-1 leading-relaxed">In this option, instead of adding a crash bar, you can keep existing gate hardware and put a heavy-duty steel cover over the mag locking device to prevent physical tampering.</p>
                     </div>
                   </div>

@@ -19,21 +19,23 @@ export async function POST(request: Request) {
     );
     const calendar = google.calendar({ version: 'v3', auth });
 
-    // 1. Timezone Fix: Parse the exact local time the user clicked
+    // Format the time flexibly (h:mm a handles both "9:00 AM" and "09:00 AM")
     const cleanDate = selectedDate.split('T')[0];
-    const localStartObj = parse(`${cleanDate} ${selectedTime}`, 'yyyy-MM-dd hh:mm a', new Date());
+    const localStartObj = parse(`${cleanDate} ${selectedTime}`, 'yyyy-MM-dd h:mm a', new Date());
     
-    // 2. Set the duration
+    // Safely extract meeting type details
+    const mt = typeof meetingType === 'string' ? meetingType : meetingType?.id;
+    const meetingTitle = typeof meetingType === 'string' ? 'Meeting' : meetingType?.title;
+    
     const durationMap: Record<string, number> = { intro: 30, lunch: 60, onsite: 120 };
-    const duration = durationMap[meetingType.id] || 30;
+    const duration = durationMap[mt] || 30;
     const localEndObj = addMinutes(localStartObj, duration);
 
-    // 3. Format it cleanly without UTC markers so Google handles the timezone perfectly
     const googleStartTime = format(localStartObj, "yyyy-MM-dd'T'HH:mm:ss");
     const googleEndTime = format(localEndObj, "yyyy-MM-dd'T'HH:mm:ss");
 
     const event = {
-      summary: `GateGuard ${meetingType.title}: ${formData.name} (${formData.company})`,
+      summary: `GateGuard ${meetingTitle}: ${formData.name} (${formData.company})`,
       description: `New meeting booked via GateGuard website.\n\nName: ${formData.name}\nEmail: ${formData.email}\nCompany: ${formData.company}\nPhone: ${formData.phone || 'N/A'}`,
       start: { dateTime: googleStartTime, timeZone: timezone },
       end: { dateTime: googleEndTime, timeZone: timezone },
@@ -41,15 +43,16 @@ export async function POST(request: Request) {
     };
 
     const response = await calendar.events.insert({
-      calendarId: process.env.SALES_REP_EMAIL,
+      calendarId: 'primary', // THIS IS THE KEY FIX FOR DOMAIN-WIDE DELEGATION
       requestBody: event,
       sendUpdates: 'all',
     });
 
     return NextResponse.json({ success: true, eventLink: response.data.htmlLink });
 
-  } catch (error) {
-    console.error('Booking Error:', error);
-    return NextResponse.json({ success: false, error: 'Failed to book meeting' }, { status: 500 });
+  } catch (error: any) {
+    // If it fails, log the EXACT reason Google rejected it
+    console.error('Booking Error Details:', error.message);
+    return NextResponse.json({ success: false, error: error.message || 'Failed to book meeting' }, { status: 500 });
   }
 }

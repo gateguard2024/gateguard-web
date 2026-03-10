@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { google } from 'googleapis';
-import { addMinutes, subMinutes, format, isBefore, setHours, setMinutes, parseISO } from 'date-fns';
+import { addMinutes, subMinutes, format, setHours, setMinutes, parseISO } from 'date-fns';
 
 const CREDENTIALS = {
   client_email: process.env.GOOGLE_CLIENT_EMAIL,
@@ -19,43 +19,46 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { date, meetingType, timezone = 'America/New_York' } = body;
 
-    // 1. Safely parse the requested date
+    // Safely extract the ID whether the frontend sends a string or an object
+    const mt = typeof meetingType === 'string' ? meetingType : meetingType?.id;
+
     const cleanDate = date.split('T')[0];
     const [year, month, day] = cleanDate.split('-').map(Number);
     const baseDate = new Date(year, month - 1, day);
-    const dayOfWeek = baseDate.getDay(); // 0 = Sun, 1 = Mon, 2 = Tue, etc.
+    const dayOfWeek = baseDate.getDay();
 
-    // 2. The Rules Engine
-    let validDays = [1, 2, 3, 4, 5]; // Default M-F
+    let validDays = [1, 2, 3, 4, 5];
     let durationMinutes = 30;
     let bufferBefore = 0;
     let bufferAfter = 0;
-    let startHour = 9;  // 9 AM
-    let endHour = 17;   // 5 PM
-    let fixedSlots: number[] = []; // Empty means every 30 mins
+    let startHour = 9;
+    let endHour = 17;
+    let fixedSlots: number[] = [];
 
-    if (meetingType === 'intro') {
+    if (mt === 'intro') {
       durationMinutes = 30;
       bufferBefore = 15;
-    } else if (meetingType === 'lunch') {
+    } else if (mt === 'lunch') {
       durationMinutes = 60;
       bufferBefore = 15;
       bufferAfter = 15;
-      validDays = [2, 4]; // Tuesdays and Thursdays only
+      validDays = [2, 4];
       startHour = 11;
-      endHour = 13; // 11 AM to 1 PM window
-    } else if (meetingType === 'onsite') {
-      durationMinutes = 120; // 2 hours
-      validDays = [1, 3, 5]; // Mon, Wed, Fri only
-      fixedSlots = [10, 14]; // Exactly 10 AM and 2 PM
+      endHour = 13;
+    } else if (mt === 'onsite') {
+      durationMinutes = 120;
+      validDays = [1, 3, 5];
+      fixedSlots = [10, 14];
     }
 
-    // Fast-fail: If they click a day that isn't allowed, return no slots
     if (!validDays.includes(dayOfWeek)) {
       return NextResponse.json({ success: true, availableSlots: [] });
     }
 
-    // 3. Query Google for busy times
+    // NEW: Get current time in your specific timezone
+    const nowStr = new Date().toLocaleString('en-US', { timeZone: timezone });
+    const localNow = new Date(nowStr);
+
     const startOfDay = new Date(baseDate.setHours(0, 0, 0, 0));
     const endOfDay = new Date(baseDate.setHours(23, 59, 59, 999));
     const targetCalendarId = process.env.SALES_REP_EMAIL;
@@ -71,7 +74,6 @@ export async function POST(request: Request) {
     });
     const busySlots = freeBusyResponse.data.calendars?.[targetCalendarId as string]?.busy || [];
 
-    // 4. Generate possible time slots
     const availableSlots: string[] = [];
     const slotsToCheck: Date[] = [];
 
@@ -80,15 +82,18 @@ export async function POST(request: Request) {
     } else {
       let current = setMinutes(setHours(baseDate, startHour), 0);
       const endLimit = setMinutes(setHours(baseDate, endHour), 0);
-      // Generate 30-min increments until the end of the window
       while (addMinutes(current, durationMinutes).getTime() <= endLimit.getTime()) {
         slotsToCheck.push(current);
         current = addMinutes(current, 30);
       }
     }
 
-    // 5. Check against Google (including our custom buffers!)
     for (const slot of slotsToCheck) {
+      // NEW: Skip this slot if it has already passed today!
+      if (slot.getTime() < localNow.getTime()) {
+        continue;
+      }
+
       const meetingStart = slot;
       const meetingEnd = addMinutes(slot, durationMinutes);
       const checkStart = subMinutes(meetingStart, bufferBefore);
@@ -98,7 +103,6 @@ export async function POST(request: Request) {
         if (!busy.start || !busy.end) return false;
         const busyStart = parseISO(busy.start);
         const busyEnd = parseISO(busy.end);
-        // Overlaps if our buffered meeting starts before they are free, and ends after they get busy
         return checkStart.getTime() < busyEnd.getTime() && checkEnd.getTime() > busyStart.getTime();
       });
 

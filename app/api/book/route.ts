@@ -16,7 +16,8 @@ export async function POST(request: Request) {
       CREDENTIALS.client_email,
       undefined,
       CREDENTIALS.private_key,
-      ['https://www.googleapis.com/auth/calendar.events'] 
+      ['https://www.googleapis.com/auth/calendar.events'],
+      process.env.SALES_REP_EMAIL // 🚨 THE IMPERSONATION LINE: This tells the bot to act exactly as the sales rep
     );
     const calendar = google.calendar({ version: 'v3', auth });
 

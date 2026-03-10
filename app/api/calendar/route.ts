@@ -19,9 +19,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { date, meetingType, timezone = 'America/New_York' } = body;
 
-    // Safely extract the ID whether the frontend sends a string or an object
     const mt = typeof meetingType === 'string' ? meetingType : meetingType?.id;
-
     const cleanDate = date.split('T')[0];
     const [year, month, day] = cleanDate.split('-').map(Number);
     const baseDate = new Date(year, month - 1, day);
@@ -55,16 +53,20 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: true, availableSlots: [] });
     }
 
-    // NEW: Get current time in your specific timezone
-    const nowStr = new Date().toLocaleString('en-US', { timeZone: timezone });
-    const localNow = new Date(nowStr);
+    // 🔥 FOOLPROOF TIMEZONE FIX 🔥
+    // Get the exact current time in your specific timezone formatted as YYYY-MM-DD HH:mm
+    const formatter = new Intl.DateTimeFormat('en-CA', { 
+      timeZone: timezone, year: 'numeric', month: '2-digit', day: '2-digit', 
+      hour: '2-digit', minute: '2-digit', hour12: false 
+    });
+    const currentLocalTimeStr = formatter.format(new Date()).replace(', ', ' ');
 
     const startOfDay = new Date(baseDate.setHours(0, 0, 0, 0));
     const endOfDay = new Date(baseDate.setHours(23, 59, 59, 999));
     const targetCalendarId = process.env.SALES_REP_EMAIL;
 
     const freeBusyResponse = await calendar.freebusy.query({
-      auth: auth,
+      auth,
       requestBody: {
         timeMin: startOfDay.toISOString(),
         timeMax: endOfDay.toISOString(),
@@ -89,10 +91,11 @@ export async function POST(request: Request) {
     }
 
     for (const slot of slotsToCheck) {
-      // NEW: Skip this slot if it has already passed today!
-      if (slot.getTime() < localNow.getTime()) {
-        continue;
-      }
+      // Create a string like "2026-03-10 09:00" to compare against current time
+      const slotTimeStr = `${cleanDate} ${format(slot, 'HH:mm')}`;
+      
+      // If the slot is earlier than right now in your local time, skip it!
+      if (slotTimeStr < currentLocalTimeStr) continue;
 
       const meetingStart = slot;
       const meetingEnd = addMinutes(slot, durationMinutes);
@@ -101,9 +104,7 @@ export async function POST(request: Request) {
 
       const isOverlapping = busySlots.some((busy) => {
         if (!busy.start || !busy.end) return false;
-        const busyStart = parseISO(busy.start);
-        const busyEnd = parseISO(busy.end);
-        return checkStart.getTime() < busyEnd.getTime() && checkEnd.getTime() > busyStart.getTime();
+        return checkStart.getTime() < parseISO(busy.end).getTime() && checkEnd.getTime() > parseISO(busy.start).getTime();
       });
 
       if (!isOverlapping) {
@@ -113,7 +114,6 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true, availableSlots });
   } catch (error) {
-    console.error('Calendar Rules Error:', error);
     return NextResponse.json({ success: false, error: 'Failed to fetch slots' }, { status: 500 });
   }
 }

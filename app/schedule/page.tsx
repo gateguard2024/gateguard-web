@@ -54,21 +54,27 @@ export default function SchedulePage() {
   const handleBack = () => setStep((prev) => prev - 1);
 
 const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
+    e.preventDefault();
+    try {
+      const response = await fetch('/api/book', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ meetingType, selectedDate, selectedTime, formData }),
+      });
 
-  // Optional: Add a loading state here if you want to show a spinner on the button
+      const data = await response.json();
 
-  try {
-    const response = await fetch('/api/book', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        meetingType,
-        selectedDate,
-        selectedTime,
-        formData
-      }),
-    });
+      if (data.success) {
+        setStep(4); 
+      } else {
+        // 🚨 THIS IS THE MAGIC LINE: It will now show the EXACT error from Google
+        alert(`Booking Failed: ${data.error}`); 
+      }
+    } catch (error) {
+      console.error("Failed to submit form", error);
+      alert("Error connecting to the booking server.");
+    }
+  };
 
     const data = await response.json();
 

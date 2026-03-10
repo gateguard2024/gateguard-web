@@ -75,6 +75,9 @@ export default function Home() {
             <a href="#services" className="hover:text-cyan-400 transition-colors">Services</a>
             <a href="#roi" className="hover:text-cyan-400 transition-colors">Compare</a>
             
+            {/* NEW SCHEDULE LINK */}
+            <Link href="/schedule" className="hover:text-cyan-400 transition-colors">Schedule</Link>
+            
             {/* UPDATED LOGIN LINK */}
             <Link 
               href="/login"
@@ -568,6 +571,10 @@ export default function Home() {
                <ul className="space-y-4 text-sm text-zinc-500">
                   <li><a href="#services" className="hover:text-cyan-400 transition-colors">Core Services</a></li>
                   <li><a href="#pricing" className="hover:text-cyan-400 transition-colors">ROI Comparison</a></li>
+                  
+                  {/* NEW SCHEDULE LINK IN FOOTER */}
+                  <li><Link href="/schedule" className="hover:text-cyan-400 transition-colors">Schedule Consultation</Link></li>
+                  
                   <li><a href="#" className="hover:text-cyan-400 transition-colors">Brivo Integration</a></li>
                </ul>
             </div>

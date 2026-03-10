@@ -17,26 +17,23 @@ const BuildingIcon = () => (
 
 // Define our refined meeting types
 const MEETING_TYPES = [
-  {
-    id: 'intro',
-    title: 'Introductory Call',
-    duration: '15 Min',
-    description: 'A focused discussion to explore if GateGuard aligns with your security needs.',
-    icon: <PhoneIcon />,
+  { 
+    id: 'intro', 
+    title: 'Discovery Call', 
+    description: 'A brief 30-minute introductory overview of the GateGuard system.', 
+    duration: '30 min' 
   },
-  {
-    id: 'technical',
-    title: 'Technical Deep Dive',
-    duration: '45 Min',
-    description: 'Analyze integration requirements, network architecture, and wiring specs.',
-    icon: <SettingsIcon />,
+  { 
+    id: 'lunch', 
+    title: 'Lunch & Learn Session', 
+    description: 'We evaluate your site, discuss solutions, and provide lunch for your team.', 
+    duration: '1 hr' 
   },
-  {
-    id: 'onsite',
-    title: 'Concierge Assessment',
-    duration: '60 Min',
-    description: 'Physical property walkthrough to design your bespoke access control solution.',
-    icon: <BuildingIcon />,
+  { 
+    id: 'onsite', 
+    title: 'Comprehensive Site Assessment', 
+    description: 'An exhaustive 2-hour on-site evaluation of your current infrastructure and upgrade options.', 
+    duration: '2 hrs' 
   },
 ];
 

@@ -56,12 +56,34 @@ export default function SchedulePage() {
   const handleNextStep = () => setStep((prev) => prev + 1);
   const handleBack = () => setStep((prev) => prev - 1);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    // Next, we build the app/api/schedule/route.ts to handle this
-    console.log('Submitting booking payload:', { meetingType, selectedDate, selectedTime, formData });
-    setStep(4); // Move to success screen
-  };
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  // Optional: Add a loading state here if you want to show a spinner on the button
+
+  try {
+    const response = await fetch('/api/book', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        meetingType,
+        selectedDate,
+        selectedTime,
+        formData
+      }),
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      setStep(4); // Move to success screen ONLY if Google successfully booked it
+    } else {
+      alert("Oops! Something went wrong booking your slot. Please try again.");
+    }
+  } catch (error) {
+    console.error("Failed to submit form", error);
+  }
+};
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200 flex items-center justify-center p-4 sm:p-8 font-sans transition-all duration-300">

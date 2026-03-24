@@ -52,7 +52,7 @@ export default function ColumbiaEnterpriseDashboard() {
 
   const selectedSites = PREDEFINED_SITES.filter(site => selectedSiteIds.includes(site.id));
 
-  // --- RAW MATH LOGIC ---
+  // --- MATH LOGIC (Fixed: Removed $250 penalty from monthly OpEx) ---
   let totalWorkingDoors = 0;
   let totalBrokenDoors = 0;
   let totalRawMonthlyFee = 0;
@@ -68,11 +68,13 @@ export default function ColumbiaEnterpriseDashboard() {
     totalWorkingDoors += (vWorking + pWorking);
     totalBrokenDoors += (vRepair + pRepair);
 
-    const siteHardwareMonthly = (site.vehicleGates * 150) + (site.pedGates * 125) + ((vRepair + pRepair) * 250);
+    // Fixed formula: Only baseline hardware costs apply to monthly
+    const siteHardwareMonthly = (site.vehicleGates * 150) + (site.pedGates * 125);
     totalRawMonthlyFee += siteHardwareMonthly;
   });
 
   const numSites = selectedSites.length;
+  // Setup fee correctly accounts for the $250 penalty on broken gates ($750 vs $500)
   const rawSetupFee = (totalWorkingDoors * 500) + (totalBrokenDoors * 750);
   const rawAvgPerUnit = totalUnits > 0 ? (totalRawMonthlyFee / totalUnits) : 0;
 
@@ -155,7 +157,7 @@ export default function ColumbiaEnterpriseDashboard() {
   // ==========================================
   if (view === 'builder') {
     return (
-      <main className="min-h-screen bg-[#020813] font-sans text-slate-100 relative selection:bg-blue-500/30">
+      <main className="min-h-screen bg-[#020813] font-sans text-slate-100 relative selection:bg-blue-500/30 pb-20">
         <div className="fixed inset-0 z-0 pointer-events-none bg-[radial-gradient(#ffffff15_1px,transparent_1px)] [background-size:20px_20px] opacity-70"></div>
         <div className="fixed top-[-20%] left-[-10%] w-[60%] h-[60%] bg-blue-900/10 blur-[150px] rounded-full z-0 pointer-events-none"></div>
 
@@ -266,10 +268,10 @@ export default function ColumbiaEnterpriseDashboard() {
                 </div>
                 <div className="relative w-full h-2.5 bg-white/5 rounded-full overflow-hidden border border-white/10">
                     <div className="absolute top-0 left-0 h-full bg-gradient-to-r from-blue-600 via-cyan-500 to-emerald-400 transition-all duration-700 ease-out" style={{ width: `${progressPercent}%` }}></div>
-                    <div className="absolute top-0 left-[12.5%] h-full w-px bg-white/20"></div> {/* 2 Sites */}
-                    <div className="absolute top-0 left-[25%] h-full w-px bg-white/20"></div> {/* 4 Sites */}
-                    <div className="absolute top-0 left-[50%] h-full w-px bg-white/20"></div> {/* 8 Sites */}
-                    <div className="absolute top-0 left-[81.25%] h-full w-px bg-white/20"></div> {/* 13 Sites */}
+                    <div className="absolute top-0 left-[12.5%] h-full w-px bg-white/20"></div>
+                    <div className="absolute top-0 left-[25%] h-full w-px bg-white/20"></div>
+                    <div className="absolute top-0 left-[50%] h-full w-px bg-white/20"></div>
+                    <div className="absolute top-0 left-[81.25%] h-full w-px bg-white/20"></div>
                 </div>
             </div>
 
@@ -287,7 +289,7 @@ export default function ColumbiaEnterpriseDashboard() {
               </button>
            </div>
 
-           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 pb-32">
+           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
               {PREDEFINED_SITES.map((site) => {
                  const isSelected = selectedSiteIds.includes(site.id);
                  const vWorking = site.vehicleGates - site.vehicleGatesRepair;
@@ -358,7 +360,6 @@ export default function ColumbiaEnterpriseDashboard() {
                 {/* LEFT SIDE: DYNAMIC CONTRACT PREVIEW */}
                 <div className="xl:col-span-8 bg-white text-slate-900 p-8 lg:p-12 rounded-2xl shadow-2xl h-[800px] overflow-y-auto">
                     
-                    {/* Contract Header */}
                     <div className="border-b-2 border-slate-900 pb-6 mb-8">
                         <div className="flex justify-between items-start mb-4">
                             <div>
@@ -372,7 +373,6 @@ export default function ColumbiaEnterpriseDashboard() {
 
                     <div className="prose prose-sm prose-slate max-w-none text-justify">
                         
-                        {/* Parties */}
                         <div className="grid grid-cols-2 gap-8 mb-8 bg-slate-50 p-6 rounded-lg border border-slate-200 text-left">
                             <div>
                                 <h4 className="font-black text-slate-900 uppercase text-xs tracking-widest mb-2 border-b border-slate-200 pb-2">Service Provider</h4>
@@ -556,7 +556,6 @@ export default function ColumbiaEnterpriseDashboard() {
                         <h3 className="font-bold text-lg mt-8 border-b border-slate-200 pb-2">11. Governing Law & Dispute Resolution</h3>
                         <p>This Agreement shall be governed by, and construed in accordance with, the laws of the State of Georgia, without regard to its conflict of law principles. Any legal action or proceeding arising under this Agreement shall be brought exclusively in the state or federal courts located in Fulton County, Georgia.</p>
 
-                        {/* Executable Signature Block */}
                         <div className="mt-12 pt-8 border-t-2 border-slate-900 grid grid-cols-2 gap-12 text-left">
                             <div className="col-span-2">
                                 <p className="font-bold mb-4">IN WITNESS WHEREOF, the Parties execute this Agreement:</p>

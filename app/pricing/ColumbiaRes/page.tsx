@@ -29,7 +29,6 @@ export default function ColumbiaEnterpriseDashboard() {
   const [selectedSiteIds, setSelectedSiteIds] = useState<string[]>(['1', '11', '17']);
   const [useAmortization, setUseAmortization] = useState(false);
   
-  // Expanded Signature & Binding Form State
   const [formData, setFormData] = useState({ 
       ownerName: 'Columbia Residential', 
       portfolioName: 'Columbia Portfolio Group',
@@ -77,7 +76,7 @@ export default function ColumbiaEnterpriseDashboard() {
   const rawSetupFee = (totalWorkingDoors * 500) + (totalBrokenDoors * 750);
   const rawAvgPerUnit = totalUnits > 0 ? (totalRawMonthlyFee / totalUnits) : 0;
 
-  // --- NEW 5-TIER VOLUME LOGIC ---
+  // --- VOLUME TIER LOGIC ---
   let unitCap = Infinity;
   let discountPercent = 0;
   let setupCapActive = false;
@@ -109,7 +108,6 @@ export default function ColumbiaEnterpriseDashboard() {
   let monthlySavings = 0;
 
   if (setupCapActive) {
-      // 8+ Sites: Flat $500 setup & Unit Caps
       finalSetupFee = (totalWorkingDoors + totalBrokenDoors) * 500;
       setupSavings = rawSetupFee - finalSetupFee;
 
@@ -117,7 +115,6 @@ export default function ColumbiaEnterpriseDashboard() {
       baseMonthlyTotal = finalAvgPerUnitBeforeAmort * totalUnits;
       monthlySavings = totalRawMonthlyFee - baseMonthlyTotal;
   } else if (discountPercent > 0) {
-      // 2-7 Sites: Flat % Discount off raw prices
       finalSetupFee = rawSetupFee * (1 - discountPercent);
       setupSavings = rawSetupFee - finalSetupFee;
 
@@ -127,7 +124,6 @@ export default function ColumbiaEnterpriseDashboard() {
 
   const isMonthlyDiscounted = monthlySavings > 0;
 
-  // Amortization (Requires 13+ Sites)
   const isAmortizationEligible = numSites >= 13;
   const amortizedUpfrontCapEx = numSites * 2500;
   const canActuallyAmortize = isAmortizationEligible && (finalSetupFee > amortizedUpfrontCapEx);
@@ -145,11 +141,8 @@ export default function ColumbiaEnterpriseDashboard() {
   const finalMonthlyTotal = baseMonthlyTotal + monthlyAmortizationFee;
   const finalBlendedUnitAvg = totalUnits > 0 ? (finalMonthlyTotal / totalUnits).toFixed(2) : "0.00";
 
-  // Progress Bar
   const maxTier = 16;
   const progressPercent = Math.min((numSites / maxTier) * 100, 100);
-
-  // Formatting Today's Date
   const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
   const handleSignContract = () => {
@@ -370,73 +363,139 @@ export default function ColumbiaEnterpriseDashboard() {
                         <div className="flex justify-between items-start mb-4">
                             <div>
                                 <h1 className="text-3xl font-black uppercase tracking-tight text-slate-900">Your Gate Guard Service Agreement</h1>
-                                <p className="text-slate-500 font-bold tracking-widest uppercase text-xs mt-2">Prepared Date: {today}</p>
+                                <p className="text-slate-500 font-bold tracking-widest uppercase text-xs mt-2">Effective Date: {today}</p>
                             </div>
-                            <img src="/logo.png" alt="Gate Guard" className="h-12 w-auto object-contain" />
+                            <img src="/Columbia_logo.png" alt="Gate Guard" className="h-12 w-auto object-contain" />
                         </div>
-                        <p className="text-sm text-slate-700">This Agreement is entered into as of the Effective Date by and between <strong>Gate Guard, LLC</strong> and <strong>{formData.ownerName || "[Customer Name]"}</strong>.</p>
+                        <p className="text-sm text-slate-700">This Agreement ("Agreement") is entered into as of the Effective Date by and between the following Parties:</p>
                     </div>
 
-                    <div className="prose prose-sm prose-slate max-w-none">
+                    <div className="prose prose-sm prose-slate max-w-none text-justify">
                         
                         {/* Parties */}
-                        <div className="grid grid-cols-2 gap-8 mb-8 bg-slate-50 p-6 rounded-lg border border-slate-200">
+                        <div className="grid grid-cols-2 gap-8 mb-8 bg-slate-50 p-6 rounded-lg border border-slate-200 text-left">
                             <div>
                                 <h4 className="font-black text-slate-900 uppercase text-xs tracking-widest mb-2 border-b border-slate-200 pb-2">Service Provider</h4>
                                 <p className="leading-relaxed"><strong>Gate Guard, LLC</strong><br/>
                                 980 Hammond Drive, Ste. 200<br/>
                                 Atlanta, GA 30328<br/>
-                                (844) 4MY-GATE<br/>
-                                info@gateguard.co</p>
+                                Phone: 844-4MY-GATE<br/>
+                                Email: info@gateguard.co</p>
                             </div>
                             <div>
                                 <h4 className="font-black text-slate-900 uppercase text-xs tracking-widest mb-2 border-b border-slate-200 pb-2">Customer</h4>
                                 <p className="leading-relaxed">
-                                    <strong>{formData.ownerName || "[Customer Name]"}</strong><br/>
-                                    Site: {formData.portfolioName || "[Portfolio Name]"}<br/>
-                                    {formData.address ? <>{formData.address}<br/></> : <span className="text-red-400 italic">[Enter Address in form]</span>}
-                                    Phone: {formData.phone || "[Phone]"}<br/>
-                                    Email: {formData.email || "[Email]"}
+                                    <strong>Name:</strong> {formData.ownerName || "[Customer Name]"}<br/>
+                                    <strong>Site Name:</strong> {formData.portfolioName || "[Portfolio Name]"}<br/>
+                                    <strong>Address:</strong> {formData.address || "[Address]"}<br/>
+                                    <strong>Phone:</strong> {formData.phone || "[Phone]"}<br/>
+                                    <strong>Email:</strong> {formData.email || "[Email]"}
                                 </p>
                             </div>
                         </div>
 
-                        {/* Standard Legal Language from Document */}
                         <h3 className="font-bold text-lg mt-8 border-b border-slate-200 pb-2">1. Definitions & Scope</h3>
-                        <p>These Terms and Conditions govern the proactive gate monitoring, preventative maintenance, and reporting services (the "Service") provided by Gate Guard, LLC to the Customer. By signing this Agreement or utilizing the Service, Customer agrees to be bound by these terms, which establish a professional partnership aimed at maintaining site security and operational uptime.</p>
+                        <p>These Terms and Conditions govern the proactive gate monitoring, preventative maintenance, and reporting services (the "Service") provided by Gate Guard, LLC. to the Customer. By signing this Agreement or utilizing the Service, Customer agrees to be bound by these terms, which establish a professional partnership aimed at maintaining site security and operational uptime.</p>
 
                         <h3 className="font-bold text-lg mt-6 border-b border-slate-200 pb-2">2. Services Provided</h3>
-                        <p>Gate Guard agrees to provide continuous monitoring and maintenance for the following <strong>{numSites} properties</strong> selected by the Customer:</p>
-                        <ul className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
+                        <p>Gate Guard agrees to provide the following services ("Services") to the Customer, but only to the extent they are selected below. Services will be applied across the following <strong>{numSites} properties</strong>:</p>
+                        <ul className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs list-disc pl-5">
                             {selectedSites.map(site => (
-                                <li key={site.id}>• {site.name} ({site.units} Units)</li>
+                                <li key={site.id}>{site.name} ({site.units} Units)</li>
                             ))}
                         </ul>
 
-                        <h3 className="font-bold text-lg mt-8 border-b border-slate-200 pb-2">3. Maintenance & Support Scope</h3>
-                        <table className="w-full text-left text-xs border-collapse border border-slate-200 mb-6">
+                        <h3 className="font-bold text-lg mt-8 border-b border-slate-200 pb-2">3. Maintenance & Support Scope (Covered vs. Excluded)</h3>
+                        <p className="text-xs mb-2">This section details the specific hardware and labor coverage included in the Monthly Service Program versus items that incur additional billable costs.</p>
+                        <p className="text-xs font-bold text-red-600 mb-4">********NOTE******* Power must be on and accessible at front gate.</p>
+                        
+                        <table className="w-full text-left text-xs border-collapse border border-slate-300 mb-6">
                             <thead>
                                 <tr className="bg-slate-100">
-                                    <th className="border border-slate-200 p-2 w-1/4">Category</th>
-                                    <th className="border border-slate-200 p-2">Included in Monthly Program</th>
-                                    <th className="border border-slate-200 p-2">Excluded (Billable)</th>
+                                    <th className="border border-slate-300 p-2 w-1/5">Category</th>
+                                    <th className="border border-slate-300 p-2 w-2/5">Included in Monthly Service Program</th>
+                                    <th className="border border-slate-300 p-2 w-2/5">Excluded (Billable Services)</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td className="border border-slate-200 p-2 font-bold">GateGuard Hardware</td>
-                                    <td className="border border-slate-200 p-2">Maintain, repair or replace Gate Guard supplied cameras, controllers, and readers due to failure.</td>
-                                    <td className="border border-slate-200 p-2">Replacement of equipment damaged/removed by ownership.</td>
+                                    <td className="border border-slate-300 p-2 font-bold bg-slate-50">Initial Setup of Working Gates/Doors</td>
+                                    <td className="border border-slate-300 p-2">We will install a Gate Guard supplied camera at the main entry gate. Test and ensure all motors, operators and Callbox locations are operating properly. Install new Brivo controllers and readers as well as take over all fees associated with the gate software.</td>
+                                    <td className="border border-slate-300 p-2">Property is responsible for providing power and internet at all locations. We do not cover the physical gate or door, only devices connected to ensure controlled access operation.</td>
                                 </tr>
                                 <tr>
-                                    <td className="border border-slate-200 p-2 font-bold">Veh. & Ped. Gates</td>
-                                    <td className="border border-slate-200 p-2">Remote technical support, preventative maintenance visits, repairs/replacements due to failure.</td>
-                                    <td className="border border-slate-200 p-2">We do not cover the physical gate or door, ONLY devices connected to ensure controlled access.</td>
+                                    <td className="border border-slate-300 p-2 font-bold bg-slate-50">Initial Setup of Non-Working Gates/Doors</td>
+                                    <td className="border border-slate-300 p-2">We will install a Gate Guard supplied camera at the main entry gate. Repair, test and ensure all motors, operators and callbox location (as needed) are operating properly. Install new controllers and readers as well as take over all fees associated to the gate software.</td>
+                                    <td className="border border-slate-300 p-2">Property is responsible for providing power and internet at all locations. We do not cover the physical gate or door, ONLY devices connected to ensure controlled access operation.</td>
+                                </tr>
+                                <tr>
+                                    <td className="border border-slate-300 p-2 font-bold bg-slate-50">GateGuard Supplied Hardware</td>
+                                    <td className="border border-slate-300 p-2">We will maintain, repair or replace any and all Gate Guard supplied cameras, controllers, and readers due to failure.</td>
+                                    <td className="border border-slate-300 p-2">Replacement of equipment damaged or removed by or under the direction of ownership.</td>
+                                </tr>
+                                <tr>
+                                    <td className="border border-slate-300 p-2 font-bold bg-slate-50">Vehicle and Pedestrian Gates</td>
+                                    <td className="border border-slate-300 p-2">We will provide remote technical support, scheduled preventative maintenance visits, repairs and replacements as needed due to failure.</td>
+                                    <td className="border border-slate-300 p-2">Replacement of equipment damaged or removed by or under the direction of ownership. We do not cover the physical gate or door, ONLY devices connected to ensure controlled access operation.</td>
+                                </tr>
+                                <tr>
+                                    <td className="border border-slate-300 p-2 font-bold bg-slate-50">Amenity Doors</td>
+                                    <td className="border border-slate-300 p-2">We will provide remote technical support, scheduled preventative maintenance visits, repairs and replacements as needed due to failure.</td>
+                                    <td className="border border-slate-300 p-2">Replacement of equipment damaged or removed by or under the direction of ownership. We do not cover the physical gate or door, ONLY devices connected to ensure controlled access operation.</td>
+                                </tr>
+                                <tr>
+                                    <td className="border border-slate-300 p-2 font-bold bg-slate-50">Labor & Trips</td>
+                                    <td className="border border-slate-300 p-2">Remote technical support, scheduled preventative maintenance, and non-scheduled repairs will all be covered under this agreement.</td>
+                                    <td className="border border-slate-300 p-2">Trip Charges will be assessed if we are not provided access to the areas necessary to conduct repairs and/or maintenance, once property confirms appointment.</td>
+                                </tr>
+                                <tr>
+                                    <td className="border border-slate-300 p-2 font-bold bg-slate-50">Software/Data</td>
+                                    <td className="border border-slate-300 p-2">Software updates, user management API with Real Page (adding/removing residents), and video retrieval requests.</td>
+                                    <td className="border border-slate-300 p-2">Custom software development or integration with non-supported third-party property management systems.</td>
                                 </tr>
                             </tbody>
                         </table>
 
-                        <h3 className="font-bold text-lg mt-6 border-b border-slate-200 pb-2">4. Financial Quote & Payment Terms</h3>
+                        <h3 className="font-bold text-lg mt-8 border-b border-slate-200 pb-2">4. User Accounts</h3>
+                        <p>The Company may provide the Customer with access to a digital portal or dashboard to view daily reports, camera feeds, and gate health analytics.</p>
+                        <ul className="list-disc pl-5">
+                            <li><strong>Account Responsibility:</strong> Customer is responsible for maintaining the confidentiality of login credentials and for all activities occurring under their account.</li>
+                            <li><strong>Access Rights:</strong> Access is granted solely for the Customer's internal business purposes during the Term of this Agreement.</li>
+                            <li><strong>Security:</strong> Customer must notify the Company immediately of any unauthorized use of their account or any other breach of security. The Company reserves the right to disable access if a security threat is identified.</li>
+                        </ul>
+
+                        <h3 className="font-bold text-lg mt-8 border-b border-slate-200 pb-2">5. Term & Termination</h3>
+                        
+                        {useAmortization ? (
+                            <div className="bg-amber-50 p-4 border-l-4 border-amber-500 my-4 text-amber-900 text-xs text-left">
+                                <ul className="list-disc pl-5 space-y-2">
+                                    <li><strong>Initial Term:</strong> Sixty (60) months beginning on the Effective Date.</li>
+                                    <li><strong>Automatic Renewal:</strong> Successive one (1) year terms unless either party provides written notice of non-renewal at least sixty (60) days prior to expiration.</li>
+                                    <li><strong>Termination for Cause:</strong> Either party may terminate for material breach not cured within thirty (30) days of written notice.</li>
+                                    <li><strong>Termination for Convenience & Early Termination Fees:</strong> Customer may terminate for convenience with ninety (90) days written notice. If Customer terminates for convenience before the end of the Initial Term, the following percentages of the remaining contract value shall be due and payable immediately:
+                                        <ul className="list-circle pl-5 mt-1 space-y-1">
+                                            <li>Termination in Year 1: 30% of remaining contract value.</li>
+                                            <li>Termination in Year 2: 20% of remaining contract value.</li>
+                                            <li>Termination in Year 3: 10% of remaining contract value.</li>
+                                            <li>Termination after Year 4: 0% of remaining contract value.</li>
+                                        </ul>
+                                    </li>
+                                    <li><strong>Asset Removal:</strong> In the event of cancellation or failure to pay, Gate Guard reserves the right to remove any and all installed assets from the property, including but not limited to cameras, locks, access systems, and network hardware.</li>
+                                </ul>
+                            </div>
+                        ) : (
+                            <div className="bg-slate-50 p-4 border-l-4 border-slate-400 my-4 text-slate-700 text-xs text-left">
+                                <ul className="list-disc pl-5 space-y-2">
+                                    <li><strong>Initial Term:</strong> Sixty (60) months beginning on the Effective Date.</li>
+                                    <li><strong>Automatic Renewal:</strong> Successive one (1) year terms unless either party provides written notice of non-renewal at least sixty (60) days prior to expiration.</li>
+                                    <li><strong>Termination for Cause:</strong> Either party may terminate for material breach not cured within thirty (30) days of written notice.</li>
+                                    <li><strong>Termination for Convenience:</strong> Customer may terminate for convenience with ninety (90) days written notice.</li>
+                                    <li><strong>Asset Removal:</strong> In the event of cancellation or failure to pay, Gate Guard reserves the right to remove any and all installed assets from the property, including but not limited to cameras, locks, access systems, and network hardware.</li>
+                                </ul>
+                            </div>
+                        )}
+
+                        <h3 className="font-bold text-lg mt-6 border-b border-slate-200 pb-2">6. Quote for Setup & Monthly Fees</h3>
                         <table className="w-full text-left mt-4 mb-6 text-sm border-collapse">
                             <tbody>
                                 <tr className="border-b border-slate-200">
@@ -448,55 +507,50 @@ export default function ColumbiaEnterpriseDashboard() {
                                     <td className="py-2 text-right">{totalUnits} Units</td>
                                 </tr>
                                 <tr className="border-b border-slate-200">
-                                    <td className="py-2 font-bold">One-Time Setup Fee (Due at Go-Live):</td>
-                                    <td className="py-2 text-right">${finalSetupFee.toLocaleString()}</td>
+                                    <td className="py-2 font-bold text-blue-900">Total Setup Fee (Due at Go-Live):</td>
+                                    <td className="py-2 text-right font-bold text-blue-900">${finalSetupFee.toLocaleString()}</td>
                                 </tr>
                                 <tr className="border-b border-slate-200 bg-slate-50">
-                                    <td className="py-2 font-bold pl-2">Predictable Monthly Subscription:</td>
-                                    <td className="py-2 text-right pr-2">${finalMonthlyTotal.toLocaleString()} / mo</td>
+                                    <td className="py-2 font-bold pl-2 text-blue-900">Total Recurring Monthly Subscription:</td>
+                                    <td className="py-2 text-right pr-2 font-bold text-blue-900">${finalMonthlyTotal.toLocaleString()} / mo</td>
                                 </tr>
                             </tbody>
                         </table>
-                        <p className="text-xs"><strong>Payment Terms:</strong> Deposit equal to 50% of the Total Due today. Remaining 50% of Setup and first month's Service due on Go Live date. Monthly fees begin on the 15th of the following calendar month.</p>
 
-                        <h3 className="font-bold text-lg mt-8 border-b border-slate-200 pb-2">5. Term & Termination</h3>
-                        {useAmortization ? (
-                            <div className="bg-amber-50 p-4 border-l-4 border-amber-500 my-4 text-amber-900 text-xs">
-                                <p className="mb-2"><strong>Enterprise Financing Election:</strong> Customer has elected to cap upfront setup costs at $2,500 per site, with the remaining balance amortized into the Monthly Subscription over a 60-month schedule.</p>
-                                <ul className="list-disc pl-5 space-y-2">
-                                    <li><strong>Initial Term:</strong> Sixty (60) months beginning on the Effective Date.</li>
-                                    <li><strong>Early Termination for Convenience:</strong> If Customer terminates for convenience before the end of the Initial Term, the remaining unamortized hardware balance shall become due and payable immediately:
-                                        <ul className="list-circle pl-5 mt-1 space-y-1">
-                                            <li>Termination in Year 1: 30% of remaining contract value due.</li>
-                                            <li>Termination in Year 2: 20% of remaining contract value due.</li>
-                                            <li>Termination in Year 3: 10% of remaining contract value due.</li>
-                                            <li>Termination after Year 4: 0% of remaining contract value due.</li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                            </div>
-                        ) : (
-                            <div className="bg-slate-50 p-4 border-l-4 border-slate-400 my-4 text-slate-700 text-xs">
-                                <p className="mb-2"><strong>Standard Terms Active:</strong> Customer has elected to pay setup CapEx upfront without financing.</p>
-                                <ul className="list-disc pl-5 space-y-2">
-                                    <li><strong>Initial Term:</strong> Sixty (60) months beginning on the Effective Date.</li>
-                                    <li><strong>Termination for Convenience:</strong> Customer may terminate this agreement for convenience by providing Ninety (90) Days written notice to Gate Guard, LLC.</li>
-                                    <li><strong>Automatic Renewal:</strong> Successive one (1) year terms unless either party provides written notice of non-renewal at least sixty (60) days prior to expiration.</li>
-                                </ul>
-                            </div>
-                        )}
+                        <h3 className="font-bold text-lg mt-8 border-b border-slate-200 pb-2">7. Payment Terms</h3>
+                        <ul className="list-disc pl-5">
+                            <li><strong>Deposit:</strong> The Deposit is equal to 50% of the Total Due today. Due upon signing of agreement.</li>
+                            <li><strong>"GO Live":</strong> The Second payment is the remaining 50% of the Set-Up Fee and 1st month's Service. This is due on the scheduled "Go Live date".</li>
+                            <li><strong>Monthly Fees:</strong> These payments will begin on the 15th of the calendar month following the "Go Live" date (not less than 30 days after event).</li>
+                        </ul>
 
-                        <div className="grid grid-cols-2 gap-4 text-xs mt-8">
-                            <div>
-                                <p><strong>8. Intellectual Property</strong><br/>Software, platforms, analytics, and processes remain the intellectual property of Gate Guard, LLC.</p>
-                            </div>
-                            <div>
-                                <p><strong>10. Limitation of Liability</strong><br/>Provider is not an insurer. Liability is capped at the total service fees paid by Customer for the six (6) months preceding the event.</p>
-                            </div>
-                        </div>
+                        <h3 className="font-bold text-lg mt-8 border-b border-slate-200 pb-2">8. Intellectual Property</h3>
+                        <ul className="list-disc pl-5">
+                            <li><strong>Ownership:</strong> Software, platforms, analytics, and processes remain the intellectual property of Gate Guard, LLC.</li>
+                            <li><strong>Data Usage:</strong> Video footage and incident data are handled securely and in accordance with applicable privacy laws.</li>
+                        </ul>
 
-                        {/* Signature Block Rendering */}
-                        <div className="mt-12 pt-8 border-t-2 border-slate-900 grid grid-cols-2 gap-12">
+                        <h3 className="font-bold text-lg mt-8 border-b border-slate-200 pb-2">9. Indemnification</h3>
+                        <ul className="list-disc pl-5">
+                            <li><strong>By Customer:</strong> Customer agrees to indemnify, defend, and hold harmless Gate Guard, LLC and its employees from any claims, damages, or losses (including reasonable attorney fees) arising from Customer's negligence, misuse of the Service, or failure to maintain the physical site in a safe condition for technicians.</li>
+                            <li><strong>By Company:</strong> Gate Guard, LLC agrees to indemnify the Customer against third-party claims arising solely from the Company's gross negligence or willful misconduct in the performance of the Services, subject to the Limitation of Liability set forth in Section 10.</li>
+                        </ul>
+
+                        <h3 className="font-bold text-lg mt-8 border-b border-slate-200 pb-2">10. Limitation of Liability</h3>
+                        <ul className="list-disc pl-5">
+                            <li><strong>Provider's Role:</strong> Gate Guard, LLC is a service provider and not an insurer; fees are for monitoring and services.</li>
+                            <li><strong>Exclusions:</strong> Gate Guard shall not be liable for failure of services or equipment due to misuse, lack of internet connectivity, power outages, or acts of third parties (including theft or vandalism).</li>
+                            <li><strong>Liability Cap:</strong> To the maximum extent permitted by law, liability is capped at the total service fees paid by Customer for the six (6) months preceding the event giving rise to a claim.</li>
+                        </ul>
+
+                        <h3 className="font-bold text-lg mt-8 border-b border-slate-200 pb-2">11. Governing Law & Dispute Resolution</h3>
+                        <p>This Agreement shall be governed by, and construed in accordance with, the laws of the State of Georgia, without regard to its conflict of law principles. Any legal action or proceeding arising under this Agreement shall be brought exclusively in the state or federal courts located in Fulton County, Georgia.</p>
+
+                        {/* Executable Signature Block */}
+                        <div className="mt-12 pt-8 border-t-2 border-slate-900 grid grid-cols-2 gap-12 text-left">
+                            <div className="col-span-2">
+                                <p className="font-bold mb-4">IN WITNESS WHEREOF, the Parties execute this Agreement:</p>
+                            </div>
                             <div>
                                 <p className="font-bold text-xs uppercase tracking-widest text-slate-500 mb-6">Service Provider (Gate Guard, LLC)</p>
                                 <div className="border-b border-slate-300 pb-1 mb-2">

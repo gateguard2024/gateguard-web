@@ -344,7 +344,7 @@ export default function ColumbiaEnterpriseDashboard() {
                             <h2 className="text-3xl font-black uppercase tracking-tight">Master Service Agreement</h2>
                             <p className="text-slate-500 font-bold tracking-widest uppercase text-xs mt-2">Gate Guard, LLC & Columbia Residential</p>
                         </div>
-                        <Image src="/Columbia_logo.png" alt="Logo" width={50} height={50} />
+                        <img src="/Columbia_logo.png" alt="Columbia Logo" className="w-[50px] h-[50px] object-contain" />
                     </div>
 
                     <div className="prose prose-sm prose-slate max-w-none">

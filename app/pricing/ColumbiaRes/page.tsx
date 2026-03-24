@@ -85,15 +85,15 @@ export default function ColumbiaEnterpriseDashboard() {
   let currentTierName = "Standard Pricing";
   
   if (numSites >= 16) {
-    unitCap = 8.5;
+    unitCap = 8.0;
     setupCapActive = true;
     currentTierName = "Maximum Scale ($8.50/Unit Cap)";
   } else if (numSites >= 13) {
-    unitCap = 9.5;
+    unitCap = 9.0;
     setupCapActive = true;
     currentTierName = "Enterprise Tier ($9.50/Unit Cap)";
   } else if (numSites >= 8) {
-    unitCap = 10.5;
+    unitCap = 10.0;
     setupCapActive = true;
     currentTierName = "Regional Tier ($10.50/Unit Cap)";
   } else if (numSites >= 4) {

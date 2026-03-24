@@ -519,9 +519,19 @@ export default function ColumbiaEnterpriseDashboard() {
 
                         <h3 className="font-bold text-lg mt-8 border-b border-slate-200 pb-2">7. Payment Terms</h3>
                         <ul className="list-disc pl-5">
-                            <li><strong>Deposit:</strong> The Deposit is equal to 50% of the Total Due today. Due upon signing of agreement.</li>
-                            <li><strong>"GO Live":</strong> The Second payment is the remaining 50% of the Set-Up Fee and 1st month's Service. This is due on the scheduled "Go Live date".</li>
-                            <li><strong>Monthly Fees:</strong> These payments will begin on the 15th of the calendar month following the "Go Live" date (not less than 30 days after event).</li>
+                            {useAmortization ? (
+                                <>
+                                    <li><strong>Deposit:</strong> The Deposit is equal to 100% of the 1st month's subscription and the capped $2,500 per site setup fee (Total Due: <strong>${(finalMonthlyTotal + finalSetupFee).toLocaleString()}</strong>). Due upon signing of agreement.</li>
+                                    <li><strong>"GO Live":</strong> No additional setup payments are due at Go-Live.</li>
+                                    <li><strong>Monthly Fees:</strong> Recurring monthly billing will begin on the 15th of the calendar month following the "Go Live" date (not less than 30 days after event).</li>
+                                </>
+                            ) : (
+                                <>
+                                    <li><strong>Deposit:</strong> The Deposit is equal to 50% of the Total Setup Fee and 1st month's Service (Total Due: <strong>${((finalSetupFee + finalMonthlyTotal) / 2).toLocaleString()}</strong>). Due upon signing of agreement.</li>
+                                    <li><strong>"GO Live":</strong> The Second payment is the remaining 50% of the Set-Up Fee and 1st month's Service (Total: <strong>${((finalSetupFee + finalMonthlyTotal) / 2).toLocaleString()}</strong>). This is due on the scheduled "Go Live date".</li>
+                                    <li><strong>Monthly Fees:</strong> Recurring monthly billing will begin on the 15th of the calendar month following the "Go Live" date (not less than 30 days after event).</li>
+                                </>
+                            )}
                         </ul>
 
                         <h3 className="font-bold text-lg mt-8 border-b border-slate-200 pb-2">8. Intellectual Property</h3>

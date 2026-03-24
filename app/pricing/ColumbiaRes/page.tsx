@@ -171,7 +171,7 @@ export default function ColumbiaEnterpriseDashboard() {
                   </div>
                   <div>
                      <h1 className="text-2xl font-black text-white tracking-tight">Columbia Residential</h1>
-                     <p className="text-xs text-blue-400 uppercase tracking-widest font-bold">Enterprise Deal Room</p>
+                     <p className="text-xs text-blue-400 uppercase tracking-widest font-bold">Portfolio Bulk Pricing</p>
                   </div>
                </div>
                <button 

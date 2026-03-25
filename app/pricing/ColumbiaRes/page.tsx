@@ -262,9 +262,9 @@ export default function ColumbiaEnterpriseDashboard() {
                     <span>Base</span>
                     <span className={numSites >= 2 ? 'text-white' : ''}>2 Sites (10%)</span>
                     <span className={numSites >= 4 ? 'text-white' : ''}>4 Sites (15%)</span>
-                    <span className={numSites >= 8 ? 'text-emerald-400' : ''}>8 Sites ($10.50)</span>
-                    <span className={numSites >= 13 ? 'text-blue-400' : ''}>13 Sites ($9.50)</span>
-                    <span className={numSites >= 16 ? 'text-purple-400' : ''}>16 Sites ($8.50)</span>
+                    <span className={numSites >= 8 ? 'text-emerald-400' : ''}>8 Sites ($9.00)</span>
+                    <span className={numSites >= 13 ? 'text-blue-400' : ''}>13 Sites ($8.50)</span>
+                    <span className={numSites >= 16 ? 'text-purple-400' : ''}>16 Sites ($8.00)</span>
                 </div>
                 <div className="relative w-full h-2.5 bg-white/5 rounded-full overflow-hidden border border-white/10">
                     <div className="absolute top-0 left-0 h-full bg-gradient-to-r from-blue-600 via-cyan-500 to-emerald-400 transition-all duration-700 ease-out" style={{ width: `${progressPercent}%` }}></div>

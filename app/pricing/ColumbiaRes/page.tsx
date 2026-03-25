@@ -13,7 +13,7 @@ const PREDEFINED_SITES = [
   { id: '8', name: 'Gardenside', units: 108, vehicleGates: 3, vehicleGatesRepair: 0, pedGates: 11, pedGatesRepair: 0, cameras: 0, conciergeShifts: 0 },
   { id: '9', name: 'Columbia Crest', units: 158, vehicleGates: 1, vehicleGatesRepair: 1, pedGates: 5, pedGatesRepair: 2, cameras: 0, conciergeShifts: 0 },
   { id: '10', name: 'Columbia Commons', units: 158, vehicleGates: 2, vehicleGatesRepair: 1, pedGates: 3, pedGatesRepair: 1, cameras: 0, conciergeShifts: 0 },
-  { id: '11', name: 'Columbia Park Commons', units: 332, vehicleGates: 6, vehicleGatesRepair: 2, pedGates: 10, pedGatesRepair: 2, cameras: 0, conciergeShifts: 0 },
+  { id: '11', name: 'Columbia Park Commons', units: 230, vehicleGates: 6, vehicleGatesRepair: 2, pedGates: 10, pedGatesRepair: 2, cameras: 0, conciergeShifts: 0 },
   { id: '12', name: 'Columbia Renaissance Square', units: 140, vehicleGates: 3, vehicleGatesRepair: 3, pedGates: 23, pedGatesRepair: 4, cameras: 0, conciergeShifts: 0 },
   { id: '13', name: 'Columbia Renaissance Senior', units: 120, vehicleGates: 2, vehicleGatesRepair: 2, pedGates: 12, pedGatesRepair: 7, cameras: 0, conciergeShifts: 0 },
   { id: '14', name: 'Columbia Renaissance P2', units: 140, vehicleGates: 2, vehicleGatesRepair: 0, pedGates: 7, pedGatesRepair: 0, cameras: 0, conciergeShifts: 0 },

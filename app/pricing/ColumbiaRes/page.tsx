@@ -69,7 +69,7 @@ export default function ColumbiaEnterpriseDashboard() {
     totalBrokenDoors += (vRepair + pRepair);
 
     // Fixed formula: Only baseline hardware costs apply to monthly
-    const siteHardwareMonthly = (site.vehicleGates * 250) + (site.pedGates * 175);
+    const siteHardwareMonthly = (site.vehicleGates * 150) + (site.pedGates * 125);
     totalRawMonthlyFee += siteHardwareMonthly;
   });
 

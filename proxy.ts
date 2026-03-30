@@ -5,7 +5,8 @@ import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 const isProtectedRoute = createRouteMatcher([
   '/sales-portal(.*)',
   '/api/maintainx(.*)',
-  '/investor(.*)' // <-- Added your new route here!
+  '/investor(.*)',
+  '/admin(.*)'
 ]);
 
 export default clerkMiddleware(async (auth, req) => {

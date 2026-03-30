@@ -69,7 +69,7 @@ export default function ColumbiaEnterpriseDashboard() {
     totalBrokenDoors += (vRepair + pRepair);
 
     // Fixed formula: Only baseline hardware costs apply to monthly
-    const siteHardwareMonthly = (site.vehicleGates * 200) + (site.pedGates * 150);
+    const siteHardwareMonthly = (site.vehicleGates * 175) + (site.pedGates * 125);
     totalRawMonthlyFee += siteHardwareMonthly;
   });
 
@@ -85,17 +85,17 @@ export default function ColumbiaEnterpriseDashboard() {
   let currentTierName = "Standard Pricing";
   
   if (numSites >= 16) {
+    unitCap = 7.5;
+    setupCapActive = true;
+    currentTierName = "Maximum Scale ($7.50/Unit Cap)";
+  } else if (numSites >= 13) {
     unitCap = 8.0;
     setupCapActive = true;
-    currentTierName = "Maximum Scale ($8.00/Unit Cap)";
-  } else if (numSites >= 13) {
+    currentTierName = "Enterprise Tier ($8.00/Unit Cap)";
+  } else if (numSites >= 8) {
     unitCap = 8.5;
     setupCapActive = true;
-    currentTierName = "Enterprise Tier ($8.50/Unit Cap)";
-  } else if (numSites >= 8) {
-    unitCap = 9.0;
-    setupCapActive = true;
-    currentTierName = "Regional Tier ($9.00/Unit Cap)";
+    currentTierName = "Regional Tier ($8.50/Unit Cap)";
   } else if (numSites >= 4) {
     discountPercent = 0.15;
     currentTierName = "Multi-Site (15% Discount)";

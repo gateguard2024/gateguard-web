@@ -5,44 +5,16 @@ import { useUser } from '@clerk/nextjs';
 import { redirect } from 'next/navigation';
 
 export default function ExecutivePortfolio() {
-  // --- CLERK SECURITY CHECK ---
+  // 1. ALL HOOKS AND STATE MUST GO AT THE VERY TOP
   const { isLoaded, isSignedIn, user } = useUser();
-  
-  // Replace these with your actual email and your investor's actual email
-  const AUTHORIZED_EMAILS = ['rfeldman@gateguard.co', 'sprabhu@gateguard.co'];
-
   const [isDarkMode, setIsDarkMode] = useState(false);
-  // ... rest of your state (simulatedInjection, timeHorizon, etc.)
+  const [simulatedInjection, setSimulatedInjection] = useState<number | ''>('');
+  const [timeHorizon, setTimeHorizon] = useState<number>(4); // Default to 4 weeks (1 Month)
 
-  // --- WAIT FOR CLERK TO LOAD ---
-  if (!isLoaded) {
-    return (
-      <div className="min-h-screen bg-zinc-200 dark:bg-[#0A0A0A] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-zinc-900 dark:border-white"></div>
-      </div>
-    );
-  }
-
-  // --- BOUNCE UNAUTHORIZED USERS ---
-  if (!isSignedIn) {
-    redirect('/login'); // Send them to login if they aren't signed in at all
-  }
-
-  const userEmail = user.primaryEmailAddress?.emailAddress;
-  
-  if (!AUTHORIZED_EMAILS.includes(userEmail || '')) {
-    // If a resident or normal customer tries to view this page, kick them back to their portal
-    redirect('/portal'); 
-  }
-
-  // --- DEMO DATA: 8 WEEKS OF FORECAST ---
-  // (Keep all your existing data and UI code below this point!)
-
-  // --- DYNAMIC DATE GENERATOR ---
-  // This ensures the sheet is "ever-evolving" and always starts from this week.
-  const generateDynamicWeeks = (numWeeks: number) => {
+  // 2. DYNAMIC DATE GENERATOR
+  const dynamicDates = useMemo(() => {
     const today = new Date();
-    return Array.from({ length: numWeeks }).map((_, i) => {
+    return Array.from({ length: 8 }).map((_, i) => {
       const start = new Date(today);
       start.setDate(start.getDate() + (i * 7));
       const end = new Date(start);
@@ -51,18 +23,35 @@ export default function ExecutivePortfolio() {
       const formatMsg = (d: Date) => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
       return { weekNum: i + 1, dateStr: `${formatMsg(start)} - ${formatMsg(end)}` };
     });
-  };
+  }, []);
 
-  const dynamicDates = generateDynamicWeeks(8);
+  // 3. CLERK SECURITY GUARDRAILS (Early Returns)
+  const AUTHORIZED_EMAILS = ['rfeldman@gateguard.co', 'sprabhu@gateguard.co'];
 
-  // --- DEMO DATA: 8 WEEKS OF FORECAST ---
+  if (!isLoaded) {
+    return (
+      <div className="min-h-screen bg-zinc-200 dark:bg-[#0A0A0A] flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-zinc-900 dark:border-white"></div>
+      </div>
+    );
+  }
+
+  if (!isSignedIn) {
+    redirect('/login');
+  }
+
+  const userEmail = user.primaryEmailAddress?.emailAddress || '';
+  if (!AUTHORIZED_EMAILS.includes(userEmail)) {
+    redirect('/portal'); // Bounce regular customers back to their portal
+  }
+
+  // 4. DATA & MATH LOGIC
   const baseCash = 42500;
   const injectionAmount = Number(simulatedInjection) || 0;
   const effectiveCash = baseCash + injectionAmount;
 
   const agingReport = { current: 18000, late30: 2500, late60: 1500, late90Plus: 500 };
 
-  // 8 weeks of data mapped to our dynamic dates
   const allWeeksData = [
     { ...dynamicDates[0], secureIn: 4000, unsureIn: 1000, note: 'Standard Payroll Disbursement', outflows: { payroll: 10500, equipLabor: 800, bills: 500, misc: 200 } },
     { ...dynamicDates[1], secureIn: 8000, unsureIn: 1000, note: 'Portfolio Invoices Clear', outflows: { payroll: 0, equipLabor: 1200, bills: 600, misc: 200 } },
@@ -74,30 +63,24 @@ export default function ExecutivePortfolio() {
     { ...dynamicDates[7], secureIn: 4500, unsureIn: 500,  note: 'Holiday Prep', outflows: { payroll: 1500, equipLabor: 1000, bills: 900, misc: 500 } },
   ];
 
-  // --- DYNAMIC CALCULATIONS BASED ON TIME HORIZON ---
-  const activeWeeks = useMemo(() => allWeeksData.slice(0, timeHorizon), [timeHorizon]);
+  const activeWeeks = allWeeksData.slice(0, timeHorizon);
 
-  const periodInflows = useMemo(() => {
-    return activeWeeks.reduce((acc, w) => {
-      acc.secure += w.secureIn;
-      acc.unsure += w.unsureIn;
-      acc.total += (w.secureIn + w.unsureIn);
-      return acc;
-    }, { secure: 0, unsure: 0, total: 0 });
-  }, [activeWeeks]);
+  const periodInflows = activeWeeks.reduce((acc, w) => {
+    acc.secure += w.secureIn;
+    acc.unsure += w.unsureIn;
+    acc.total += (w.secureIn + w.unsureIn);
+    return acc;
+  }, { secure: 0, unsure: 0, total: 0 });
   
-  const periodOutflows = useMemo(() => {
-    return activeWeeks.reduce((acc, w) => {
-      acc.payroll += w.outflows.payroll;
-      acc.equipLabor += w.outflows.equipLabor;
-      acc.bills += w.outflows.bills;
-      acc.misc += w.outflows.misc;
-      acc.total += (w.outflows.payroll + w.outflows.equipLabor + w.outflows.bills + w.outflows.misc);
-      return acc;
-    }, { payroll: 0, equipLabor: 0, bills: 0, misc: 0, total: 0 });
-  }, [activeWeeks]);
+  const periodOutflows = activeWeeks.reduce((acc, w) => {
+    acc.payroll += w.outflows.payroll;
+    acc.equipLabor += w.outflows.equipLabor;
+    acc.bills += w.outflows.bills;
+    acc.misc += w.outflows.misc;
+    acc.total += (w.outflows.payroll + w.outflows.equipLabor + w.outflows.bills + w.outflows.misc);
+    return acc;
+  }, { payroll: 0, equipLabor: 0, bills: 0, misc: 0, total: 0 });
 
-  // Calculate the running balance array for the Weekly Forecast UI
   let runningBalance = effectiveCash;
   const projectedWeeks = activeWeeks.map(w => {
      const start = runningBalance;
@@ -108,14 +91,13 @@ export default function ExecutivePortfolio() {
      return { ...w, weekInTotal, weekOutTotal, start, end };
   });
 
+  // 5. RENDER THE UI
   return (
     <div className={isDarkMode ? 'dark' : ''}>
       <main className="bg-zinc-200 dark:bg-[#0A0A0A] text-zinc-900 dark:text-zinc-50 min-h-screen font-sans selection:bg-zinc-300 dark:selection:bg-zinc-700 flex flex-col transition-colors duration-500 relative pb-20">
         
-        {/* ULTRA-MODERN SUBTLE MESH BACKGROUND */}
         <div className="fixed inset-0 z-0 opacity-[0.03] pointer-events-none bg-[radial-gradient(#000000_1px,transparent_1px)] dark:bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:24px_24px]"></div>
 
-        {/* MAIN HEADER */}
         <header className="h-24 border-b border-zinc-300/50 dark:border-white/5 bg-zinc-200 dark:bg-[#0A0A0A] flex items-center justify-between px-8 lg:px-16 z-50 shrink-0 transition-colors">
           <div className="flex items-center gap-6">
             <Link href="/"><div className="w-12 h-12 bg-zinc-900 dark:bg-white rounded-none flex items-center justify-center text-white dark:text-black font-serif text-xl tracking-tighter">GG</div></Link>
@@ -135,14 +117,9 @@ export default function ExecutivePortfolio() {
           </div>
         </header>
 
-        {/* ✨ STICKY CONTROL CENTER ✨
-          This row locks to the top of the screen so she can use the simulator 
-          and change time horizons while looking at data deep down the page.
-        */}
         <div className="sticky top-0 z-40 bg-zinc-200/90 dark:bg-[#0A0A0A]/90 backdrop-blur-2xl border-b border-zinc-300/50 dark:border-white/10 pt-8 pb-8 px-8 lg:px-16 transition-colors shadow-sm">
           <div className="max-w-[1600px] w-full mx-auto">
             
-            {/* HORIZON TOGGLE (Editorial Style Tabs) */}
             <div className="flex gap-8 mb-6">
               {[
                 { label: '1 Week', val: 1 },
@@ -164,16 +141,13 @@ export default function ExecutivePortfolio() {
               ))}
             </div>
 
-            {/* THE BIG 3 & SIMULATOR */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
               
-              {/* CARD 1 */}
               <div className="bg-white dark:bg-[#121212] p-6 rounded-2xl border border-zinc-300/50 dark:border-white/5 shadow-sm flex flex-col justify-center relative">
                 <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-zinc-500 dark:text-zinc-400 mb-1">Liquid Assets</p>
                 <h2 className="text-3xl font-normal text-zinc-800 dark:text-white tracking-tight">${baseCash.toLocaleString()}</h2>
               </div>
 
-              {/* CARD 2: INTERACTIVE SIMULATOR */}
               <div className="bg-[#FCFBF8] dark:bg-[#1A1814] p-6 rounded-2xl border border-[#EBE5D8] dark:border-[#332D21] shadow-sm flex flex-col justify-center relative transition-colors">
                 <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#8C7A54] dark:text-[#C5B382] mb-2 flex items-center gap-2">
                   Capital Deployment Simulator
@@ -190,7 +164,6 @@ export default function ExecutivePortfolio() {
                 </div>
               </div>
 
-              {/* CARD 3: EFFECTIVE CASH */}
               <div className={`p-6 rounded-2xl border shadow-sm flex flex-col justify-center transition-all duration-700 ${injectionAmount > 0 ? 'bg-zinc-900 dark:bg-zinc-100 border-zinc-900 scale-105' : 'bg-white dark:bg-[#121212] border-zinc-300/50 dark:border-white/5'}`}>
                 <p className={`text-[10px] font-bold uppercase tracking-[0.15em] mb-1 transition-colors ${injectionAmount > 0 ? 'text-zinc-400 dark:text-zinc-500' : 'text-zinc-500 dark:text-zinc-400'}`}>
                   {injectionAmount > 0 ? 'Simulated Operating Capital' : 'Operating Capital'}
@@ -200,7 +173,6 @@ export default function ExecutivePortfolio() {
                 </h2>
               </div>
 
-              {/* CARD 4: HEALTH */}
               <div className="bg-white dark:bg-[#121212] p-6 rounded-2xl border border-zinc-300/50 dark:border-white/5 shadow-sm flex flex-col justify-center">
                 <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-zinc-500 dark:text-zinc-400 mb-2">Portfolio Health</p>
                 <div className="flex items-center gap-4">
@@ -218,13 +190,8 @@ export default function ExecutivePortfolio() {
 
         <div className="max-w-[1600px] w-full mx-auto px-8 lg:px-16 pt-12 z-10 relative">
           
-          {/* MIDDLE SECTION */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
-            
-            {/* COLUMN 1: MONEY IN VS OUT (Dynamically updates based on time horizon) */}
             <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-12 bg-white dark:bg-[#121212] p-10 rounded-2xl border border-zinc-300/50 dark:border-white/5 shadow-md">
-              
-              {/* INFLOWS */}
               <div>
                 <h3 className="text-sm font-bold uppercase tracking-[0.15em] text-zinc-800 dark:text-white mb-6 border-b border-zinc-100 dark:border-white/5 pb-4 flex items-center justify-between">
                   Capital Inflows
@@ -252,7 +219,6 @@ export default function ExecutivePortfolio() {
                 </div>
               </div>
 
-              {/* OUTFLOWS */}
               <div>
                 <h3 className="text-sm font-bold uppercase tracking-[0.15em] text-zinc-800 dark:text-white mb-6 border-b border-zinc-100 dark:border-white/5 pb-4 flex items-center justify-between">
                   Operating Outflows
@@ -277,7 +243,6 @@ export default function ExecutivePortfolio() {
               </div>
             </div>
 
-            {/* COLUMN 2: AGING */}
             <div className="lg:col-span-1 bg-white dark:bg-[#121212] p-10 rounded-2xl border border-zinc-300/50 dark:border-white/5 shadow-md flex flex-col">
               <h3 className="text-sm font-bold uppercase tracking-[0.15em] text-zinc-800 dark:text-white mb-6 border-b border-zinc-100 dark:border-white/5 pb-4">
                 Outstanding Receivables
@@ -302,10 +267,8 @@ export default function ExecutivePortfolio() {
                 </div>
               </div>
             </div>
-
           </div>
 
-          {/* BOTTOM SECTION: FORECAST GRID */}
           <div className="bg-white dark:bg-[#121212] p-10 rounded-2xl border border-zinc-300/50 dark:border-white/5 shadow-md mb-12">
             <div className="flex flex-col md:flex-row md:items-center justify-between mb-8">
               <div>
@@ -320,15 +283,13 @@ export default function ExecutivePortfolio() {
               {projectedWeeks.map((week, idx) => (
                 <div key={idx} className="bg-white dark:bg-[#121212] border border-zinc-200 dark:border-white/10 p-8 flex flex-col rounded-2xl shadow-sm">
                   
-                  {/* Card Header */}
                   <div className="mb-6 border-b border-zinc-100 dark:border-white/5 pb-4">
                     <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500 mb-2">Week {week.weekNum}</p>
                     <p className="text-sm font-bold text-zinc-800 dark:text-white">{week.dateStr}</p>
                     <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1 font-medium">{week.note}</p>
                   </div>
 
-                  {/* High Level Math */}
-                  <div className="space-y-4 flex-1 relative z-10">
+                  <div className="space-y-4 flex-1 relative z-10 mt-auto">
                     <div className="flex justify-between items-center pb-2 border-b border-zinc-100 dark:border-white/5">
                       <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Start</span>
                       <span className="text-xs font-bold text-zinc-800 dark:text-white transition-all duration-500">${week.start.toLocaleString()}</span>
@@ -344,7 +305,6 @@ export default function ExecutivePortfolio() {
                       <span className="text-xs font-bold text-zinc-500">${week.weekOutTotal.toLocaleString()}</span>
                     </div>
                     
-                    {/* ✨ ITEMIZED OUTFLOW LEDGER ✨ */}
                     <div className="bg-zinc-50 dark:bg-black/30 p-3 rounded-lg space-y-2 border border-zinc-200/60 dark:border-white/5 mt-2">
                        <div className="flex justify-between items-center text-[9px] text-zinc-500 uppercase tracking-wider font-bold">
                           <span>Payroll</span>

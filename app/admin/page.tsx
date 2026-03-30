@@ -20,7 +20,7 @@ export default function AdminPortal() {
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saved' | 'error'>('idle');
 
   // CHANGE THIS TO YOUR ACTUAL EMAIL
-  const ADMIN_EMAILS = ['your_email@gateguard.co']; 
+  const ADMIN_EMAILS = ['rfeldman@gateguard.co']; 
 
   // --- 1. CORE & AGING STATE ---
   const [baseCash, setBaseCash] = useState<number | ''>(42500);

@@ -21,7 +21,7 @@ const PREDEFINED_SITES = [
   { id: '16', name: 'Columbia Village', units: 104, vehicleGates: 2, vehicleGatesRepair: 0, pedGates: 4, pedGatesRepair: 0, cameras: 0, conciergeShifts: 0 },
   { id: '17', name: 'Pendana at West Lakes', units: 200, vehicleGates: 6, vehicleGatesRepair: 3, pedGates: 24, pedGatesRepair: 20, cameras: 0, conciergeShifts: 0 },
   { id: '18', name: 'Pendana Senior', units: 120, vehicleGates: 0, vehicleGatesRepair: 0, pedGates: 14, pedGatesRepair: 1, cameras: 0, conciergeShifts: 0 },
-  { id: '19', name: 'Columbia Sylvan Hills', units: 191, vehicleGates: 0, vehicleGatesRepair: 0, pedGates: 27, pedGatesRepair: 18, cameras: 0, conciergeShifts: 0 }
+  { id: '19', name: 'Columbia Sylvan Hills', units: 191, vehicleGates: 0, vehicleGatesRepair: 0, pedGates: 18, pedGatesRepair: 4, cameras: 0, conciergeShifts: 0 }
 ];
 
 export default function ColumbiaEnterpriseDashboard() {

@@ -85,20 +85,23 @@ export default function ColumbiaEnterpriseDashboard() {
   let currentTierName = "Standard Pricing";
   
   if (numSites >= 16) {
-    discountPercent = 0.25;
-    currentTierName = "Dual-Site (25% Discount)";
+    unitCap = 7.5;
+    setupCapActive = true;
+    currentTierName = "Maximum Scale ($7.50/Unit Cap)";
   } else if (numSites >= 13) {
-    discountPercent = 0.20;
-    currentTierName = "Dual-Site (20% Discount)";
+    unitCap = 8.0;
+    setupCapActive = true;
+    currentTierName = "Enterprise Tier ($8.00/Unit Cap)";
   } else if (numSites >= 8) {
-    discountPercent = 0.15;
-    currentTierName = "Dual-Site (15% Discount)";
+    unitCap = 8.5;
+    setupCapActive = true;
+    currentTierName = "Regional Tier ($8.50/Unit Cap)";
   } else if (numSites >= 4) {
-    discountPercent = 0.10;
-    currentTierName = "Multi-Site (10% Discount)";
+    discountPercent = 0.15;
+    currentTierName = "Multi-Site (15% Discount)";
   } else if (numSites >= 2) {
-    discountPercent = 0.05;
-    currentTierName = "Dual-Site (5% Discount)";
+    discountPercent = 0.10;
+    currentTierName = "Dual-Site (10% Discount)";
   }
 
   let finalSetupFee = rawSetupFee;

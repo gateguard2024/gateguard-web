@@ -36,13 +36,14 @@ export default function ExecutivePortfolio() {
 
   return (
     <div className={isDarkMode ? 'dark' : ''}>
-      <main className="bg-zinc-100 dark:bg-[#0A0A0A] text-zinc-900 dark:text-zinc-50 min-h-screen font-sans selection:bg-zinc-300 dark:selection:bg-zinc-700 flex flex-col transition-colors duration-500 relative pb-20">
+      {/* BACKGROUND UPDATED TO bg-zinc-200 */}
+      <main className="bg-zinc-200 dark:bg-[#0A0A0A] text-zinc-900 dark:text-zinc-50 min-h-screen font-sans selection:bg-zinc-300 dark:selection:bg-zinc-700 flex flex-col transition-colors duration-500 relative pb-20">
         
         {/* ULTRA-MODERN SUBTLE MESH BACKGROUND */}
         <div className="fixed inset-0 z-0 opacity-[0.03] pointer-events-none bg-[radial-gradient(#000000_1px,transparent_1px)] dark:bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:24px_24px]"></div>
 
-        {/* HEADER: CLEAN, MINIMALIST */}
-        <header className="h-24 border-b border-zinc-200 dark:border-white/5 bg-white/80 dark:bg-black/60 backdrop-blur-2xl flex items-center justify-between px-8 lg:px-16 z-50 shrink-0 transition-colors shadow-sm">
+        {/* HEADER */}
+        <header className="h-24 border-b border-zinc-300/50 dark:border-white/5 bg-white/80 dark:bg-black/60 backdrop-blur-2xl flex items-center justify-between px-8 lg:px-16 z-50 shrink-0 transition-colors shadow-sm">
           <div className="flex items-center gap-6">
             <Link href="/"><div className="w-12 h-12 bg-zinc-900 dark:bg-white rounded-none flex items-center justify-center text-white dark:text-black font-serif text-xl tracking-tighter">GG</div></Link>
             <div className="w-px h-10 bg-zinc-300 dark:bg-white/10"></div>
@@ -54,7 +55,7 @@ export default function ExecutivePortfolio() {
           <div className="flex items-center gap-6">
             <button 
                 onClick={() => setIsDarkMode(!isDarkMode)} 
-                className="w-12 h-12 rounded-full border border-zinc-200 dark:border-white/10 bg-white hover:bg-zinc-50 dark:bg-black dark:hover:bg-white/5 transition-colors flex items-center justify-center text-lg shadow-sm"
+                className="w-12 h-12 rounded-full border border-zinc-300/50 dark:border-white/10 bg-white hover:bg-zinc-50 dark:bg-black dark:hover:bg-white/5 transition-colors flex items-center justify-center text-lg shadow-sm"
             >
                 {isDarkMode ? '☀️' : '🌙'}
             </button>
@@ -67,12 +68,12 @@ export default function ExecutivePortfolio() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
             
             {/* CARD 1 */}
-            <div className="bg-white dark:bg-[#121212] p-8 rounded-2xl border border-zinc-200/60 dark:border-white/5 shadow-md flex flex-col justify-center relative">
+            <div className="bg-white dark:bg-[#121212] p-8 rounded-2xl border border-zinc-300/50 dark:border-white/5 shadow-md flex flex-col justify-center relative">
               <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-zinc-500 dark:text-zinc-400 mb-2">Liquid Assets</p>
               <h2 className="text-4xl font-normal text-zinc-800 dark:text-white tracking-tight">${baseCash.toLocaleString()}</h2>
             </div>
 
-            {/* CARD 2: INTERACTIVE SIMULATOR (Champagne / Gold accent) */}
+            {/* CARD 2: INTERACTIVE SIMULATOR */}
             <div className="bg-[#FCFBF8] dark:bg-[#1A1814] p-8 rounded-2xl border border-[#EBE5D8] dark:border-[#332D21] shadow-md flex flex-col justify-center relative transition-colors">
               <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#8C7A54] dark:text-[#C5B382] mb-3 flex items-center gap-2">
                 Capital Deployment Simulator
@@ -90,7 +91,7 @@ export default function ExecutivePortfolio() {
             </div>
 
             {/* CARD 3: EFFECTIVE CASH */}
-            <div className={`p-8 rounded-2xl border shadow-md flex flex-col justify-center transition-all duration-700 ${injectionAmount > 0 ? 'bg-zinc-900 dark:bg-zinc-100 border-zinc-900 scale-105' : 'bg-white dark:bg-[#121212] border-zinc-200/60 dark:border-white/5'}`}>
+            <div className={`p-8 rounded-2xl border shadow-md flex flex-col justify-center transition-all duration-700 ${injectionAmount > 0 ? 'bg-zinc-900 dark:bg-zinc-100 border-zinc-900 scale-105' : 'bg-white dark:bg-[#121212] border-zinc-300/50 dark:border-white/5'}`}>
               <p className={`text-[10px] font-bold uppercase tracking-[0.15em] mb-2 transition-colors ${injectionAmount > 0 ? 'text-zinc-400 dark:text-zinc-500' : 'text-zinc-500 dark:text-zinc-400'}`}>
                 {injectionAmount > 0 ? 'Simulated Operating Capital' : 'Operating Capital'}
               </p>
@@ -100,7 +101,7 @@ export default function ExecutivePortfolio() {
             </div>
 
             {/* CARD 4: HEALTH */}
-            <div className="bg-white dark:bg-[#121212] p-8 rounded-2xl border border-zinc-200/60 dark:border-white/5 shadow-md flex flex-col justify-center">
+            <div className="bg-white dark:bg-[#121212] p-8 rounded-2xl border border-zinc-300/50 dark:border-white/5 shadow-md flex flex-col justify-center">
               <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-zinc-500 dark:text-zinc-400 mb-3">Portfolio Health</p>
               <div className="flex items-center gap-4">
                 <div className="w-2 h-2 rounded-full bg-[#4A7C59] animate-pulse shadow-[0_0_8px_rgba(74,124,89,0.6)]"></div>
@@ -117,7 +118,7 @@ export default function ExecutivePortfolio() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
             
             {/* COLUMN 1: MONEY IN VS OUT */}
-            <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-12 bg-white dark:bg-[#121212] p-10 rounded-2xl border border-zinc-200/60 dark:border-white/5 shadow-md">
+            <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-12 bg-white dark:bg-[#121212] p-10 rounded-2xl border border-zinc-300/50 dark:border-white/5 shadow-md">
               
               {/* INFLOWS */}
               <div>
@@ -172,7 +173,7 @@ export default function ExecutivePortfolio() {
             </div>
 
             {/* COLUMN 2: AGING */}
-            <div className="lg:col-span-1 bg-white dark:bg-[#121212] p-10 rounded-2xl border border-zinc-200/60 dark:border-white/5 shadow-md flex flex-col">
+            <div className="lg:col-span-1 bg-white dark:bg-[#121212] p-10 rounded-2xl border border-zinc-300/50 dark:border-white/5 shadow-md flex flex-col">
               <h3 className="text-sm font-bold uppercase tracking-[0.15em] text-zinc-800 dark:text-white mb-6 border-b border-zinc-100 dark:border-white/5 pb-4">
                 Outstanding Receivables
               </h3>
@@ -200,7 +201,7 @@ export default function ExecutivePortfolio() {
           </div>
 
           {/* BOTTOM SECTION: FORECAST */}
-          <div className="bg-white dark:bg-[#121212] p-10 rounded-2xl border border-zinc-200/60 dark:border-white/5 shadow-md">
+          <div className="bg-white dark:bg-[#121212] p-10 rounded-2xl border border-zinc-300/50 dark:border-white/5 shadow-md">
             <div className="flex flex-col md:flex-row md:items-center justify-between mb-8">
               <div>
                 <h3 className="text-sm font-bold uppercase tracking-[0.15em] text-zinc-800 dark:text-white flex items-center gap-4">
@@ -210,9 +211,9 @@ export default function ExecutivePortfolio() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 bg-zinc-200 dark:bg-white/10 border border-zinc-300/50 dark:border-white/10 rounded-xl p-px overflow-hidden">
               {projectedWeeks.map((week, idx) => (
-                <div key={idx} className="bg-zinc-50/80 dark:bg-black/50 border border-zinc-200/80 dark:border-white/10 p-6 rounded-2xl flex flex-col">
+                <div key={idx} className="bg-white dark:bg-[#121212] p-8 flex flex-col rounded-[11px]">
                   
                   <div className="mb-6">
                     <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500 mb-2">Week {week.week}</p>
@@ -221,7 +222,7 @@ export default function ExecutivePortfolio() {
                   </div>
 
                   <div className="space-y-4 flex-1 relative z-10 mt-auto">
-                    <div className="flex justify-between items-center pb-2 border-b border-zinc-200 dark:border-white/5">
+                    <div className="flex justify-between items-center pb-2 border-b border-zinc-100 dark:border-white/5">
                       <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Start</span>
                       <span className="text-xs font-bold text-zinc-800 dark:text-white transition-all duration-500">${week.start.toLocaleString()}</span>
                     </div>
@@ -231,7 +232,7 @@ export default function ExecutivePortfolio() {
                       <span className="text-xs font-bold text-[#4A7C59]">${week.in.toLocaleString()}</span>
                     </div>
                     
-                    <div className="flex justify-between items-center pb-4 border-b border-zinc-200 dark:border-white/5">
+                    <div className="flex justify-between items-center pb-4 border-b border-zinc-100 dark:border-white/5">
                       <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">- Out</span>
                       <span className="text-xs font-bold text-zinc-500">${week.out.toLocaleString()}</span>
                     </div>

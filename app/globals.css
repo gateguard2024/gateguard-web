@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* 1. Tell Tailwind to use the class strategy for the 'dark:' prefix */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -12,11 +15,10 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* 2. Change this from a media query to the .dark class */
+.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
 }
 
 body {

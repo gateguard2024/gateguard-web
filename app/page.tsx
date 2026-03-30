@@ -553,9 +553,9 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 8. ENHANCED FOOTER */}
-      <footer className="py-20 bg-black border-t border-white/5">
-        <div className="container mx-auto px-6">
+{/* 8. ENHANCED FOOTER */}
+      <footer className="py-20 bg-black border-t border-white/5 relative">
+        <div className="container mx-auto px-6 relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-20">
             <div className="col-span-1 md:col-span-2">
                <div className="flex items-center gap-3 mb-6">
@@ -571,11 +571,11 @@ export default function Home() {
                <ul className="space-y-4 text-sm text-zinc-500">
                   <li><a href="#services" className="hover:text-cyan-400 transition-colors">Core Services</a></li>
                   <li><a href="#pricing" className="hover:text-cyan-400 transition-colors">ROI Comparison</a></li>
-                  
-                  {/* NEW SCHEDULE LINK IN FOOTER */}
                   <li><Link href="/schedule" className="hover:text-cyan-400 transition-colors">Schedule Consultation</Link></li>
-                  
                   <li><a href="#" className="hover:text-cyan-400 transition-colors">Brivo Integration</a></li>
+                  
+                  {/* ✨ NEW EXPLICIT INVESTOR LINK ✨ */}
+                  <li><Link href="/investor" className="hover:text-cyan-400 transition-colors">Investors</Link></li>
                </ul>
             </div>
             <div>
@@ -587,6 +587,7 @@ export default function Home() {
                </ul>
             </div>
           </div>
+          
           <div className="pt-8 border-t border-white/5 text-center flex flex-col items-center">
             <p className="text-zinc-700 text-[10px] font-bold uppercase tracking-[0.5em]">
               &copy; {new Date().getFullYear()} Gate Guard Security Ecosystem. All Rights Reserved.

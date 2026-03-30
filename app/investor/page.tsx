@@ -1,11 +1,42 @@
 "use client";
 import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
+import { useUser } from '@clerk/nextjs';
+import { redirect } from 'next/navigation';
 
 export default function ExecutivePortfolio() {
+  // --- CLERK SECURITY CHECK ---
+  const { isLoaded, isSignedIn, user } = useUser();
+  
+  // Replace these with your actual email and your investor's actual email
+  const AUTHORIZED_EMAILS = ['your_email@gateguard.co', 'investor_email@gmail.com'];
+
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [simulatedInjection, setSimulatedInjection] = useState<number | ''>('');
-  const [timeHorizon, setTimeHorizon] = useState<number>(4); // Default to 4 weeks (1 Month)
+  // ... rest of your state (simulatedInjection, timeHorizon, etc.)
+
+  // --- WAIT FOR CLERK TO LOAD ---
+  if (!isLoaded) {
+    return (
+      <div className="min-h-screen bg-zinc-200 dark:bg-[#0A0A0A] flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-zinc-900 dark:border-white"></div>
+      </div>
+    );
+  }
+
+  // --- BOUNCE UNAUTHORIZED USERS ---
+  if (!isSignedIn) {
+    redirect('/login'); // Send them to login if they aren't signed in at all
+  }
+
+  const userEmail = user.primaryEmailAddress?.emailAddress;
+  
+  if (!AUTHORIZED_EMAILS.includes(userEmail || '')) {
+    // If a resident or normal customer tries to view this page, kick them back to their portal
+    redirect('/portal'); 
+  }
+
+  // --- DEMO DATA: 8 WEEKS OF FORECAST ---
+  // (Keep all your existing data and UI code below this point!)
 
   // --- DYNAMIC DATE GENERATOR ---
   // This ensures the sheet is "ever-evolving" and always starts from this week.

@@ -9,7 +9,7 @@ export default function ExecutivePortfolio() {
   const { isLoaded, isSignedIn, user } = useUser();
   
   // Replace these with your actual email and your investor's actual email
-  const AUTHORIZED_EMAILS = ['your_email@gateguard.co', 'investor_email@gmail.com'];
+  const AUTHORIZED_EMAILS = ['rfeldman@gateguard.co', 'sprabhu@gateguard.co'];
 
   const [isDarkMode, setIsDarkMode] = useState(false);
   // ... rest of your state (simulatedInjection, timeHorizon, etc.)

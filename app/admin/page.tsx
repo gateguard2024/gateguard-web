@@ -12,7 +12,7 @@ export default function AdminPortal() {
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saved' | 'error'>('idle');
 
   // ONLY YOUR EMAIL GOES HERE. The investor cannot access this page.
-  const ADMIN_EMAILS = ['your_email@gateguard.co']; 
+  const ADMIN_EMAILS = ['rfeldman@gateguard.co']; 
 
   // --- FORM STATE ---
   // 1. Core Liquidity

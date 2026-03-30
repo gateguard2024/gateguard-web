@@ -1,10 +1,11 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 
-// This explicitly protects the sales-portal and your API routes, 
-// but leaves your public pages, login, and the actual client proposals open.
+// This explicitly protects the sales-portal, API routes, 
+// AND the new investor pulse dashboard.
 const isProtectedRoute = createRouteMatcher([
   '/sales-portal(.*)',
-  '/api/maintainx(.*)'
+  '/api/maintainx(.*)',
+  '/investor(.*)' // <-- Added your new route here!
 ]);
 
 export default clerkMiddleware(async (auth, req) => {

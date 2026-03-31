@@ -1,82 +1,125 @@
 "use client";
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
-import { useUser } from '@clerk/nextjs';
+import { useUser, useAuth } from '@clerk/nextjs';
 import { redirect } from 'next/navigation';
+import { getSupabase } from '@/lib/supabaseClient';
 
 export default function ExecutivePortfolio() {
-  // 1. ALL HOOKS AND STATE MUST GO AT THE VERY TOP
   const { isLoaded, isSignedIn, user } = useUser();
+  const { getToken } = useAuth();
+  
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [simulatedInjection, setSimulatedInjection] = useState<number | ''>('');
-  const [timeHorizon, setTimeHorizon] = useState<number>(4); // Default to 4 weeks (1 Month)
+  const [timeHorizon, setTimeHorizon] = useState<number>(4);
+  const [isFetching, setIsFetching] = useState(true);
 
-  // 2. DYNAMIC DATE GENERATOR
-  const dynamicDates = useMemo(() => {
+  const [dbBaseCash, setDbBaseCash] = useState<number>(0);
+  const [dbReceivables, setDbReceivables] = useState<any[]>([]);
+  const [dbLedger, setDbLedger] = useState<any[]>([]);
+
+  const AUTHORIZED_EMAILS = ['rfeldman@gateguard.co', 'sprabhu@gateguard.co'];
+
+  useEffect(() => {
+    const fetchFinancialData = async () => {
+      try {
+        const token = await getToken({ template: 'supabase' });
+        if (!token) return;
+        const supabase = await getSupabase(token);
+
+        const [cashRes, recRes, ledgerRes] = await Promise.all([
+          supabase.from('core_metrics').select('base_cash').eq('id', 1).single(),
+          supabase.from('receivables').select('*'),
+          supabase.from('ledgers').select('*')
+        ]);
+
+        if (cashRes.data) setDbBaseCash(cashRes.data.base_cash);
+        if (recRes.data) setDbReceivables(recRes.data);
+        if (ledgerRes.data) setDbLedger(ledgerRes.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setIsFetching(false);
+      }
+    };
+
+    if (isLoaded && isSignedIn) fetchFinancialData();
+  }, [isLoaded, isSignedIn, getToken]);
+
+  // CALC AGING REPORT
+  const agingReport = useMemo(() => {
+    const today = new Date().getTime();
+    return dbReceivables.reduce((acc, rec) => {
+      const invoiceDate = new Date(rec.invoice_date).getTime();
+      const diffDays = Math.ceil((today - invoiceDate) / (1000 * 60 * 60 * 24));
+      const amount = Number(rec.amount) || 0;
+      
+      if (diffDays <= 30 || invoiceDate > today) acc.current += amount;
+      else if (diffDays <= 60) acc.late30 += amount;
+      else if (diffDays <= 90) acc.late60 += amount;
+      else acc.late90Plus += amount;
+      return acc;
+    }, { current: 0, late30: 0, late60: 0, late90Plus: 0 });
+  }, [dbReceivables]);
+
+  // DYNAMIC DATES & LEDGER MATCHING
+  const activeWeeks = useMemo(() => {
     const today = new Date();
-    return Array.from({ length: 8 }).map((_, i) => {
+    today.setHours(0,0,0,0);
+    
+    return Array.from({ length: timeHorizon }).map((_, i) => {
       const start = new Date(today);
       start.setDate(start.getDate() + (i * 7));
       const end = new Date(start);
       end.setDate(end.getDate() + 6);
+      end.setHours(23,59,59,999);
       
       const formatMsg = (d: Date) => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-      return { weekNum: i + 1, dateStr: `${formatMsg(start)} - ${formatMsg(end)}` };
+      
+      // Filter database ledger items falling within this specific week
+      const weeklyLedger = dbLedger.filter(item => {
+        const itemDate = new Date(item.date).getTime();
+        return itemDate >= start.getTime() && itemDate <= end.getTime();
+      });
+
+      // Sum Inflows
+      const secureIn = weeklyLedger.filter(i => i.type === 'in' && i.category === 'Recurring Revenue').reduce((sum, i) => sum + Number(i.amount), 0);
+      const unsureIn = weeklyLedger.filter(i => i.type === 'in' && i.category === 'General Income').reduce((sum, i) => sum + Number(i.amount), 0);
+      
+      // Sum Outflows
+      const payroll = weeklyLedger.filter(i => i.type === 'out' && i.category === 'Payroll').reduce((sum, i) => sum + Number(i.amount), 0);
+      const equipLabor = weeklyLedger.filter(i => i.type === 'out' && i.category === 'Equip & Contractors').reduce((sum, i) => sum + Number(i.amount), 0);
+      const bills = weeklyLedger.filter(i => i.type === 'out' && i.category === 'Bills').reduce((sum, i) => sum + Number(i.amount), 0);
+      const misc = weeklyLedger.filter(i => i.type === 'out' && i.category === 'Parts & Misc').reduce((sum, i) => sum + Number(i.amount), 0);
+
+      const isActivity = secureIn > 0 || unsureIn > 0 || payroll > 0 || equipLabor > 0 || bills > 0 || misc > 0;
+
+      return {
+        weekNum: i + 1,
+        dateStr: `${formatMsg(start)} - ${formatMsg(end)}`,
+        note: isActivity ? 'Database Driven Flow' : 'No Scheduled Activity',
+        secureIn, unsureIn,
+        outflows: { payroll, equipLabor, bills, misc }
+      };
     });
-  }, []);
+  }, [timeHorizon, dbLedger]);
 
-  // 3. CLERK SECURITY GUARDRAILS (Early Returns)
-  const AUTHORIZED_EMAILS = ['rfeldman@gateguard.co', 'sprabhu@gateguard.co'];
-
-  if (!isLoaded) {
-    return (
-      <div className="min-h-screen bg-zinc-200 dark:bg-[#0A0A0A] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-zinc-900 dark:border-white"></div>
-      </div>
-    );
-  }
-
-  if (!isSignedIn) {
-    redirect('/login');
-  }
-
+  if (!isLoaded || isFetching) return <div className="min-h-screen bg-zinc-200 dark:bg-[#0A0A0A] flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-zinc-900 dark:border-white"></div></div>;
+  if (!isSignedIn) redirect('/login');
+  
   const userEmail = user.primaryEmailAddress?.emailAddress || '';
-  if (!AUTHORIZED_EMAILS.includes(userEmail)) {
-    redirect('/portal'); // Bounce regular customers back to their portal
-  }
+  if (!AUTHORIZED_EMAILS.includes(userEmail)) redirect('/portal');
 
-  // 4. DATA & MATH LOGIC
-  const baseCash = 42500;
   const injectionAmount = Number(simulatedInjection) || 0;
-  const effectiveCash = baseCash + injectionAmount;
-
-  const agingReport = { current: 18000, late30: 2500, late60: 1500, late90Plus: 500 };
-
-  const allWeeksData = [
-    { ...dynamicDates[0], secureIn: 4000, unsureIn: 1000, note: 'Standard Payroll Disbursement', outflows: { payroll: 10500, equipLabor: 800, bills: 500, misc: 200 } },
-    { ...dynamicDates[1], secureIn: 8000, unsureIn: 1000, note: 'Portfolio Invoices Clear', outflows: { payroll: 0, equipLabor: 1200, bills: 600, misc: 200 } },
-    { ...dynamicDates[2], secureIn: 3000, unsureIn: 1000, note: 'Hardware & Vendor Payables', outflows: { payroll: 0, equipLabor: 900, bills: 2100, misc: 500 } },
-    { ...dynamicDates[3], secureIn: 4000, unsureIn: 500,  note: 'Standard Operating Flow', outflows: { payroll: 1500, equipLabor: 1200, bills: 700, misc: 200 } },
-    { ...dynamicDates[4], secureIn: 5500, unsureIn: 500,  note: 'End of Month Collections', outflows: { payroll: 10500, equipLabor: 500, bills: 800, misc: 300 } },
-    { ...dynamicDates[5], secureIn: 7500, unsureIn: 1000, note: 'New Installs Billed', outflows: { payroll: 0, equipLabor: 2500, bills: 400, misc: 100 } },
-    { ...dynamicDates[6], secureIn: 3000, unsureIn: 500,  note: 'Mid-Month Lull', outflows: { payroll: 0, equipLabor: 800, bills: 1800, misc: 400 } },
-    { ...dynamicDates[7], secureIn: 4500, unsureIn: 500,  note: 'Holiday Prep', outflows: { payroll: 1500, equipLabor: 1000, bills: 900, misc: 500 } },
-  ];
-
-  const activeWeeks = allWeeksData.slice(0, timeHorizon);
+  const effectiveCash = dbBaseCash + injectionAmount;
 
   const periodInflows = activeWeeks.reduce((acc, w) => {
-    acc.secure += w.secureIn;
-    acc.unsure += w.unsureIn;
-    acc.total += (w.secureIn + w.unsureIn);
+    acc.secure += w.secureIn; acc.unsure += w.unsureIn; acc.total += (w.secureIn + w.unsureIn);
     return acc;
   }, { secure: 0, unsure: 0, total: 0 });
   
   const periodOutflows = activeWeeks.reduce((acc, w) => {
-    acc.payroll += w.outflows.payroll;
-    acc.equipLabor += w.outflows.equipLabor;
-    acc.bills += w.outflows.bills;
-    acc.misc += w.outflows.misc;
+    acc.payroll += w.outflows.payroll; acc.equipLabor += w.outflows.equipLabor; acc.bills += w.outflows.bills; acc.misc += w.outflows.misc;
     acc.total += (w.outflows.payroll + w.outflows.equipLabor + w.outflows.bills + w.outflows.misc);
     return acc;
   }, { payroll: 0, equipLabor: 0, bills: 0, misc: 0, total: 0 });
@@ -91,11 +134,9 @@ export default function ExecutivePortfolio() {
      return { ...w, weekInTotal, weekOutTotal, start, end };
   });
 
-  // 5. RENDER THE UI
   return (
     <div className={isDarkMode ? 'dark' : ''}>
       <main className="bg-zinc-200 dark:bg-[#0A0A0A] text-zinc-900 dark:text-zinc-50 min-h-screen font-sans selection:bg-zinc-300 dark:selection:bg-zinc-700 flex flex-col transition-colors duration-500 relative pb-20">
-        
         <div className="fixed inset-0 z-0 opacity-[0.03] pointer-events-none bg-[radial-gradient(#000000_1px,transparent_1px)] dark:bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:24px_24px]"></div>
 
         <header className="h-24 border-b border-zinc-300/50 dark:border-white/5 bg-zinc-200 dark:bg-[#0A0A0A] flex items-center justify-between px-8 lg:px-16 z-50 shrink-0 transition-colors">
@@ -108,10 +149,7 @@ export default function ExecutivePortfolio() {
             </div>
           </div>
           <div className="flex items-center gap-6">
-            <button 
-                onClick={() => setIsDarkMode(!isDarkMode)} 
-                className="w-12 h-12 rounded-full border border-zinc-300/50 dark:border-white/10 bg-white hover:bg-zinc-50 dark:bg-black dark:hover:bg-white/5 transition-colors flex items-center justify-center text-lg shadow-sm"
-            >
+            <button onClick={() => setIsDarkMode(!isDarkMode)} className="w-12 h-12 rounded-full border border-zinc-300/50 dark:border-white/10 bg-white hover:bg-zinc-50 dark:bg-black dark:hover:bg-white/5 transition-colors flex items-center justify-center text-lg shadow-sm">
                 {isDarkMode ? '☀️' : '🌙'}
             </button>
           </div>
@@ -121,46 +159,24 @@ export default function ExecutivePortfolio() {
           <div className="max-w-[1600px] w-full mx-auto">
             
             <div className="flex gap-8 mb-6">
-              {[
-                { label: '1 Week', val: 1 },
-                { label: '2 Weeks', val: 2 },
-                { label: '1 Month', val: 4 },
-                { label: '2 Months', val: 8 },
-              ].map(h => (
-                  <button 
-                    key={h.val}
-                    onClick={() => setTimeHorizon(h.val)}
-                    className={`pb-2 text-[10px] uppercase tracking-[0.2em] font-bold transition-all duration-300 ${
-                      timeHorizon === h.val 
-                        ? 'border-b border-zinc-900 dark:border-white text-zinc-900 dark:text-white' 
-                        : 'border-transparent text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300'
-                    }`}
-                  >
+              {[{ label: '1 Week', val: 1 }, { label: '2 Weeks', val: 2 }, { label: '1 Month', val: 4 }, { label: '2 Months', val: 8 }].map(h => (
+                  <button key={h.val} onClick={() => setTimeHorizon(h.val)} className={`pb-2 text-[10px] uppercase tracking-[0.2em] font-bold transition-all duration-300 ${timeHorizon === h.val ? 'border-b border-zinc-900 dark:border-white text-zinc-900 dark:text-white' : 'border-transparent text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300'}`}>
                     {h.label}
                   </button>
               ))}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-              
               <div className="bg-white dark:bg-[#121212] p-6 rounded-2xl border border-zinc-300/50 dark:border-white/5 shadow-sm flex flex-col justify-center relative">
                 <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-zinc-500 dark:text-zinc-400 mb-1">Liquid Assets</p>
-                <h2 className="text-3xl font-normal text-zinc-800 dark:text-white tracking-tight">${baseCash.toLocaleString()}</h2>
+                <h2 className="text-3xl font-normal text-zinc-800 dark:text-white tracking-tight">${dbBaseCash.toLocaleString()}</h2>
               </div>
 
               <div className="bg-[#FCFBF8] dark:bg-[#1A1814] p-6 rounded-2xl border border-[#EBE5D8] dark:border-[#332D21] shadow-sm flex flex-col justify-center relative transition-colors">
-                <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#8C7A54] dark:text-[#C5B382] mb-2 flex items-center gap-2">
-                  Capital Deployment Simulator
-                </p>
+                <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#8C7A54] dark:text-[#C5B382] mb-2 flex items-center gap-2">Capital Deployment Simulator</p>
                 <div className="relative">
                   <span className="absolute left-0 top-1/2 -translate-y-1/2 text-[#8C7A54] font-normal text-xl border-r border-[#EBE5D8] dark:border-zinc-700 pr-3">$</span>
-                  <input 
-                    type="number" 
-                    placeholder="0"
-                    value={simulatedInjection}
-                    onChange={(e) => setSimulatedInjection(e.target.value ? Number(e.target.value) : '')}
-                    className="w-full bg-transparent border-b border-zinc-300 dark:border-zinc-700 py-1 pl-10 pr-2 text-xl font-normal text-zinc-800 dark:text-white focus:outline-none focus:border-[#8C7A54] dark:focus:border-[#C5B382] transition-colors placeholder:text-zinc-400 dark:placeholder:text-zinc-600"
-                  />
+                  <input type="number" placeholder="0" value={simulatedInjection} onChange={(e) => setSimulatedInjection(e.target.value ? Number(e.target.value) : '')} className="w-full bg-transparent border-b border-zinc-300 dark:border-zinc-700 py-1 pl-10 pr-2 text-xl font-normal text-zinc-800 dark:text-white focus:outline-none focus:border-[#8C7A54] dark:focus:border-[#C5B382] transition-colors placeholder:text-zinc-400 dark:placeholder:text-zinc-600" />
                 </div>
               </div>
 
@@ -189,13 +205,11 @@ export default function ExecutivePortfolio() {
         </div>
 
         <div className="max-w-[1600px] w-full mx-auto px-8 lg:px-16 pt-12 z-10 relative">
-          
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
             <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-12 bg-white dark:bg-[#121212] p-10 rounded-2xl border border-zinc-300/50 dark:border-white/5 shadow-md">
               <div>
                 <h3 className="text-sm font-bold uppercase tracking-[0.15em] text-zinc-800 dark:text-white mb-6 border-b border-zinc-100 dark:border-white/5 pb-4 flex items-center justify-between">
-                  Capital Inflows
-                  <span className="text-[#4A7C59] font-normal text-xl">${periodInflows.total.toLocaleString()}</span>
+                  Capital Inflows <span className="text-[#4A7C59] font-normal text-xl">${periodInflows.total.toLocaleString()}</span>
                 </h3>
                 <div className="space-y-6">
                   <div>
@@ -221,16 +235,10 @@ export default function ExecutivePortfolio() {
 
               <div>
                 <h3 className="text-sm font-bold uppercase tracking-[0.15em] text-zinc-800 dark:text-white mb-6 border-b border-zinc-100 dark:border-white/5 pb-4 flex items-center justify-between">
-                  Operating Outflows
-                  <span className="text-zinc-600 font-normal text-xl">${periodOutflows.total.toLocaleString()}</span>
+                  Operating Outflows <span className="text-zinc-600 font-normal text-xl">${periodOutflows.total.toLocaleString()}</span>
                 </h3>
                 <div className="space-y-5">
-                  {[
-                    { label: 'Payroll', value: periodOutflows.payroll },
-                    { label: 'Equip & Labor', value: periodOutflows.equipLabor },
-                    { label: 'Bills', value: periodOutflows.bills },
-                    { label: 'Misc', value: periodOutflows.misc }
-                  ].map((item, idx) => (
+                  {[{ label: 'Payroll', value: periodOutflows.payroll }, { label: 'Equip & Labor', value: periodOutflows.equipLabor }, { label: 'Bills', value: periodOutflows.bills }, { label: 'Misc', value: periodOutflows.misc }].map((item, idx) => (
                     <div key={idx} className="flex items-center gap-4">
                       <div className="w-24 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">{item.label}</div>
                       <div className="flex-1 h-1.5 bg-zinc-100 dark:bg-white/5 rounded-full overflow-hidden flex">
@@ -244,10 +252,7 @@ export default function ExecutivePortfolio() {
             </div>
 
             <div className="lg:col-span-1 bg-white dark:bg-[#121212] p-10 rounded-2xl border border-zinc-300/50 dark:border-white/5 shadow-md flex flex-col">
-              <h3 className="text-sm font-bold uppercase tracking-[0.15em] text-zinc-800 dark:text-white mb-6 border-b border-zinc-100 dark:border-white/5 pb-4">
-                Outstanding Receivables
-              </h3>
-              
+              <h3 className="text-sm font-bold uppercase tracking-[0.15em] text-zinc-800 dark:text-white mb-6 border-b border-zinc-100 dark:border-white/5 pb-4">Outstanding Receivables</h3>
               <div className="space-y-3 flex-1">
                 <div className="flex items-center justify-between p-3 rounded-xl bg-[#F4F7F5] dark:bg-emerald-500/5 border border-[#E2EBE5] dark:border-emerald-500/20">
                    <span className="text-xs font-bold text-[#3B6347] dark:text-emerald-400">Current (0-30 Days)</span>
@@ -282,7 +287,6 @@ export default function ExecutivePortfolio() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {projectedWeeks.map((week, idx) => (
                 <div key={idx} className="bg-white dark:bg-[#121212] border border-zinc-200 dark:border-white/10 p-8 flex flex-col rounded-2xl shadow-sm">
-                  
                   <div className="mb-6 border-b border-zinc-100 dark:border-white/5 pb-4">
                     <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500 mb-2">Week {week.weekNum}</p>
                     <p className="text-sm font-bold text-zinc-800 dark:text-white">{week.dateStr}</p>

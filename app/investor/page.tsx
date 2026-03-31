@@ -62,7 +62,7 @@ export default function ExecutivePortfolio() {
     }, { current: 0, late30: 0, late60: 0, late90Plus: 0 });
   }, [dbReceivables]);
 
-  // DYNAMIC DATES & LEDGER MATCHING
+// DYNAMIC DATES & LEDGER MATCHING
   const activeWeeks = useMemo(() => {
     const today = new Date();
     today.setHours(0,0,0,0);
@@ -80,11 +80,19 @@ export default function ExecutivePortfolio() {
       const weeklyLedger = dbLedger.filter(item => {
         if (!item.date) return false;
         
-        // FIX: Parse strictly to local time so dates don't shift backward!
-        const [year, month, day] = item.date.split('-');
+        // BULLETPROOF DATE PARSER: Strips timezones entirely
+        const cleanDate = item.date.split('T')[0]; // Removes anything after 'T' if it's a timestamp
+        const [year, month, day] = cleanDate.split('-');
         const itemDate = new Date(Number(year), Number(month) - 1, Number(day)).getTime();
         
-        return itemDate >= start.getTime() && itemDate <= end.getTime();
+        const isInWeek = itemDate >= start.getTime() && itemDate <= end.getTime();
+        
+        // This will print every transaction and where it gets placed to your console!
+        if (isInWeek) {
+          console.log(`Assigned to Week ${i + 1} (${formatMsg(start)}):`, item.description, item.amount);
+        }
+        
+        return isInWeek;
       });
 
       // Sum Inflows

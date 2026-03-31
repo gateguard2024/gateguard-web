@@ -2,12 +2,13 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import { useUser, useAuth } from '@clerk/nextjs';
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { getSupabase } from '@/lib/supabaseClient';
 
 export default function ExecutivePortfolio() {
   const { isLoaded, isSignedIn, user } = useUser();
   const { getToken } = useAuth();
+  const router = useRouter();
   
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [simulatedInjection, setSimulatedInjection] = useState<number | ''>('');
@@ -20,6 +21,21 @@ export default function ExecutivePortfolio() {
 
   const AUTHORIZED_EMAILS = ['rfeldman@gateguard.co', 'sprabhu@gateguard.co'];
 
+  // 1. SAFELY HANDLE CLERK REDIRECTS (Prevents 500 Internal Server Error)
+  useEffect(() => {
+    if (isLoaded) {
+      if (!isSignedIn) {
+        router.push('/login');
+      } else {
+        const userEmail = user?.primaryEmailAddress?.emailAddress || '';
+        if (!AUTHORIZED_EMAILS.includes(userEmail)) {
+          router.push('/portal');
+        }
+      }
+    }
+  }, [isLoaded, isSignedIn, user, router]);
+
+  // 2. FETCH DATA FROM SUPABASE
   useEffect(() => {
     const fetchFinancialData = async () => {
       try {
@@ -46,7 +62,7 @@ export default function ExecutivePortfolio() {
     if (isLoaded && isSignedIn) fetchFinancialData();
   }, [isLoaded, isSignedIn, getToken]);
 
-// CALC AGING REPORT (Now shielded from bad database rows)
+  // 3. CALC AGING REPORT (Bulletproofed against bad data & timezones)
   const agingReport = useMemo(() => {
     const today = new Date().getTime();
     return dbReceivables.reduce((acc, rec) => {
@@ -68,12 +84,12 @@ export default function ExecutivePortfolio() {
         
         return acc;
       } catch (err) {
-        return acc; // If this row is corrupted, ignore it and continue
+        return acc;
       }
     }, { current: 0, late30: 0, late60: 0, late90Plus: 0 });
   }, [dbReceivables]);
 
-  // DYNAMIC DATES & LEDGER MATCHING (Now shielded from bad database rows)
+  // 4. DYNAMIC DATES & LEDGER MATCHING (Bulletproofed against bad data & timezones)
   const activeWeeks = useMemo(() => {
     const today = new Date();
     today.setHours(0,0,0,0);
@@ -104,7 +120,7 @@ export default function ExecutivePortfolio() {
           
           return isInWeek;
         } catch (err) {
-          return false; // If this row is corrupted, skip it
+          return false;
         }
       });
 
@@ -127,12 +143,18 @@ export default function ExecutivePortfolio() {
     });
   }, [timeHorizon, dbLedger]);
 
-  if (!isLoaded || isFetching) return <div className="min-h-screen bg-zinc-200 dark:bg-[#0A0A0A] flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-zinc-900 dark:border-white"></div></div>;
-  if (!isSignedIn) redirect('/login');
-  
-  const userEmail = user.primaryEmailAddress?.emailAddress || '';
-  if (!AUTHORIZED_EMAILS.includes(userEmail)) redirect('/portal');
+  // PREVENT UI FLASHING WHILE AUTH/DATA LOADS
+  const userEmail = user?.primaryEmailAddress?.emailAddress || '';
+  const isAuthorized = AUTHORIZED_EMAILS.includes(userEmail);
+  if (!isLoaded || isFetching || !isSignedIn || !isAuthorized) {
+    return (
+      <div className="min-h-screen bg-zinc-200 dark:bg-[#0A0A0A] flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-zinc-900 dark:border-white"></div>
+      </div>
+    );
+  }
 
+  // 5. FINAL MATH CALCULATIONS
   const injectionAmount = Number(simulatedInjection) || 0;
   const effectiveCash = dbBaseCash + injectionAmount;
 

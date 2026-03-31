@@ -80,7 +80,7 @@ export default function AdminPortal() {
     else setOutflows(updater(outflows));
   };
 
-  const handlePublish = async (e: React.FormEvent) => {
+ const handlePublish = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
     setSaveStatus('idle');
@@ -89,26 +89,28 @@ export default function AdminPortal() {
       if (!token) throw new Error("No auth token");
       const supabase = await getSupabase(token);
 
-      await supabase.from('core_metrics').upsert({ id: 1, base_cash: Number(baseCash) });
+      // We added .throwOnError() to all of these!
+      await supabase.from('core_metrics').upsert({ id: 1, base_cash: Number(baseCash) }).throwOnError();
 
-      await supabase.from('receivables').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+      await supabase.from('receivables').delete().neq('id', '00000000-0000-0000-0000-000000000000').throwOnError();
       if (receivables.length > 0) {
-        await supabase.from('receivables').insert(receivables.map(r => ({ invoice_date: r.invoiceDate, client_name: r.clientName, amount: Number(r.amount) })));
+        await supabase.from('receivables').insert(receivables.map(r => ({ invoice_date: r.invoiceDate, client_name: r.clientName, amount: Number(r.amount) }))).throwOnError();
       }
 
-      await supabase.from('ledgers').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+      await supabase.from('ledgers').delete().neq('id', '00000000-0000-0000-0000-000000000000').throwOnError();
       const combinedLedger = [
         ...inflows.map(i => ({ type: 'in', date: i.date, description: i.description, amount: Number(i.amount), category: i.category, is_recurring: i.isRecurring })),
         ...outflows.map(o => ({ type: 'out', date: o.date, description: o.description, amount: Number(o.amount), category: o.category, is_recurring: o.isRecurring }))
       ];
       if (combinedLedger.length > 0) {
-        await supabase.from('ledgers').insert(combinedLedger);
+        await supabase.from('ledgers').insert(combinedLedger).throwOnError();
       }
 
       setSaveStatus('saved');
       setTimeout(() => setSaveStatus('idle'), 4000);
-} catch (err) {
-      console.error("🚨 FULL PUBLISH ERROR:", err); // <-- This will tell us everything
+    } catch (err: any) {
+      // THIS WILL PRINT THE EXACT REASON TO YOUR BROWSER
+      console.error("🚨 PUBLISH BLOCKED BY SUPABASE:", err.message || err);
       setSaveStatus('error');
     } finally {
       setIsSaving(false);

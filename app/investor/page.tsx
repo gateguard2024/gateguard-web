@@ -46,23 +46,34 @@ export default function ExecutivePortfolio() {
     if (isLoaded && isSignedIn) fetchFinancialData();
   }, [isLoaded, isSignedIn, getToken]);
 
-  // CALC AGING REPORT
+// CALC AGING REPORT (Now shielded from bad database rows)
   const agingReport = useMemo(() => {
     const today = new Date().getTime();
     return dbReceivables.reduce((acc, rec) => {
-      const invoiceDate = new Date(rec.invoice_date).getTime();
-      const diffDays = Math.ceil((today - invoiceDate) / (1000 * 60 * 60 * 24));
-      const amount = Number(rec.amount) || 0;
-      
-      if (diffDays <= 30 || invoiceDate > today) acc.current += amount;
-      else if (diffDays <= 60) acc.late30 += amount;
-      else if (diffDays <= 90) acc.late60 += amount;
-      else acc.late90Plus += amount;
-      return acc;
+      try {
+        if (!rec.invoice_date || typeof rec.invoice_date !== 'string') return acc;
+        
+        const cleanDate = rec.invoice_date.split('T')[0];
+        const [year, month, day] = cleanDate.split('-');
+        if (!year || !month || !day) return acc;
+
+        const invoiceDate = new Date(Number(year), Number(month) - 1, Number(day)).getTime();
+        const diffDays = Math.ceil((today - invoiceDate) / (1000 * 60 * 60 * 24));
+        const amount = Number(rec.amount) || 0;
+        
+        if (diffDays <= 30 || invoiceDate > today) acc.current += amount;
+        else if (diffDays <= 60) acc.late30 += amount;
+        else if (diffDays <= 90) acc.late60 += amount;
+        else acc.late90Plus += amount;
+        
+        return acc;
+      } catch (err) {
+        return acc; // If this row is corrupted, ignore it and continue
+      }
     }, { current: 0, late30: 0, late60: 0, late90Plus: 0 });
   }, [dbReceivables]);
 
-// DYNAMIC DATES & LEDGER MATCHING
+  // DYNAMIC DATES & LEDGER MATCHING (Now shielded from bad database rows)
   const activeWeeks = useMemo(() => {
     const today = new Date();
     today.setHours(0,0,0,0);
@@ -76,30 +87,29 @@ export default function ExecutivePortfolio() {
       
       const formatMsg = (d: Date) => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
       
-      // Filter database ledger items falling within this specific week
       const weeklyLedger = dbLedger.filter(item => {
-        if (!item.date) return false;
-        
-        // BULLETPROOF DATE PARSER: Strips timezones entirely
-        const cleanDate = item.date.split('T')[0]; // Removes anything after 'T' if it's a timestamp
-        const [year, month, day] = cleanDate.split('-');
-        const itemDate = new Date(Number(year), Number(month) - 1, Number(day)).getTime();
-        
-        const isInWeek = itemDate >= start.getTime() && itemDate <= end.getTime();
-        
-        // This will print every transaction and where it gets placed to your console!
-        if (isInWeek) {
-          console.log(`Assigned to Week ${i + 1} (${formatMsg(start)}):`, item.description, item.amount);
+        try {
+          if (!item.date || typeof item.date !== 'string') return false;
+          
+          const cleanDate = item.date.split('T')[0];
+          const [year, month, day] = cleanDate.split('-');
+          if (!year || !month || !day) return false;
+
+          const itemDate = new Date(Number(year), Number(month) - 1, Number(day)).getTime();
+          const isInWeek = itemDate >= start.getTime() && itemDate <= end.getTime();
+          
+          if (isInWeek) {
+            console.log(`Assigned to Week ${i + 1} (${formatMsg(start)}):`, item.description, item.amount);
+          }
+          
+          return isInWeek;
+        } catch (err) {
+          return false; // If this row is corrupted, skip it
         }
-        
-        return isInWeek;
       });
 
-      // Sum Inflows
       const secureIn = weeklyLedger.filter(i => i.type === 'in' && i.category === 'Recurring Revenue').reduce((sum, i) => sum + Number(i.amount), 0);
       const unsureIn = weeklyLedger.filter(i => i.type === 'in' && i.category === 'General Income').reduce((sum, i) => sum + Number(i.amount), 0);
-      
-      // Sum Outflows
       const payroll = weeklyLedger.filter(i => i.type === 'out' && i.category === 'Payroll').reduce((sum, i) => sum + Number(i.amount), 0);
       const equipLabor = weeklyLedger.filter(i => i.type === 'out' && i.category === 'Equip & Contractors').reduce((sum, i) => sum + Number(i.amount), 0);
       const bills = weeklyLedger.filter(i => i.type === 'out' && i.category === 'Bills').reduce((sum, i) => sum + Number(i.amount), 0);

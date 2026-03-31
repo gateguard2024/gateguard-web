@@ -78,7 +78,12 @@ export default function ExecutivePortfolio() {
       
       // Filter database ledger items falling within this specific week
       const weeklyLedger = dbLedger.filter(item => {
-        const itemDate = new Date(item.date).getTime();
+        if (!item.date) return false;
+        
+        // FIX: Parse strictly to local time so dates don't shift backward!
+        const [year, month, day] = item.date.split('-');
+        const itemDate = new Date(Number(year), Number(month) - 1, Number(day)).getTime();
+        
         return itemDate >= start.getTime() && itemDate <= end.getTime();
       });
 

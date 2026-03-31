@@ -107,8 +107,8 @@ export default function AdminPortal() {
 
       setSaveStatus('saved');
       setTimeout(() => setSaveStatus('idle'), 4000);
-    } catch (err) {
-      console.error("Publish Error:", err);
+} catch (err) {
+      console.error("🚨 FULL PUBLISH ERROR:", err); // <-- This will tell us everything
       setSaveStatus('error');
     } finally {
       setIsSaving(false);

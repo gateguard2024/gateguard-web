@@ -7,8 +7,8 @@ const PREDEFINED_SITES = [
   { id: '2', name: 'Columbia Senior Residences', units: 154, vehicleGates: 0, vehicleGatesRepair: 0, pedGates: 8, pedGatesRepair: 2, cameras: 0, conciergeShifts: 0 },
   { id: '3', name: 'Columbia Mechanicsville', units: 173, vehicleGates: 3, vehicleGatesRepair: 0, pedGates: 15, pedGatesRepair: 7, cameras: 0, conciergeShifts: 0 },
   { id: '4', name: 'Parkside at Mechanicsville', units: 156, vehicleGates: 0, vehicleGatesRepair: 0, pedGates: 15, pedGatesRepair: 5, cameras: 0, conciergeShifts: 0 },
-  { id: '5', name: 'Mechanicsville Station', units: 164, vehicleGates: 1, vehicleGatesRepair: 0, pedGates: 15, pedGatesRepair: 11, cameras: 0, conciergeShifts: 0 },
-  { id: '6', name: 'Mechanicsville Crossing', units: 164, vehicleGates: 1, vehicleGatesRepair: 0, pedGates: 19, pedGatesRepair: 9, cameras: 0, conciergeShifts: 0 },
+  { id: '5', name: 'Mechanicsville Station', units: 164, vehicleGates: 2, vehicleGatesRepair: 0, pedGates: 15, pedGatesRepair: 11, cameras: 0, conciergeShifts: 0 },
+  { id: '6', name: 'Mechanicsville Crossing', units: 164, vehicleGates: 2, vehicleGatesRepair: 0, pedGates: 19, pedGatesRepair: 9, cameras: 0, conciergeShifts: 0 },
   { id: '7', name: 'Villages of East Lake', units: 542, vehicleGates: 11, vehicleGatesRepair: 0, pedGates: 16, pedGatesRepair: 0, cameras: 0, conciergeShifts: 0 },
   { id: '8', name: 'Gardenside', units: 108, vehicleGates: 3, vehicleGatesRepair: 0, pedGates: 11, pedGatesRepair: 0, cameras: 0, conciergeShifts: 0 },
   { id: '9', name: 'Columbia Crest', units: 158, vehicleGates: 1, vehicleGatesRepair: 1, pedGates: 5, pedGatesRepair: 2, cameras: 0, conciergeShifts: 0 },
@@ -194,7 +194,7 @@ export default function ColumbiaEnterpriseDashboard() {
   const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
   const handleSignContract = () => {
-    if (!formData.signerName || !formData.signature || !formData.email) return;
+    if (!formData.signerName || !formData.signature || !formData.email || !formData.address) return;
     setIsSigned(true);
   };
 
@@ -698,8 +698,16 @@ export default function ColumbiaEnterpriseDashboard() {
                                 <div className="space-y-4">
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="col-span-2">
+                                            <label className="block text-[10px] uppercase tracking-widest text-slate-500 dark:text-slate-400 font-bold mb-1">Portfolio Name</label>
+                                            <input type="text" className="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-white/10 rounded-lg p-2.5 text-slate-900 dark:text-white text-sm focus:border-blue-500 outline-none transition-colors" value={formData.portfolioName} onChange={e => setFormData({...formData, portfolioName: e.target.value})} />
+                                        </div>
+                                        <div className="col-span-2">
                                             <label className="block text-[10px] uppercase tracking-widest text-slate-500 dark:text-slate-400 font-bold mb-1">Owning Entity</label>
                                             <input type="text" className="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-white/10 rounded-lg p-2.5 text-slate-900 dark:text-white text-sm focus:border-blue-500 outline-none transition-colors" value={formData.ownerName} onChange={e => setFormData({...formData, ownerName: e.target.value})} />
+                                        </div>
+                                        <div className="col-span-2">
+                                            <label className="block text-[10px] uppercase tracking-widest text-slate-500 dark:text-slate-400 font-bold mb-1">Corporate Address</label>
+                                            <input type="text" placeholder="123 Main St, Suite 100, Atlanta GA" className="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-white/10 rounded-lg p-2.5 text-slate-900 dark:text-white text-sm focus:border-blue-500 outline-none transition-colors placeholder:text-slate-400 dark:placeholder:text-slate-600" value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} />
                                         </div>
                                         <div className="col-span-1">
                                             <label className="block text-[10px] uppercase tracking-widest text-slate-500 dark:text-slate-400 font-bold mb-1">Billing Email</label>

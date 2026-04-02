@@ -11,7 +11,7 @@ const PREDEFINED_SITES = [
   { id: '6', name: 'Mechanicsville Crossing', units: 164, vehicleGates: 2, vehicleGatesRepair: 0, pedGates: 19, pedGatesRepair: 9, cameras: 0, conciergeShifts: 0 },
   { id: '7', name: 'Villages of East Lake', units: 542, vehicleGates: 11, vehicleGatesRepair: 0, pedGates: 16, pedGatesRepair: 0, cameras: 0, conciergeShifts: 0 },
   { id: '8', name: 'Gardenside', units: 108, vehicleGates: 3, vehicleGatesRepair: 0, pedGates: 11, pedGatesRepair: 0, cameras: 0, conciergeShifts: 0 },
-  { id: '9', name: 'Columbia Crest', units: 158, vehicleGates: 2, vehicleGatesRepair: 1, pedGates: 5, pedGatesRepair: 2, cameras: 0, conciergeShifts: 0 },
+  { id: '9', name: 'Columbia Crest', units: 158, vehicleGates: 1, vehicleGatesRepair: 1, pedGates: 5, pedGatesRepair: 2, cameras: 0, conciergeShifts: 0 },
   { id: '10', name: 'Columbia Commons', units: 158, vehicleGates: 2, vehicleGatesRepair: 1, pedGates: 3, pedGatesRepair: 1, cameras: 0, conciergeShifts: 0 },
   { id: '11', name: 'Columbia Park Commons', units: 230, vehicleGates: 6, vehicleGatesRepair: 2, pedGates: 10, pedGatesRepair: 2, cameras: 0, conciergeShifts: 0 },
   { id: '12', name: 'Columbia Renaissance Square', units: 140, vehicleGates: 3, vehicleGatesRepair: 3, pedGates: 23, pedGatesRepair: 4, cameras: 0, conciergeShifts: 0 },
@@ -136,7 +136,8 @@ export default function ColumbiaEnterpriseDashboard() {
   const finalBlendedUnitAvg = totalUnits > 0 ? (finalMonthlyTotal / totalUnits).toFixed(2) : "0.00";
 
   // --- DYNAMIC DEPOSIT MATH ---
-  const depositAmount = (finalSetupFee + finalMonthlyTotal) / 2;
+  const fullDepositAmount = finalSetupFee + finalMonthlyTotal;
+  const splitDepositAmount = fullDepositAmount / 2;
 
   const maxTier = 16;
   const progressPercent = Math.min((numSites / maxTier) * 100, 100);
@@ -478,10 +479,20 @@ export default function ColumbiaEnterpriseDashboard() {
 
                             <h3 className="font-bold text-lg mt-8 text-slate-900">5. Term & Termination</h3>
                             <ul className="list-disc pl-5 mb-6 text-slate-700 space-y-2">
-                                <li><strong>Initial Term:</strong> Sixty (60) months beginning on the Effective Date.</li>
+                                <li><strong>Initial Term:</strong> Sixty (60) months beginning on the Effective Date.{useAmortization && " Note: If the Optional Ramp Up Plan is selected (Section 6.1), the Initial Term is extended to seventy-two (72) months."}</li>
                                 <li><strong>Automatic Renewal:</strong> Successive one (1) year terms unless either party provides written notice of non-renewal at least sixty (60) days prior to expiration.</li>
                                 <li><strong>Termination for Cause:</strong> Either party may terminate for material breach not cured within thirty (30) days of written notice.</li>
-                                <li><strong>Termination for Convenience:</strong> Customer may terminate for convenience with ninety (90) days written notice.</li>
+                                <li><strong>Termination for Convenience:</strong> Customer may terminate for convenience with ninety (90) days written notice{useAmortization && ", subject to the Early Termination Fees outlined below"}.</li>
+                                {useAmortization && (
+                                    <li><strong>Early Termination Fees:</strong> If Customer terminates for convenience before the end of the Initial Term, the following percentages of the remaining contract value shall be due and payable immediately:
+                                        <ul className="list-[circle] pl-5 mt-2 space-y-1">
+                                            <li>Termination in Year 1: 40% of remaining contract value.</li>
+                                            <li>Termination in Year 2: 30% of remaining contract value.</li>
+                                            <li>Termination in Year 3: 15% of remaining contract value.</li>
+                                            <li>Termination after Year 4: 0% of remaining contract value.</li>
+                                        </ul>
+                                    </li>
+                                )}
                                 <li><strong>Asset Removal:</strong> In the event of cancellation or failure to pay, Gate Guard reserves the right to remove any and all installed assets from the property, including but not limited to cameras, locks, access systems, and network hardware.</li>
                             </ul>
 
@@ -509,9 +520,18 @@ export default function ColumbiaEnterpriseDashboard() {
 
                             <h3 className="font-bold text-lg mt-8 text-slate-900">7. Payment Terms</h3>
                             <ul className="list-disc pl-5 mb-6 text-slate-700 space-y-2">
-                                <li><strong>Deposit:</strong> The Deposit is equal to 50% of the Total Setup Fee and 1st month's Service (Total Due: <strong>${depositAmount.toLocaleString()}</strong>). Due upon signing of agreement.</li>
-                                <li><strong>"GO Live":</strong> The Second payment is the remaining 50% of the Set-Up Fee and 1st month's Service (Total: <strong>${depositAmount.toLocaleString()}</strong>). This is due on the scheduled "Go Live date".</li>
-                                <li><strong>Monthly Fees:</strong> Recurring monthly billing will begin on the 15th of the calendar month following the "Go Live" date (not less than 30 days after event).</li>
+                                {useAmortization ? (
+                                    <>
+                                        <li><strong>Deposit:</strong> The full Setup Fee and 1st month's Service (Total Due: <strong>${fullDepositAmount.toLocaleString()}</strong>) is due upon signing of this agreement.</li>
+                                        <li><strong>Monthly Fees:</strong> Recurring monthly billing will begin on the 15th of the calendar month following the "Go Live" date (not less than 30 days after event).</li>
+                                    </>
+                                ) : (
+                                    <>
+                                        <li><strong>Deposit:</strong> The Deposit is equal to 50% of the Total Setup Fee and 1st month's Service (Total Due: <strong>${splitDepositAmount.toLocaleString()}</strong>). Due upon signing of agreement.</li>
+                                        <li><strong>"GO Live":</strong> The Second payment is the remaining 50% of the Set-Up Fee and 1st month's Service (Total: <strong>${splitDepositAmount.toLocaleString()}</strong>). This is due on the scheduled "Go Live date".</li>
+                                        <li><strong>Monthly Fees:</strong> Recurring monthly billing will begin on the 15th of the calendar month following the "Go Live" date (not less than 30 days after event).</li>
+                                    </>
+                                )}
                             </ul>
 
                             <h3 className="font-bold text-lg mt-8 text-slate-900">8. Intellectual Property</h3>

@@ -536,7 +536,7 @@ export default function ColumbiaResPresentation() {
               <p className="text-5xl font-black text-white mb-2">19+ Sites</p>
               <p className="text-sm text-blue-200 mb-6">Standardize access control across the portfolio.</p>
               <Link 
-               href="https://gateguard.co/pricing/columbiares" 
+               href="https://www.gateguard.co/pricing/ColumbiaRes" 
                target="_blank" 
                className="w-full inline-block bg-blue-500 text-white font-bold py-4 px-8 rounded-xl hover:bg-blue-400 transition-all shadow-lg hover:-translate-y-1"
               >

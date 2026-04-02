@@ -3,12 +3,12 @@ import React, { useState, useEffect } from 'react';
 
 // EXACT DATA EXTRACTED FROM COLUMBIA SURVEY (19 SITES)
 const PREDEFINED_SITES = [
-  { id: '1', name: 'Columbia Gardens of South City', units: 290, vehicleGates: 4, vehicleGatesRepair: 2, pedGates: 19, pedGatesRepair: 8, cameras: 0, conciergeShifts: 0 },
+  { id: '1', name: 'Columbia Gardens of South City', units: 290, vehicleGates: 6, vehicleGatesRepair: 1, pedGates: 19, pedGatesRepair: 8, cameras: 0, conciergeShifts: 0 },
   { id: '2', name: 'Columbia Senior Residences', units: 154, vehicleGates: 0, vehicleGatesRepair: 0, pedGates: 8, pedGatesRepair: 2, cameras: 0, conciergeShifts: 0 },
   { id: '3', name: 'Columbia Mechanicsville', units: 173, vehicleGates: 3, vehicleGatesRepair: 0, pedGates: 15, pedGatesRepair: 7, cameras: 0, conciergeShifts: 0 },
   { id: '4', name: 'Parkside at Mechanicsville', units: 156, vehicleGates: 0, vehicleGatesRepair: 0, pedGates: 15, pedGatesRepair: 5, cameras: 0, conciergeShifts: 0 },
-  { id: '5', name: 'Mechanicsville Station', units: 164, vehicleGates: 2, vehicleGatesRepair: 0, pedGates: 15, pedGatesRepair: 11, cameras: 0, conciergeShifts: 0 },
-  { id: '6', name: 'Mechanicsville Crossing', units: 164, vehicleGates: 2, vehicleGatesRepair: 0, pedGates: 19, pedGatesRepair: 9, cameras: 0, conciergeShifts: 0 },
+  { id: '5', name: 'Mechanicsville Station', units: 164, vehicleGates: 1, vehicleGatesRepair: 0, pedGates: 15, pedGatesRepair: 11, cameras: 0, conciergeShifts: 0 },
+  { id: '6', name: 'Mechanicsville Crossing', units: 164, vehicleGates: 1, vehicleGatesRepair: 0, pedGates: 19, pedGatesRepair: 9, cameras: 0, conciergeShifts: 0 },
   { id: '7', name: 'Villages of East Lake', units: 542, vehicleGates: 11, vehicleGatesRepair: 0, pedGates: 16, pedGatesRepair: 0, cameras: 0, conciergeShifts: 0 },
   { id: '8', name: 'Gardenside', units: 108, vehicleGates: 3, vehicleGatesRepair: 0, pedGates: 11, pedGatesRepair: 0, cameras: 0, conciergeShifts: 0 },
   { id: '9', name: 'Columbia Crest', units: 158, vehicleGates: 1, vehicleGatesRepair: 1, pedGates: 5, pedGatesRepair: 2, cameras: 0, conciergeShifts: 0 },
@@ -52,6 +52,21 @@ export default function ColumbiaEnterpriseDashboard() {
   const handleSelectAll = () => {
     if (selectedSiteIds.length === PREDEFINED_SITES.length) setSelectedSiteIds([]);
     else setSelectedSiteIds(PREDEFINED_SITES.map(s => s.id));
+  };
+
+  const handleToggleAllMagCovers = () => {
+    const allHaveCovers = PREDEFINED_SITES.every(site => siteMagCovers[site.id] !== undefined);
+    if (allHaveCovers) {
+      setSiteMagCovers({}); // Remove all
+    } else {
+      const next: Record<string, number> = { ...siteMagCovers };
+      PREDEFINED_SITES.forEach(site => {
+         if (next[site.id] === undefined) {
+             next[site.id] = 1; // Default to 1 per site
+         }
+      });
+      setSiteMagCovers(next);
+    }
   };
 
   // Mag Cover Handlers
@@ -325,13 +340,22 @@ export default function ColumbiaEnterpriseDashboard() {
                    <h2 className="text-xl font-black text-slate-900 dark:text-white tracking-tight">Portfolio Roster</h2>
                    <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Select properties below to bundle them into your Addendum quote.</p>
                 </div>
-                <div className="flex gap-4 items-center">
-                    <div className="bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-lg px-4 py-2 flex items-center gap-3">
+                <div className="flex flex-wrap gap-3 items-center justify-end">
+                    <div className="bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-lg px-4 py-2 flex items-center gap-3 shadow-sm">
                         <span className="text-[10px] uppercase tracking-widest font-bold text-slate-500 dark:text-slate-400">Mag Cover Price:</span>
                         <span className="font-mono font-bold text-blue-600 dark:text-blue-400">${magCoverPrice}</span>
                     </div>
-                    <button onClick={handleSelectAll} className="text-[10px] text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-white font-bold tracking-widest uppercase transition-colors bg-white dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 px-4 py-2 rounded-lg border border-slate-200 dark:border-white/10 shadow-sm dark:shadow-none backdrop-blur-sm">
-                    {selectedSiteIds.length === PREDEFINED_SITES.length ? 'Deselect All' : 'Select All 19 Properties'}
+                    <button 
+                      onClick={handleToggleAllMagCovers} 
+                      className="text-[10px] text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-white font-bold tracking-widest uppercase transition-colors bg-white dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 px-4 py-2 rounded-lg border border-slate-200 dark:border-white/10 shadow-sm dark:shadow-none backdrop-blur-sm"
+                    >
+                      {Object.keys(siteMagCovers).length === PREDEFINED_SITES.length ? '- Remove All Covers' : '+ Add All Covers'}
+                    </button>
+                    <button 
+                      onClick={handleSelectAll} 
+                      className="text-[10px] text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-white font-bold tracking-widest uppercase transition-colors bg-white dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 px-4 py-2 rounded-lg border border-slate-200 dark:border-white/10 shadow-sm dark:shadow-none backdrop-blur-sm"
+                    >
+                      {selectedSiteIds.length === PREDEFINED_SITES.length ? 'Deselect All' : 'Select All 19 Properties'}
                     </button>
                 </div>
              </div>
@@ -374,7 +398,7 @@ export default function ColumbiaEnterpriseDashboard() {
                                     {site.vehicleGates === 0 && <span className="text-slate-500 bg-slate-100 dark:bg-white/5 px-2 py-0.5 rounded border border-slate-200 dark:border-white/10">0 Gates</span>}
                                 </div>
                             </div>
-                            <div className="flex justify-between items-center pb-3 border-b border-slate-100 dark:border-white/5">
+                            <div className="flex justify-between items-center pb-2">
                                 <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400">Ped. Doors ({site.pedGates})</span>
                                 <div className="flex gap-2 text-[10px] font-medium text-right">
                                     {pWorking > 0 ? <span className="text-emerald-700 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-950/30 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-500/20">{pWorking} Working</span> : null}
@@ -383,33 +407,31 @@ export default function ColumbiaEnterpriseDashboard() {
                                 </div>
                             </div>
 
-                            {/* MAG COVER TOGGLE & INPUT */}
-                            {isSelected && (
-                                <div className="pt-1 flex items-center justify-between" onClick={(e) => e.stopPropagation()}>
-                                    <div className="flex items-center gap-2">
-                                        <button 
-                                            onClick={(e) => toggleMagCoverForSite(e, site.id)}
-                                            className={`w-8 h-4 rounded-full transition-colors relative flex items-center border ${hasMagCovers ? 'bg-blue-600 border-blue-600' : 'bg-slate-200 dark:bg-white/10 border-slate-300 dark:border-white/20'}`}
-                                        >
-                                            <div className={`w-3 h-3 rounded-full bg-white shadow-sm transition-transform absolute ${hasMagCovers ? 'translate-x-4' : 'translate-x-0.5'}`}></div>
-                                        </button>
-                                        <span className="text-[10px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider">Add Mag Covers</span>
-                                    </div>
-
-                                    {hasMagCovers && (
-                                        <div className="flex items-center gap-2">
-                                            <input 
-                                                type="number" 
-                                                min="0"
-                                                value={magCoverQty}
-                                                onChange={(e) => updateMagCoverQuantity(e, site.id)}
-                                                className="w-12 bg-white dark:bg-black/50 border border-slate-300 dark:border-white/20 rounded px-1.5 py-0.5 text-xs text-center font-mono outline-none focus:border-blue-500"
-                                            />
-                                            <span className="text-[10px] font-bold text-slate-500">Qty</span>
-                                        </div>
-                                    )}
+                            {/* MAG COVER TOGGLE & INPUT - ALWAYS VISIBLE */}
+                            <div className="pt-3 mt-3 border-t border-slate-100 dark:border-white/5 flex items-center justify-between" onClick={(e) => e.stopPropagation()}>
+                                <div className="flex items-center gap-2">
+                                    <button 
+                                        onClick={(e) => toggleMagCoverForSite(e, site.id)}
+                                        className={`w-8 h-4 rounded-full transition-colors relative flex items-center border ${hasMagCovers ? 'bg-blue-600 border-blue-600' : 'bg-slate-200 dark:bg-white/10 border-slate-300 dark:border-white/20'}`}
+                                    >
+                                        <div className={`w-3 h-3 rounded-full bg-white shadow-sm transition-transform absolute ${hasMagCovers ? 'translate-x-4' : 'translate-x-0.5'}`}></div>
+                                    </button>
+                                    <span className="text-[10px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider">Mag Covers</span>
                                 </div>
-                            )}
+
+                                {hasMagCovers && (
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Qty</span>
+                                        <input 
+                                            type="number" 
+                                            min="0"
+                                            value={magCoverQty}
+                                            onChange={(e) => updateMagCoverQuantity(e, site.id)}
+                                            className="w-12 bg-white dark:bg-black/50 border border-slate-300 dark:border-white/20 rounded px-1.5 py-0.5 text-xs text-center font-mono outline-none focus:border-blue-500"
+                                        />
+                                    </div>
+                                )}
+                            </div>
 
                          </div>
                       </div>

@@ -30,6 +30,9 @@ export default function ColumbiaEnterpriseDashboard() {
   const [useAmortization, setUseAmortization] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   
+  // State to track Mag Covers per site. Key is site ID, Value is quantity.
+  const [siteMagCovers, setSiteMagCovers] = useState<Record<string, number>>({});
+
   const [formData, setFormData] = useState({ 
       ownerName: 'Columbia Residential', 
       portfolioName: 'Columbia Portfolio Group',
@@ -51,6 +54,28 @@ export default function ColumbiaEnterpriseDashboard() {
     else setSelectedSiteIds(PREDEFINED_SITES.map(s => s.id));
   };
 
+  // Mag Cover Handlers
+  const toggleMagCoverForSite = (e: React.MouseEvent, id: string) => {
+    e.stopPropagation(); // Prevent the whole card from clicking
+    setSiteMagCovers(prev => {
+      const next = { ...prev };
+      if (next[id]) {
+        delete next[id]; // Turn off
+      } else {
+        next[id] = 1; // Turn on, default to 1
+      }
+      return next;
+    });
+  };
+
+  const updateMagCoverQuantity = (e: React.ChangeEvent<HTMLInputElement>, id: string) => {
+    e.stopPropagation();
+    const val = parseInt(e.target.value) || 0;
+    if (val >= 0) {
+      setSiteMagCovers(prev => ({ ...prev, [id]: val }));
+    }
+  };
+
   const selectedSites = PREDEFINED_SITES.filter(site => selectedSiteIds.includes(site.id));
 
   // --- MATH LOGIC ---
@@ -58,6 +83,7 @@ export default function ColumbiaEnterpriseDashboard() {
   let totalBrokenDoors = 0;
   let totalRawMonthlyFee = 0;
   let totalUnits = 0;
+  let totalMagCovers = 0;
 
   selectedSites.forEach(site => {
     totalUnits += site.units;
@@ -71,10 +97,18 @@ export default function ColumbiaEnterpriseDashboard() {
 
     const siteHardwareMonthly = (site.vehicleGates * 175) + (site.pedGates * 125);
     totalRawMonthlyFee += siteHardwareMonthly;
+
+    if (siteMagCovers[site.id]) {
+        totalMagCovers += siteMagCovers[site.id];
+    }
   });
 
   const numSites = selectedSites.length;
-  const rawSetupFee = (totalWorkingDoors * 500) + (totalBrokenDoors * 750);
+  const magCoverPrice = numSites >= 13 ? 500 : 750;
+  const totalMagCoverCost = totalMagCovers * magCoverPrice;
+
+  // Add Mag Cover cost to the raw setup fee
+  const rawSetupFee = (totalWorkingDoors * 500) + (totalBrokenDoors * 750) + totalMagCoverCost;
   const rawAvgPerUnit = totalUnits > 0 ? (totalRawMonthlyFee / totalUnits) : 0;
 
   // --- VOLUME TIER LOGIC ---
@@ -103,7 +137,8 @@ export default function ColumbiaEnterpriseDashboard() {
   let monthlySavings = 0;
 
   if (setupCapActive) {
-      finalSetupFee = (totalWorkingDoors + totalBrokenDoors) * 500;
+      // If setup cap is active, working/broken doors drop to flat $500. Mag covers are still added on top.
+      finalSetupFee = ((totalWorkingDoors + totalBrokenDoors) * 500) + totalMagCoverCost;
       setupSavings = rawSetupFee - finalSetupFee;
 
       const finalAvgPerUnitBeforeAmort = Math.min(rawAvgPerUnit, unitCap);
@@ -290,9 +325,15 @@ export default function ColumbiaEnterpriseDashboard() {
                    <h2 className="text-xl font-black text-slate-900 dark:text-white tracking-tight">Portfolio Roster</h2>
                    <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Select properties below to bundle them into your Addendum quote.</p>
                 </div>
-                <button onClick={handleSelectAll} className="text-[10px] text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-white font-bold tracking-widest uppercase transition-colors bg-white dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 px-4 py-2 rounded-lg border border-slate-200 dark:border-white/10 shadow-sm dark:shadow-none backdrop-blur-sm">
-                   {selectedSiteIds.length === PREDEFINED_SITES.length ? 'Deselect All' : 'Select All 19 Properties'}
-                </button>
+                <div className="flex gap-4 items-center">
+                    <div className="bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-lg px-4 py-2 flex items-center gap-3">
+                        <span className="text-[10px] uppercase tracking-widest font-bold text-slate-500 dark:text-slate-400">Mag Cover Price:</span>
+                        <span className="font-mono font-bold text-blue-600 dark:text-blue-400">${magCoverPrice}</span>
+                    </div>
+                    <button onClick={handleSelectAll} className="text-[10px] text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-white font-bold tracking-widest uppercase transition-colors bg-white dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 px-4 py-2 rounded-lg border border-slate-200 dark:border-white/10 shadow-sm dark:shadow-none backdrop-blur-sm">
+                    {selectedSiteIds.length === PREDEFINED_SITES.length ? 'Deselect All' : 'Select All 19 Properties'}
+                    </button>
+                </div>
              </div>
 
              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
@@ -300,6 +341,8 @@ export default function ColumbiaEnterpriseDashboard() {
                    const isSelected = selectedSiteIds.includes(site.id);
                    const vWorking = site.vehicleGates - site.vehicleGatesRepair;
                    const pWorking = site.pedGates - site.pedGatesRepair;
+                   const hasMagCovers = siteMagCovers[site.id] !== undefined;
+                   const magCoverQty = siteMagCovers[site.id] || 0;
 
                    return (
                       <div 
@@ -331,7 +374,7 @@ export default function ColumbiaEnterpriseDashboard() {
                                     {site.vehicleGates === 0 && <span className="text-slate-500 bg-slate-100 dark:bg-white/5 px-2 py-0.5 rounded border border-slate-200 dark:border-white/10">0 Gates</span>}
                                 </div>
                             </div>
-                            <div className="flex justify-between items-center pb-1">
+                            <div className="flex justify-between items-center pb-3 border-b border-slate-100 dark:border-white/5">
                                 <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400">Ped. Doors ({site.pedGates})</span>
                                 <div className="flex gap-2 text-[10px] font-medium text-right">
                                     {pWorking > 0 ? <span className="text-emerald-700 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-950/30 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-500/20">{pWorking} Working</span> : null}
@@ -339,6 +382,35 @@ export default function ColumbiaEnterpriseDashboard() {
                                     {site.pedGates === 0 && <span className="text-slate-500 bg-slate-100 dark:bg-white/5 px-2 py-0.5 rounded border border-slate-200 dark:border-white/10">0 Doors</span>}
                                 </div>
                             </div>
+
+                            {/* MAG COVER TOGGLE & INPUT */}
+                            {isSelected && (
+                                <div className="pt-1 flex items-center justify-between" onClick={(e) => e.stopPropagation()}>
+                                    <div className="flex items-center gap-2">
+                                        <button 
+                                            onClick={(e) => toggleMagCoverForSite(e, site.id)}
+                                            className={`w-8 h-4 rounded-full transition-colors relative flex items-center border ${hasMagCovers ? 'bg-blue-600 border-blue-600' : 'bg-slate-200 dark:bg-white/10 border-slate-300 dark:border-white/20'}`}
+                                        >
+                                            <div className={`w-3 h-3 rounded-full bg-white shadow-sm transition-transform absolute ${hasMagCovers ? 'translate-x-4' : 'translate-x-0.5'}`}></div>
+                                        </button>
+                                        <span className="text-[10px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider">Add Mag Covers</span>
+                                    </div>
+
+                                    {hasMagCovers && (
+                                        <div className="flex items-center gap-2">
+                                            <input 
+                                                type="number" 
+                                                min="0"
+                                                value={magCoverQty}
+                                                onChange={(e) => updateMagCoverQuantity(e, site.id)}
+                                                className="w-12 bg-white dark:bg-black/50 border border-slate-300 dark:border-white/20 rounded px-1.5 py-0.5 text-xs text-center font-mono outline-none focus:border-blue-500"
+                                            />
+                                            <span className="text-[10px] font-bold text-slate-500">Qty</span>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
                          </div>
                       </div>
                    );
@@ -414,7 +486,10 @@ export default function ColumbiaEnterpriseDashboard() {
                             <p>Gate Guard agrees to provide the following services ("Services") to the Customer, but only to the extent they are selected below. Services will be applied across the following <strong>{numSites} properties</strong>:</p>
                             <ul className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs list-disc pl-5 mt-2 mb-6 text-slate-700">
                                 {selectedSites.map(site => (
-                                    <li key={site.id}>{site.name} ({site.units} Units)</li>
+                                    <li key={site.id}>
+                                        {site.name} ({site.units} Units) 
+                                        {siteMagCovers[site.id] && <span className="text-blue-600 font-semibold ml-1">[{siteMagCovers[site.id]} Mag Covers]</span>}
+                                    </li>
                                 ))}
                             </ul>
 
@@ -510,7 +585,7 @@ export default function ColumbiaEnterpriseDashboard() {
                                         <td className="py-3 px-4 text-right font-medium">{totalUnits.toLocaleString()} Units</td>
                                     </tr>
                                     <tr className="border-b border-slate-200">
-                                        <td className="py-3 px-4 font-bold text-blue-900 bg-blue-50/50">Total Setup Fee (Due at Go-Live):</td>
+                                        <td className="py-3 px-4 font-bold text-blue-900 bg-blue-50/50">Total Hardware & Setup Fee (Includes Mag Covers):</td>
                                         <td className="py-3 px-4 text-right font-bold text-blue-900">${finalSetupFee.toLocaleString()} {useAmortization && <span className="text-[10px] font-normal text-slate-500 block">*Includes enterprise financing cap</span>}</td>
                                     </tr>
                                     <tr className="bg-slate-50">

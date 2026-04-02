@@ -164,7 +164,7 @@ export default function ColumbiaEnterpriseDashboard() {
               <div className="flex justify-between items-center mb-6 border-b border-slate-200 dark:border-white/5 pb-4">
                  <div className="flex items-center gap-4">
                     <div className="bg-white dark:bg-white/5 p-2 rounded-xl border border-slate-200 dark:border-white/10 h-14 flex items-center justify-center shadow-sm dark:shadow-inner">
-                       <img src="/logo.png" alt="Columbia Residential" className="h-full w-auto object-contain" />
+                       <img src="/Columbia_logo.png" alt="Columbia Residential" className="h-full w-auto object-contain" />
                     </div>
                     <div>
                        <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Columbia Residential</h1>
@@ -378,7 +378,7 @@ export default function ColumbiaEnterpriseDashboard() {
                                     <p className="text-slate-500 font-bold tracking-widest uppercase text-xs mt-2">Effective Date: {today}</p>
                                 </div>
                                 <div className="h-12 lg:h-16 flex items-center justify-end">
-                                    <img src="/columbia-logo.png" alt="Columbia Residential" className="max-h-full max-w-full object-contain" />
+                                    <img src="/logo.png" alt="Columbia Residential" className="max-h-full max-w-full object-contain" />
                                 </div>
                             </div>
                         </div>

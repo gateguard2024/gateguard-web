@@ -7,8 +7,8 @@ const PREDEFINED_SITES = [
   { id: '2', name: 'Columbia Senior Residences', units: 154, vehicleGates: 0, vehicleGatesRepair: 0, pedGates: 8, pedGatesRepair: 2, cameras: 0, conciergeShifts: 0 },
   { id: '3', name: 'Columbia Mechanicsville', units: 173, vehicleGates: 3, vehicleGatesRepair: 0, pedGates: 15, pedGatesRepair: 7, cameras: 0, conciergeShifts: 0 },
   { id: '4', name: 'Parkside at Mechanicsville', units: 156, vehicleGates: 0, vehicleGatesRepair: 0, pedGates: 15, pedGatesRepair: 5, cameras: 0, conciergeShifts: 0 },
-  { id: '5', name: 'Mechanicsville Station', units: 164, vehicleGates: 2, vehicleGatesRepair: 0, pedGates: 15, pedGatesRepair: 11, cameras: 0, conciergeShifts: 0 },
-  { id: '6', name: 'Mechanicsville Crossing', units: 164, vehicleGates: 2, vehicleGatesRepair: 0, pedGates: 19, pedGatesRepair: 9, cameras: 0, conciergeShifts: 0 },
+  { id: '5', name: 'Mechanicsville Station', units: 164, vehicleGates: 1, vehicleGatesRepair: 0, pedGates: 15, pedGatesRepair: 11, cameras: 0, conciergeShifts: 0 },
+  { id: '6', name: 'Mechanicsville Crossing', units: 164, vehicleGates: 1, vehicleGatesRepair: 0, pedGates: 19, pedGatesRepair: 9, cameras: 0, conciergeShifts: 0 },
   { id: '7', name: 'Villages of East Lake', units: 542, vehicleGates: 11, vehicleGatesRepair: 0, pedGates: 16, pedGatesRepair: 0, cameras: 0, conciergeShifts: 0 },
   { id: '8', name: 'Gardenside', units: 108, vehicleGates: 3, vehicleGatesRepair: 0, pedGates: 11, pedGatesRepair: 0, cameras: 0, conciergeShifts: 0 },
   { id: '9', name: 'Columbia Crest', units: 158, vehicleGates: 1, vehicleGatesRepair: 1, pedGates: 5, pedGatesRepair: 2, cameras: 0, conciergeShifts: 0 },
@@ -163,8 +163,8 @@ export default function ColumbiaEnterpriseDashboard() {
               
               <div className="flex justify-between items-center mb-6 border-b border-slate-200 dark:border-white/5 pb-4">
                  <div className="flex items-center gap-4">
-                    <div className="bg-white dark:bg-white/5 p-2 rounded-xl border border-slate-200 dark:border-white/10 w-14 h-14 flex items-center justify-center shadow-sm dark:shadow-inner">
-                       <span className="text-xl font-black text-slate-800 dark:text-white">CR</span>
+                    <div className="bg-white dark:bg-white/5 p-2 rounded-xl border border-slate-200 dark:border-white/10 h-14 flex items-center justify-center shadow-sm dark:shadow-inner">
+                       <img src="/columbia-logo.png" alt="Columbia Residential" className="h-full w-auto object-contain" />
                     </div>
                     <div>
                        <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Columbia Residential</h1>
@@ -377,7 +377,9 @@ export default function ColumbiaEnterpriseDashboard() {
                                     <h1 className="text-3xl font-black uppercase tracking-tight text-slate-900">Your Gate Guard Service Agreement</h1>
                                     <p className="text-slate-500 font-bold tracking-widest uppercase text-xs mt-2">Effective Date: {today}</p>
                                 </div>
-                                <div className="h-12 w-32 bg-slate-100 border border-slate-200 flex items-center justify-center text-xs font-bold text-slate-400">LOGO</div>
+                                <div className="h-12 lg:h-16 flex items-center justify-end">
+                                    <img src="/columbia-logo.png" alt="Columbia Residential" className="max-h-full max-w-full object-contain" />
+                                </div>
                             </div>
                         </div>
 

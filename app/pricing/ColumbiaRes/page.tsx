@@ -1,656 +1,379 @@
-"use client";
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import Link from 'next/link';
 
-// EXACT DATA EXTRACTED FROM COLUMBIA SURVEY (19 SITES)
-const PREDEFINED_SITES = [
-  { id: '1', name: 'Columbia Gardens of South City', units: 290, vehicleGates: 6, vehicleGatesRepair: 1, pedGates: 19, pedGatesRepair: 8, cameras: 0, conciergeShifts: 0 },
-  { id: '2', name: 'Columbia Senior Residences', units: 154, vehicleGates: 0, vehicleGatesRepair: 0, pedGates: 8, pedGatesRepair: 2, cameras: 0, conciergeShifts: 0 },
-  { id: '3', name: 'Columbia Mechanicsville', units: 173, vehicleGates: 3, vehicleGatesRepair: 0, pedGates: 15, pedGatesRepair: 7, cameras: 0, conciergeShifts: 0 },
-  { id: '4', name: 'Parkside at Mechanicsville', units: 156, vehicleGates: 0, vehicleGatesRepair: 0, pedGates: 15, pedGatesRepair: 5, cameras: 0, conciergeShifts: 0 },
-  { id: '5', name: 'Mechanicsville Station', units: 164, vehicleGates: 1, vehicleGatesRepair: 0, pedGates: 15, pedGatesRepair: 11, cameras: 0, conciergeShifts: 0 },
-  { id: '6', name: 'Mechanicsville Crossing', units: 164, vehicleGates: 1, vehicleGatesRepair: 0, pedGates: 19, pedGatesRepair: 9, cameras: 0, conciergeShifts: 0 },
-  { id: '7', name: 'Villages of East Lake', units: 542, vehicleGates: 11, vehicleGatesRepair: 0, pedGates: 16, pedGatesRepair: 0, cameras: 0, conciergeShifts: 0 },
-  { id: '8', name: 'Gardenside', units: 108, vehicleGates: 3, vehicleGatesRepair: 0, pedGates: 11, pedGatesRepair: 0, cameras: 0, conciergeShifts: 0 },
-  { id: '9', name: 'Columbia Crest', units: 158, vehicleGates: 1, vehicleGatesRepair: 1, pedGates: 5, pedGatesRepair: 2, cameras: 0, conciergeShifts: 0 },
-  { id: '10', name: 'Columbia Commons', units: 158, vehicleGates: 2, vehicleGatesRepair: 1, pedGates: 3, pedGatesRepair: 1, cameras: 0, conciergeShifts: 0 },
-  { id: '11', name: 'Columbia Park Commons', units: 230, vehicleGates: 6, vehicleGatesRepair: 2, pedGates: 10, pedGatesRepair: 2, cameras: 0, conciergeShifts: 0 },
-  { id: '12', name: 'Columbia Renaissance Square', units: 140, vehicleGates: 3, vehicleGatesRepair: 3, pedGates: 23, pedGatesRepair: 4, cameras: 0, conciergeShifts: 0 },
-  { id: '13', name: 'Columbia Renaissance Senior', units: 120, vehicleGates: 2, vehicleGatesRepair: 2, pedGates: 12, pedGatesRepair: 7, cameras: 0, conciergeShifts: 0 },
-  { id: '14', name: 'Columbia Renaissance P2', units: 140, vehicleGates: 2, vehicleGatesRepair: 0, pedGates: 7, pedGatesRepair: 0, cameras: 0, conciergeShifts: 0 },
-  { id: '15', name: 'Columbia South River Gardens', units: 124, vehicleGates: 3, vehicleGatesRepair: 2, pedGates: 6, pedGatesRepair: 2, cameras: 0, conciergeShifts: 0 },
-  { id: '16', name: 'Columbia Village', units: 104, vehicleGates: 2, vehicleGatesRepair: 0, pedGates: 4, pedGatesRepair: 0, cameras: 0, conciergeShifts: 0 },
-  { id: '17', name: 'Pendana at West Lakes', units: 200, vehicleGates: 6, vehicleGatesRepair: 3, pedGates: 24, pedGatesRepair: 20, cameras: 0, conciergeShifts: 0 },
-  { id: '18', name: 'Pendana Senior', units: 120, vehicleGates: 0, vehicleGatesRepair: 0, pedGates: 14, pedGatesRepair: 1, cameras: 0, conciergeShifts: 0 },
-  { id: '19', name: 'Columbia Sylvan Hills', units: 191, vehicleGates: 0, vehicleGatesRepair: 0, pedGates: 18, pedGatesRepair: 4, cameras: 0, conciergeShifts: 0 }
-];
-
-export default function ColumbiaEnterpriseDashboard() {
-  const [view, setView] = useState<'builder' | 'contract'>('builder');
-  const [selectedSiteIds, setSelectedSiteIds] = useState<string[]>(['1', '11', '17']);
-  const [useAmortization, setUseAmortization] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
-  
-  const [formData, setFormData] = useState({ 
-      ownerName: 'Columbia Residential', 
-      portfolioName: 'Columbia Portfolio Group',
-      address: '', 
-      phone: '',
-      email: '', 
-      signerName: '', 
-      signerTitle: '',
-      signature: '' 
-  });
-  const [isSigned, setIsSigned] = useState(false);
-
-  const toggleSite = (id: string) => {
-    setSelectedSiteIds(prev => prev.includes(id) ? prev.filter(siteId => siteId !== id) : [...prev, id]);
-  };
-
-  const handleSelectAll = () => {
-    if (selectedSiteIds.length === PREDEFINED_SITES.length) setSelectedSiteIds([]);
-    else setSelectedSiteIds(PREDEFINED_SITES.map(s => s.id));
-  };
-
-  const selectedSites = PREDEFINED_SITES.filter(site => selectedSiteIds.includes(site.id));
-
-  // --- MATH LOGIC ---
-  let totalWorkingDoors = 0;
-  let totalBrokenDoors = 0;
-  let totalRawMonthlyFee = 0;
-  let totalUnits = 0;
-
-  selectedSites.forEach(site => {
-    totalUnits += site.units;
-    const vRepair = site.vehicleGatesRepair;
-    const vWorking = site.vehicleGates - vRepair;
-    const pRepair = site.pedGatesRepair;
-    const pWorking = site.pedGates - pRepair;
-
-    totalWorkingDoors += (vWorking + pWorking);
-    totalBrokenDoors += (vRepair + pRepair);
-
-    const siteHardwareMonthly = (site.vehicleGates * 175) + (site.pedGates * 125);
-    totalRawMonthlyFee += siteHardwareMonthly;
-  });
-
-  const numSites = selectedSites.length;
-  const rawSetupFee = (totalWorkingDoors * 500) + (totalBrokenDoors * 750);
-  const rawAvgPerUnit = totalUnits > 0 ? (totalRawMonthlyFee / totalUnits) : 0;
-
-  // --- VOLUME TIER LOGIC ---
-  let unitCap = Infinity;
-  let discountPercent = 0;
-  let setupCapActive = false;
-  
-  if (numSites >= 16) {
-    unitCap = 7.5;
-    setupCapActive = true;
-  } else if (numSites >= 13) {
-    unitCap = 8.0;
-    setupCapActive = true;
-  } else if (numSites >= 8) {
-    unitCap = 8.5;
-    setupCapActive = true;
-  } else if (numSites >= 4) {
-    discountPercent = 0.15;
-  } else if (numSites >= 2) {
-    discountPercent = 0.10;
-  }
-
-  let finalSetupFee = rawSetupFee;
-  let baseMonthlyTotal = totalRawMonthlyFee;
-  let setupSavings = 0;
-  let monthlySavings = 0;
-
-  if (setupCapActive) {
-      finalSetupFee = (totalWorkingDoors + totalBrokenDoors) * 500;
-      setupSavings = rawSetupFee - finalSetupFee;
-
-      const finalAvgPerUnitBeforeAmort = Math.min(rawAvgPerUnit, unitCap);
-      baseMonthlyTotal = finalAvgPerUnitBeforeAmort * totalUnits;
-      monthlySavings = totalRawMonthlyFee - baseMonthlyTotal;
-  } else if (discountPercent > 0) {
-      finalSetupFee = rawSetupFee * (1 - discountPercent);
-      setupSavings = rawSetupFee - finalSetupFee;
-
-      baseMonthlyTotal = totalRawMonthlyFee * (1 - discountPercent);
-      monthlySavings = totalRawMonthlyFee - baseMonthlyTotal;
-  }
-
-  const isMonthlyDiscounted = monthlySavings > 0;
-  const isAmortizationEligible = numSites >= 13;
-  const amortizedUpfrontCapEx = numSites * 2500;
-  const canActuallyAmortize = isAmortizationEligible && (finalSetupFee > amortizedUpfrontCapEx);
-
-  useEffect(() => {
-    if (!canActuallyAmortize && useAmortization) setUseAmortization(false);
-  }, [numSites, canActuallyAmortize, useAmortization]);
-
-  let monthlyAmortizationFee = 0;
-  if (canActuallyAmortize && useAmortization) {
-    monthlyAmortizationFee = (finalSetupFee - amortizedUpfrontCapEx) / 60;
-    finalSetupFee = amortizedUpfrontCapEx;
-  }
-
-  const finalMonthlyTotal = baseMonthlyTotal + monthlyAmortizationFee;
-  const finalBlendedUnitAvg = totalUnits > 0 ? (finalMonthlyTotal / totalUnits).toFixed(2) : "0.00";
-
-  // --- DYNAMIC DEPOSIT MATH ---
-  const fullDepositAmount = finalSetupFee + finalMonthlyTotal;
-  const splitDepositAmount = fullDepositAmount / 2;
-
-  const maxTier = 16;
-  const progressPercent = Math.min((numSites / maxTier) * 100, 100);
-  const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-
-  const handleSignContract = () => {
-    if (!formData.signerName || !formData.signature || !formData.email) return;
-    setIsSigned(true);
-  };
-
+export default function ColumbiaResPresentation() {
   return (
-    <div className={isDarkMode ? 'dark' : ''}>
-      {view === 'builder' ? (
-        // ==========================================
-        // VIEW 1: THE PORTFOLIO BUILDER
-        // ==========================================
-        <main className="min-h-screen bg-slate-50 dark:bg-[#020813] font-sans text-slate-800 dark:text-slate-100 relative selection:bg-blue-500/30 pb-20 transition-colors duration-300">
-          <div className="fixed inset-0 z-0 pointer-events-none bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] dark:bg-[radial-gradient(#ffffff15_1px,transparent_1px)] [background-size:20px_20px] opacity-70"></div>
-          <div className="fixed top-[-20%] left-[-10%] w-[60%] h-[60%] bg-blue-200/40 dark:bg-blue-900/10 blur-[150px] rounded-full z-0 pointer-events-none transition-colors"></div>
+    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-blue-200 overflow-x-hidden">
+      
+      {/* 1. HERO SECTION */}
+      <header className="bg-slate-900 text-white py-24 px-6 text-center border-b-[8px] border-blue-600 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500 rounded-full blur-3xl opacity-10 -mr-10 -mt-10 pointer-events-none"></div>
+        <div className="max-w-5xl mx-auto relative z-10">
+          <span className="inline-block py-1 px-3 rounded-full bg-blue-900/50 border border-blue-700 text-blue-300 text-xs font-bold tracking-widest uppercase mb-6">
+            Executive Briefing • Presented by Russell Feldman
+          </span>
+          <h1 className="text-5xl md:text-6xl font-extrabold mb-6 tracking-tight">
+            Elevating Access for <br className="hidden md:block" />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">Columbia Residential</span>
+          </h1>
+          <p className="text-xl text-slate-400 max-w-3xl mx-auto font-light leading-relaxed mb-8">
+            A proactive "Your Gate Guard" roadmap to standardize access control, preserve your assets, and transform unpredictable CapEx headaches into guaranteed monthly savings.
+          </p>
+          
+          <a 
+            href="/GateGuard-Columbia-Residential.pdf" 
+            download 
+            className="inline-flex items-center gap-2 text-sm font-bold text-blue-300 hover:text-white transition-colors border border-blue-500/30 hover:bg-blue-600/20 px-6 py-2.5 rounded-full shadow-sm"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+            Download Executive Summary (PDF)
+          </a>
+        </div>
+      </header>
 
-          <div className="sticky top-0 z-50 bg-white/80 dark:bg-[#040d21]/90 backdrop-blur-2xl border-b border-slate-200 dark:border-white/5 shadow-sm dark:shadow-2xl transition-all">
-            <div className="max-w-[1700px] mx-auto pt-6 px-4 lg:px-8 pb-4 relative">
-              
-              <div className="flex justify-between items-center mb-6 border-b border-slate-200 dark:border-white/5 pb-4">
-                 <div className="flex items-center gap-4">
-                    <div className="bg-white dark:bg-white/5 p-2 rounded-xl border border-slate-200 dark:border-white/10 h-14 flex items-center justify-center shadow-sm dark:shadow-inner">
-                       <img src="/Columbia_logo.png" alt="Columbia Residential" className="h-full w-auto object-contain" />
-                    </div>
-                    <div>
-                       <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Columbia Residential</h1>
-                       <p className="text-xs text-blue-600 dark:text-blue-400 uppercase tracking-widest font-bold">Portfolio Bulk Pricing</p>
-                    </div>
-                 </div>
-                 <div className="flex items-center gap-4">
-                    <button 
-                       onClick={() => setIsDarkMode(!isDarkMode)} 
-                       className="p-2.5 rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 text-slate-500 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors shadow-sm"
-                       aria-label="Toggle Dark Mode"
-                    >
-                       {isDarkMode ? '☀️ Light' : '🌙 Dark'}
-                    </button>
-                    <button 
-                       onClick={() => setView('contract')}
-                       disabled={selectedSites.length === 0}
-                       className="bg-blue-600 hover:bg-blue-700 dark:hover:bg-blue-500 disabled:bg-slate-200 dark:disabled:bg-white/5 disabled:text-slate-400 dark:disabled:text-slate-500 text-white px-8 py-3.5 rounded-lg font-bold transition-all shadow-[0_0_20px_rgba(37,99,235,0.2)] dark:shadow-[0_0_20px_rgba(37,99,235,0.3)] disabled:shadow-none flex items-center gap-2 uppercase tracking-widest text-[11px]"
-                    >
-                       Generate Contract <span>→</span>
-                    </button>
-                 </div>
-              </div>
-
-              <div className="grid grid-cols-2 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
-                 <div className="col-span-2 lg:col-span-3 flex items-center gap-8">
-                    <div className="flex flex-col">
-                        <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase tracking-widest font-bold mb-1">Portfolio</span>
-                        <div className="flex items-baseline gap-2">
-                          <span className="text-4xl font-black text-slate-900 dark:text-white">{selectedSites.length}</span>
-                          <span className="text-xs text-slate-500 font-medium">/ 19 Sites</span>
-                        </div>
-                    </div>
-                    <div className="flex flex-col border-l border-slate-200 dark:border-white/10 pl-8">
-                        <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase tracking-widest font-bold mb-1">Scale</span>
-                        <div className="flex items-baseline gap-2">
-                          <span className="text-4xl font-black text-slate-900 dark:text-white">{totalUnits.toLocaleString()}</span>
-                          <span className="text-xs text-slate-500 font-medium">Units</span>
-                        </div>
-                    </div>
-                 </div>
-
-                 <div className="col-span-2 lg:col-span-3 flex flex-col border-l border-slate-200 dark:border-white/10 pl-8 relative">
-                    <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase tracking-widest font-bold mb-1 flex justify-between">
-                        Monthly OpEx 
-                        {isMonthlyDiscounted && <span className="text-emerald-600 dark:text-emerald-400 font-black animate-pulse">+ SAVING ${monthlySavings.toLocaleString(undefined, {maximumFractionDigits: 0})}/mo</span>}
-                    </span>
-                    <div className="flex items-baseline gap-3 mt-1">
-                        {isMonthlyDiscounted && (
-                            <span className="text-xl font-medium text-slate-400 dark:text-slate-500 line-through decoration-red-500/70 decoration-2">${totalRawMonthlyFee.toLocaleString(undefined, {maximumFractionDigits: 0})}</span>
-                        )}
-                        <span className="text-3xl font-black text-slate-900 dark:text-white font-mono">${finalMonthlyTotal.toLocaleString(undefined, {maximumFractionDigits: 0})}</span>
-                    </div>
-                    <span className={`text-[10px] font-bold tracking-widest uppercase mt-1.5 ${isMonthlyDiscounted ? 'text-emerald-700 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-950/30 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-500/20 inline-block w-max' : 'text-slate-500'}`}>
-                        Blended Rate: ${finalBlendedUnitAvg} / unit
-                    </span>
-                 </div>
-
-                 <div className="col-span-2 lg:col-span-3 flex flex-col border-l border-slate-200 dark:border-white/10 pl-8">
-                    <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase tracking-widest font-bold mb-1 flex justify-between">
-                        Turnkey Hardware Setup
-                        {setupSavings > 0 && !useAmortization && <span className="text-emerald-600 dark:text-emerald-400 font-black">+ SAVED ${setupSavings.toLocaleString(undefined, {maximumFractionDigits: 0})}</span>}
-                    </span>
-                    <div className="flex items-baseline gap-3 mt-1">
-                        {setupSavings > 0 && !useAmortization && (
-                            <span className="text-xl font-medium text-slate-400 dark:text-slate-500 line-through decoration-red-500/70 decoration-2">${rawSetupFee.toLocaleString(undefined, {maximumFractionDigits: 0})}</span>
-                        )}
-                        <span className="text-3xl font-black text-slate-900 dark:text-white font-mono">${finalSetupFee.toLocaleString(undefined, {maximumFractionDigits: 0})}</span>
-                    </div>
-                    {setupCapActive && !useAmortization && (
-                        <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-widest mt-1.5 bg-emerald-100 dark:bg-emerald-950/30 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-500/20 inline-block w-max">
-                            $500 Flat Rate Unlocked
-                        </span>
-                    )}
-                 </div>
-
-                 <div className="col-span-2 lg:col-span-3 flex flex-col border-l border-slate-200 dark:border-white/10 pl-8 justify-center h-full">
-                     {canActuallyAmortize ? (
-                        <div className={`p-4 rounded-xl border transition-all flex justify-between items-center shadow-sm dark:shadow-2xl ${useAmortization ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-500/50' : 'bg-white dark:bg-white/5 border-slate-200 dark:border-white/10'}`}>
-                           <div>
-                              <span className="block text-[11px] font-black text-slate-900 dark:text-white mb-1 tracking-wide">Enterprise Financing</span>
-                              <span className="block text-[10px] text-slate-500 dark:text-slate-400 leading-tight">Cap setup at $2.5k/site. Balance amortized.</span>
-                           </div>
-                           <button onClick={() => setUseAmortization(!useAmortization)} className={`w-12 h-6 rounded-full transition-colors relative flex items-center shrink-0 border border-slate-300 dark:border-white/10 ${useAmortization ? 'bg-blue-600 dark:bg-blue-500' : 'bg-slate-200 dark:bg-white/10'}`}>
-                              <div className={`w-4 h-4 rounded-full bg-white shadow-sm transition-transform absolute ${useAmortization ? 'translate-x-7' : 'translate-x-1'}`}></div>
-                           </button>
-                        </div>
-                     ) : (
-                        <div className="p-4 rounded-xl border border-slate-200 dark:border-white/5 bg-slate-100 dark:bg-white/[0.02] flex justify-between items-center opacity-60">
-                           <div>
-                              <span className="block text-[11px] font-bold text-slate-500 mb-1">Financing Locked</span>
-                              <span className="block text-[10px] text-slate-500 leading-tight">Select {Math.max(0, 13 - numSites)} more to unlock $2.5k CapEx cap.</span>
-                           </div>
-                        </div>
-                     )}
-                 </div>
-              </div>
-
-              <div className="mt-8 mb-2 flex flex-col items-center w-full max-w-5xl mx-auto">
-                  <div className="flex justify-between w-full text-[9px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2 px-2">
-                      <span>Base</span>
-                      <span className={numSites >= 2 ? 'text-slate-800 dark:text-white' : ''}>2 Sites (10%)</span>
-                      <span className={numSites >= 4 ? 'text-slate-800 dark:text-white' : ''}>4 Sites (15%)</span>
-                      <span className={numSites >= 8 ? 'text-emerald-600 dark:text-emerald-400' : ''}>8 Sites ($8.50)</span>
-                      <span className={numSites >= 13 ? 'text-blue-600 dark:text-blue-400' : ''}>13 Sites ($8.00)</span>
-                      <span className={numSites >= 16 ? 'text-purple-600 dark:text-purple-400' : ''}>16 Sites ($7.50)</span>
-                  </div>
-                  <div className="relative w-full h-2.5 bg-slate-200 dark:bg-white/5 rounded-full overflow-hidden border border-slate-300 dark:border-white/10">
-                      <div className="absolute top-0 left-0 h-full bg-gradient-to-r from-blue-500 via-cyan-400 to-emerald-400 transition-all duration-700 ease-out" style={{ width: `${progressPercent}%` }}></div>
-                      <div className="absolute top-0 left-[12.5%] h-full w-px bg-white/50 dark:bg-white/20"></div>
-                      <div className="absolute top-0 left-[25%] h-full w-px bg-white/50 dark:bg-white/20"></div>
-                      <div className="absolute top-0 left-[50%] h-full w-px bg-white/50 dark:bg-white/20"></div>
-                      <div className="absolute top-0 left-[81.25%] h-full w-px bg-white/50 dark:bg-white/20"></div>
-                  </div>
-              </div>
-
+      {/* 2. THE VISUAL PAIN POINTS & THE $5 BLEED */}
+      <section className="py-24 px-6 max-w-7xl mx-auto">
+        <div className="text-center mb-16 max-w-3xl mx-auto">
+          <h2 className="text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">The True Cost of "Do Nothing"</h2>
+          <div className="w-20 h-1.5 bg-blue-600 mx-auto rounded-full mb-8"></div>
+          <p className="text-lg text-slate-600 leading-relaxed mb-6">
+            Historically, properties get trapped in a reactive "break-fix" cycle. Even if you do nothing today, you are already paying roughly <strong className="text-red-600 bg-red-50 px-2 py-0.5 rounded">$5 per resident, per month</strong> just to keep legacy DoorKing callboxes running—and that doesn't account for the heavy CapEx spikes when a controller fails.
+          </p>
+        </div>
+        
+        {/* Photo Gallery of Pain */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-24">
+          <div className="overflow-hidden rounded-2xl shadow-lg group border border-slate-100 bg-white">
+            <img src="/break-fix-1.jpg" alt="Vandalized strike" className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300" />
+            <div className="p-4 text-center border-t border-slate-100">
+              <p className="text-sm font-semibold text-slate-700">Vandalized strikes and locks requiring expensive repairs.</p>
             </div>
           </div>
-
-          <div className="max-w-[1700px] mx-auto p-4 lg:p-8 relative z-10">
-             <div className="flex justify-between items-end mb-6">
-                <div>
-                   <h2 className="text-xl font-black text-slate-900 dark:text-white tracking-tight">Portfolio Roster</h2>
-                   <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Select properties below to bundle them into your Addendum quote.</p>
-                </div>
-                <button onClick={handleSelectAll} className="text-[10px] text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-white font-bold tracking-widest uppercase transition-colors bg-white dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 px-4 py-2 rounded-lg border border-slate-200 dark:border-white/10 shadow-sm dark:shadow-none backdrop-blur-sm">
-                   {selectedSiteIds.length === PREDEFINED_SITES.length ? 'Deselect All' : 'Select All 19 Properties'}
-                </button>
-             </div>
-
-             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-                {PREDEFINED_SITES.map((site) => {
-                   const isSelected = selectedSiteIds.includes(site.id);
-                   const vWorking = site.vehicleGates - site.vehicleGatesRepair;
-                   const pWorking = site.pedGates - site.pedGatesRepair;
-
-                   return (
-                      <div 
-                         key={site.id} 
-                         onClick={() => toggleSite(site.id)}
-                         className={`cursor-pointer rounded-xl p-6 border transition-all duration-200 relative backdrop-blur-xl flex flex-col justify-between
-                            ${isSelected 
-                               ? 'bg-blue-50 dark:bg-blue-900/10 border-blue-400 dark:border-blue-500 shadow-md dark:shadow-[0_8px_30px_rgba(37,99,235,0.15)] ring-1 ring-blue-400/50 dark:ring-blue-500/50' 
-                               : 'bg-white dark:bg-white/[0.03] border-slate-200 dark:border-white/10 hover:border-slate-300 dark:hover:border-white/20 shadow-sm hover:shadow-md dark:hover:bg-white/[0.05] opacity-90 hover:opacity-100'
-                            }
-                         `}
-                      >
-                         <div className="flex justify-between items-start mb-6">
-                            <div className="pr-10">
-                               <h3 className="font-bold text-base text-slate-900 dark:text-white leading-tight mb-2 tracking-tight">{site.name}</h3>
-                               <span className="inline-block bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-300 text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-widest border border-slate-200 dark:border-white/10">{site.units} Units</span>
-                            </div>
-                            <div className={`absolute top-6 right-6 w-6 h-6 rounded-md border flex items-center justify-center shrink-0 transition-colors ${isSelected ? 'bg-blue-600 dark:bg-blue-500 border-blue-600 dark:border-blue-400 text-white shadow-[0_0_10px_rgba(59,130,246,0.3)] dark:shadow-[0_0_10px_rgba(59,130,246,0.5)]' : 'border-slate-300 dark:border-white/20 bg-slate-50 dark:bg-black/50'}`}>
-                               {isSelected && <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
-                            </div>
-                         </div>
-
-                         <div className="space-y-3 mt-auto">
-                            <div className="flex justify-between items-center pb-3 border-b border-slate-100 dark:border-white/5">
-                                <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400">Veh. Gates ({site.vehicleGates})</span>
-                                <div className="flex gap-2 text-[10px] font-medium text-right">
-                                    {vWorking > 0 ? <span className="text-emerald-700 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-950/30 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-500/20">{vWorking} Working</span> : null}
-                                    {site.vehicleGatesRepair > 0 && <span className="text-red-700 dark:text-red-400 bg-red-100 dark:bg-red-950/30 px-2 py-0.5 rounded border border-red-200 dark:border-red-500/20">{site.vehicleGatesRepair} Broken</span>}
-                                    {site.vehicleGates === 0 && <span className="text-slate-500 bg-slate-100 dark:bg-white/5 px-2 py-0.5 rounded border border-slate-200 dark:border-white/10">0 Gates</span>}
-                                </div>
-                            </div>
-                            <div className="flex justify-between items-center pb-1">
-                                <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400">Ped. Doors ({site.pedGates})</span>
-                                <div className="flex gap-2 text-[10px] font-medium text-right">
-                                    {pWorking > 0 ? <span className="text-emerald-700 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-950/30 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-500/20">{pWorking} Working</span> : null}
-                                    {site.pedGatesRepair > 0 && <span className="text-red-700 dark:text-red-400 bg-red-100 dark:bg-red-950/30 px-2 py-0.5 rounded border border-red-200 dark:border-red-500/20">{site.pedGatesRepair} Broken</span>}
-                                    {site.pedGates === 0 && <span className="text-slate-500 bg-slate-100 dark:bg-white/5 px-2 py-0.5 rounded border border-slate-200 dark:border-white/10">0 Doors</span>}
-                                </div>
-                            </div>
-                         </div>
-                      </div>
-                   );
-                })}
-             </div>
+          <div className="overflow-hidden rounded-2xl shadow-lg group border border-slate-100 bg-white">
+            <img src="/break-fix-2.jpg" alt="Missing hardware" className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300" />
+            <div className="p-4 text-center border-t border-slate-100">
+              <p className="text-sm font-semibold text-slate-700">Missing hardware leading to wide-open entries.</p>
+            </div>
           </div>
-        </main>
-      ) : (
-        // ==========================================
-        // VIEW 2: DYNAMIC DIGITAL SIGNATURE ROOM
-        // ==========================================
-        <main className="min-h-screen bg-slate-50 dark:bg-[#020813] font-sans text-slate-800 dark:text-slate-100 p-4 lg:p-10 relative selection:bg-blue-500/30 transition-colors duration-300">
-            <div className="fixed inset-0 z-0 pointer-events-none bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] dark:bg-[radial-gradient(#ffffff15_1px,transparent_1px)] [background-size:20px_20px] opacity-70"></div>
+          <div className="overflow-hidden rounded-2xl shadow-lg group border border-slate-100 bg-white">
+            <img src="/break-fix-3.jpg" alt="Empty post" className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300" />
+            <div className="p-4 text-center border-t border-slate-100">
+              <p className="text-sm font-semibold text-slate-700">Useless, empty posts and decommissioned equipment.</p>
+            </div>
+          </div>
+          <div className="overflow-hidden rounded-2xl shadow-lg group border border-slate-100 bg-white">
+            <img src="/break-fix-4.jpg" alt="Unmonitored gate" className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300" />
+            <div className="p-4 text-center border-t border-slate-100">
+              <p className="text-sm font-semibold text-slate-700">Unmonitored entries where incidents go unrecorded.</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Traditional Reality vs GateGuard Summary Cards */}
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
+          
+          {/* The Current Reality Card */}
+          <div className="bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden h-full">
+            <div className="bg-slate-50 border-b border-slate-100 p-8 flex items-center gap-5">
+              <div className="flex items-center justify-center w-14 h-14 rounded-full bg-red-100 text-red-600 font-bold text-2xl shrink-0 shadow-inner">✕</div>
+              <h3 className="text-2xl font-bold text-slate-800 tracking-tight">Moving From:<br/><span className="text-slate-500 font-medium text-xl">The Break-Fix Bleed</span></h3>
+            </div>
             
-            <div className="max-w-[1500px] mx-auto relative z-10">
-                <div className="flex justify-between items-center mb-8">
-                    <button onClick={() => setView('builder')} className="text-[10px] uppercase font-bold tracking-widest text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white flex items-center gap-2 bg-white dark:bg-white/5 px-4 py-2 rounded-lg w-max border border-slate-200 dark:border-white/10 transition-colors shadow-sm dark:shadow-none">
-                        ← Return to Deal Builder
-                    </button>
-                    <button 
-                       onClick={() => setIsDarkMode(!isDarkMode)} 
-                       className="p-2.5 rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 text-slate-500 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors shadow-sm"
-                    >
-                       {isDarkMode ? '☀️ Light Mode' : '🌙 Dark Mode'}
-                    </button>
-                </div>
-
-                <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
-                    
-                    {/* LEFT SIDE: DYNAMIC CONTRACT PREVIEW */}
-                    <div className="xl:col-span-8 bg-white text-slate-900 p-8 lg:p-12 rounded-2xl shadow-xl dark:shadow-2xl h-[800px] overflow-y-auto border border-slate-200 dark:border-none">
-                        
-                        <div className="border-b-2 border-slate-900 pb-6 mb-8">
-                            <div className="flex justify-between items-start mb-4">
-                                <div>
-                                    <h1 className="text-3xl font-black uppercase tracking-tight text-slate-900">Your Gate Guard Service Agreement</h1>
-                                    <p className="text-slate-500 font-bold tracking-widest uppercase text-xs mt-2">Effective Date: {today}</p>
-                                </div>
-                                <div className="h-12 lg:h-16 flex items-center justify-end">
-                                    <img src="/logo.png" alt="Columbia Residential" className="max-h-full max-w-full object-contain" />
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="prose prose-sm prose-slate max-w-none text-justify">
-                            <p className="mb-6">This Agreement ("Agreement") is entered into as of the Effective Date by and between the following Parties:</p>
-                            
-                            <div className="grid grid-cols-2 gap-8 mb-8 bg-slate-50 p-6 rounded-lg border border-slate-200 text-left">
-                                <div>
-                                    <h4 className="font-black text-slate-900 uppercase text-xs tracking-widest mb-2 border-b border-slate-200 pb-2">Service Provider</h4>
-                                    <p className="leading-relaxed"><strong>Gate Guard, LLC</strong><br/>
-                                    980 Hammond Drive, Ste. 200<br/>
-                                    Atlanta, GA 30328<br/>
-                                    Phone: 844-4MY-GATE<br/>
-                                    Email: info@gateguard.co</p>
-                                </div>
-                                <div>
-                                    <h4 className="font-black text-slate-900 uppercase text-xs tracking-widest mb-2 border-b border-slate-200 pb-2">Customer</h4>
-                                    <p className="leading-relaxed">
-                                        <strong>Name:</strong> {formData.ownerName || "[Customer Name]"}<br/>
-                                        <strong>Site Name:</strong> {formData.portfolioName || "[Portfolio Name]"}<br/>
-                                        <strong>Address:</strong> {formData.address || "[Address]"}<br/>
-                                        <strong>Phone:</strong> {formData.phone || "[Phone]"}<br/>
-                                        <strong>Email:</strong> {formData.email || "[Email]"}
-                                    </p>
-                                </div>
-                            </div>
-
-                            <h3 className="font-bold text-lg mt-8 text-slate-900">1. Definitions & Scope</h3>
-                            <p>These Terms and Conditions govern the proactive gate monitoring, preventative maintenance, and reporting services (the "Service") provided by Gate Guard, LLC. to the Customer. By signing this Agreement or utilizing the Service, Customer agrees to be bound by these terms, which establish a professional partnership aimed at maintaining site security and operational uptime.</p>
-
-                            <h3 className="font-bold text-lg mt-8 text-slate-900">2. Services Provided</h3>
-                            <p>Gate Guard agrees to provide the following services ("Services") to the Customer, but only to the extent they are selected below. Services will be applied across the following <strong>{numSites} properties</strong>:</p>
-                            <ul className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs list-disc pl-5 mt-2 mb-6 text-slate-700">
-                                {selectedSites.map(site => (
-                                    <li key={site.id}>{site.name} ({site.units} Units)</li>
-                                ))}
-                            </ul>
-
-                            <h3 className="font-bold text-lg mt-8 text-slate-900">3. Maintenance & Support Scope (Covered vs. Excluded)</h3>
-                            <p className="mb-2">This section details the specific hardware and labor coverage included in the Monthly Service Program versus items that incur additional billable costs.</p>
-                            <p className="font-bold text-red-600 bg-red-50 p-2 rounded text-xs mb-4 inline-block">********NOTE******** Power must be on and accessible at front gate.</p>
-
-                            <div className="overflow-x-auto mb-6">
-                                <table className="w-full text-left border-collapse border border-slate-300">
-                                    <thead className="bg-slate-100">
-                                        <tr>
-                                            <th className="border border-slate-300 px-4 py-3 font-bold text-slate-900 w-1/4">Category</th>
-                                            <th className="border border-slate-300 px-4 py-3 font-bold text-slate-900 w-2/5">Included in Monthly Service Program</th>
-                                            <th className="border border-slate-300 px-4 py-3 font-bold text-slate-900">Excluded (Billable Services)</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="align-top text-xs">
-                                        <tr>
-                                            <td className="border border-slate-300 px-4 py-3 font-bold">Initial Setup of Working Gates/Doors</td>
-                                            <td className="border border-slate-300 px-4 py-3 text-slate-700">We will install a Gate Guard supplied camera at the main entry gate. Test and ensure all motors, operators and Callbox locations are operating properly. Install new Brivo controllers and readers as well as take over all fees associated with the gate software.</td>
-                                            <td className="border border-slate-300 px-4 py-3 text-slate-700">Property is responsible for providing power and internet at all locations. We do not cover the physical gate or door, only devices connected to ensure controlled access operation.</td>
-                                        </tr>
-                                        <tr>
-                                            <td className="border border-slate-300 px-4 py-3 font-bold">Initial Setup of Non-Working Gates/Doors</td>
-                                            <td className="border border-slate-300 px-4 py-3 text-slate-700">We will install a Gate Guard supplied camera at the main entry gate. Repair, test and ensure all motors, operators and callbox location (as needed) are operating properly. Install new controllers and readers as well as take over all fees associated to the gate software.</td>
-                                            <td className="border border-slate-300 px-4 py-3 text-slate-700">Property is responsible for providing power and internet at all locations. We do not cover the physical gate or door, ONLY devices connected to ensure controlled access operation.</td>
-                                        </tr>
-                                        <tr>
-                                            <td className="border border-slate-300 px-4 py-3 font-bold">GateGuard Supplied Hardware</td>
-                                            <td className="border border-slate-300 px-4 py-3 text-slate-700">We will maintain, repair or replace any and all Gate Guard supplied cameras, controllers, and readers due to failure.</td>
-                                            <td className="border border-slate-300 px-4 py-3 text-slate-700">Replacement of equipment damaged or removed by or under the direction of ownership.</td>
-                                        </tr>
-                                        <tr>
-                                            <td className="border border-slate-300 px-4 py-3 font-bold">Vehicle and Pedestrian Gates</td>
-                                            <td className="border border-slate-300 px-4 py-3 text-slate-700">We will provide remote technical support, scheduled preventative maintenance visits, repairs and replacements as needed due to failure.</td>
-                                            <td className="border border-slate-300 px-4 py-3 text-slate-700">Replacement of equipment damaged or removed by or under the direction of ownership. We do not cover the physical gate or door, ONLY devices connected to ensure controlled access operation.</td>
-                                        </tr>
-                                        <tr>
-                                            <td className="border border-slate-300 px-4 py-3 font-bold">Amenity Doors</td>
-                                            <td className="border border-slate-300 px-4 py-3 text-slate-700">We will provide remote technical support, scheduled preventative maintenance visits, repairs and replacements as needed due to failure.</td>
-                                            <td className="border border-slate-300 px-4 py-3 text-slate-700">Replacement of equipment damaged or removed by or under the direction of ownership. We do not cover the physical gate or door, ONLY devices connected to ensure controlled access operation.</td>
-                                        </tr>
-                                        <tr>
-                                            <td className="border border-slate-300 px-4 py-3 font-bold">Labor & Trips</td>
-                                            <td className="border border-slate-300 px-4 py-3 text-slate-700">Remote technical support, scheduled preventative maintenance, and non-scheduled repairs will all be covered under this agreement.</td>
-                                            <td className="border border-slate-300 px-4 py-3 text-slate-700">Trip Charges will be assessed if we are not provided access to the areas necessary to conduct repairs and/or maintenance, once property confirms appointment.</td>
-                                        </tr>
-                                        <tr>
-                                            <td className="border border-slate-300 px-4 py-3 font-bold">Software/Data</td>
-                                            <td className="border border-slate-300 px-4 py-3 text-slate-700">Software updates, user management API with Real Page (adding/removing residents), and video retrieval requests.</td>
-                                            <td className="border border-slate-300 px-4 py-3 text-slate-700">Custom software development or integration with non-supported third-party property management systems.</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-
-                            <h3 className="font-bold text-lg mt-8 text-slate-900">4. User Accounts</h3>
-                            <p>The Company may provide the Customer with access to a digital portal or dashboard to view daily reports, camera feeds, and gate health analytics.</p>
-                            <ul className="list-disc pl-5 mb-6 text-slate-700 space-y-2">
-                                <li><strong>Account Responsibility:</strong> Customer is responsible for maintaining the confidentiality of login credentials and for all activities occurring under their account.</li>
-                                <li><strong>Access Rights:</strong> Access is granted solely for the Customer's internal business purposes during the Term of this Agreement.</li>
-                                <li><strong>Security:</strong> Customer must notify the Company immediately of any unauthorized use of their account or any other breach of security. The Company reserves the right to disable access if a security threat is identified.</li>
-                            </ul>
-
-                            <h3 className="font-bold text-lg mt-8 text-slate-900">5. Term & Termination</h3>
-                            <ul className="list-disc pl-5 mb-6 text-slate-700 space-y-2">
-                                <li><strong>Initial Term:</strong> Sixty (60) months beginning on the Effective Date.{useAmortization && " Note: If the Optional Ramp Up Plan is selected (Section 6.1), the Initial Term is extended to seventy-two (72) months."}</li>
-                                <li><strong>Automatic Renewal:</strong> Successive one (1) year terms unless either party provides written notice of non-renewal at least sixty (60) days prior to expiration.</li>
-                                <li><strong>Termination for Cause:</strong> Either party may terminate for material breach not cured within thirty (30) days of written notice.</li>
-                                <li><strong>Termination for Convenience:</strong> Customer may terminate for convenience with ninety (90) days written notice{useAmortization && ", subject to the Early Termination Fees outlined below"}.</li>
-                                {useAmortization && (
-                                    <li><strong>Early Termination Fees:</strong> If Customer terminates for convenience before the end of the Initial Term, the following percentages of the remaining contract value shall be due and payable immediately:
-                                        <ul className="list-[circle] pl-5 mt-2 space-y-1">
-                                            <li>Termination in Year 1: 40% of remaining contract value.</li>
-                                            <li>Termination in Year 2: 30% of remaining contract value.</li>
-                                            <li>Termination in Year 3: 15% of remaining contract value.</li>
-                                            <li>Termination after Year 4: 0% of remaining contract value.</li>
-                                        </ul>
-                                    </li>
-                                )}
-                                <li><strong>Asset Removal:</strong> In the event of cancellation or failure to pay, Gate Guard reserves the right to remove any and all installed assets from the property, including but not limited to cameras, locks, access systems, and network hardware.</li>
-                            </ul>
-
-                            <h3 className="font-bold text-lg mt-8 text-slate-900">6. Quote for Setup & Monthly Fees</h3>
-                            <table className="w-full text-left mt-4 mb-6 text-sm border-collapse border border-slate-200">
-                                <tbody>
-                                    <tr className="border-b border-slate-200">
-                                        <td className="py-3 px-4 font-bold bg-slate-50 w-2/3">Total Properties Covered:</td>
-                                        <td className="py-3 px-4 text-right font-medium">{numSites} Sites</td>
-                                    </tr>
-                                    <tr className="border-b border-slate-200">
-                                        <td className="py-3 px-4 font-bold bg-slate-50">Total Portfolio Scale:</td>
-                                        <td className="py-3 px-4 text-right font-medium">{totalUnits.toLocaleString()} Units</td>
-                                    </tr>
-                                    <tr className="border-b border-slate-200">
-                                        <td className="py-3 px-4 font-bold text-blue-900 bg-blue-50/50">Total Setup Fee (Due at Go-Live):</td>
-                                        <td className="py-3 px-4 text-right font-bold text-blue-900">${finalSetupFee.toLocaleString()} {useAmortization && <span className="text-[10px] font-normal text-slate-500 block">*Includes enterprise financing cap</span>}</td>
-                                    </tr>
-                                    <tr className="bg-slate-50">
-                                        <td className="py-3 px-4 font-bold text-blue-900 bg-blue-50">Total Recurring Monthly Subscription:</td>
-                                        <td className="py-3 px-4 text-right font-bold text-blue-900">${finalMonthlyTotal.toLocaleString()} / mo</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-
-                            <h3 className="font-bold text-lg mt-8 text-slate-900">7. Payment Terms</h3>
-                            <ul className="list-disc pl-5 mb-6 text-slate-700 space-y-2">
-                                {useAmortization ? (
-                                    <>
-                                        <li><strong>Deposit:</strong> The full Setup Fee and 1st month's Service (Total Due: <strong>${fullDepositAmount.toLocaleString()}</strong>) is due upon signing of this agreement.</li>
-                                        <li><strong>Monthly Fees:</strong> Recurring monthly billing will begin on the 15th of the calendar month following the "Go Live" date (not less than 30 days after event).</li>
-                                    </>
-                                ) : (
-                                    <>
-                                        <li><strong>Deposit:</strong> The Deposit is equal to 50% of the Total Setup Fee and 1st month's Service (Total Due: <strong>${splitDepositAmount.toLocaleString()}</strong>). Due upon signing of agreement.</li>
-                                        <li><strong>"GO Live":</strong> The Second payment is the remaining 50% of the Set-Up Fee and 1st month's Service (Total: <strong>${splitDepositAmount.toLocaleString()}</strong>). This is due on the scheduled "Go Live date".</li>
-                                        <li><strong>Monthly Fees:</strong> Recurring monthly billing will begin on the 15th of the calendar month following the "Go Live" date (not less than 30 days after event).</li>
-                                    </>
-                                )}
-                            </ul>
-
-                            <h3 className="font-bold text-lg mt-8 text-slate-900">8. Intellectual Property</h3>
-                            <ul className="list-disc pl-5 mb-6 text-slate-700 space-y-2">
-                                <li><strong>Ownership:</strong> Software, platforms, analytics, and processes remain the intellectual property of Gate Guard, LLC.</li>
-                                <li><strong>Data Usage:</strong> Video footage and incident data are handled securely and in accordance with applicable privacy laws.</li>
-                            </ul>
-
-                            <h3 className="font-bold text-lg mt-8 text-slate-900">9. Indemnification</h3>
-                            <ul className="list-disc pl-5 mb-6 text-slate-700 space-y-2">
-                                <li><strong>By Customer:</strong> Customer agrees to indemnify, defend, and hold harmless Gate Guard, LLC and its employees from any claims, damages, or losses (including reasonable attorney fees) arising from Customer's negligence, misuse of the Service, or failure to maintain the physical site in a safe condition for technicians.</li>
-                                <li><strong>By Company:</strong> Gate Guard, LLC agrees to indemnify the Customer against third-party claims arising solely from the Company's gross negligence or willful misconduct in the performance of the Services, subject to the Limitation of Liability set forth in Section 10.</li>
-                            </ul>
-
-                            <h3 className="font-bold text-lg mt-8 text-slate-900">10. Limitation of Liability</h3>
-                            <ul className="list-disc pl-5 mb-6 text-slate-700 space-y-2">
-                                <li><strong>Provider's Role:</strong> Gate Guard, LLC is a service provider and not an insurer; fees are for monitoring and services.</li>
-                                <li><strong>Exclusions:</strong> Gate Guard shall not be liable for failure of services or equipment due to misuse, lack of internet connectivity, power outages, or acts of third parties (including theft or vandalism).</li>
-                                <li><strong>Liability Cap:</strong> To the maximum extent permitted by law, liability is capped at the total service fees paid by Customer for the six (6) months preceding the event giving rise to a claim.</li>
-                            </ul>
-
-                            <h3 className="font-bold text-lg mt-8 text-slate-900">11. Governing Law & Dispute Resolution</h3>
-                            <p className="mb-12">This Agreement shall be governed by, and construed in accordance with, the laws of the State of Georgia, without regard to its conflict of law principles. Any legal action or proceeding arising under this Agreement shall be brought exclusively in the state or federal courts located in Fulton County, Georgia.</p>
-
-                            <div className="pt-8 border-t-2 border-slate-900 grid grid-cols-2 gap-12 text-left">
-                                <div className="col-span-2">
-                                    <p className="font-bold mb-4">IN WITNESS WHEREOF, the Parties execute this Agreement:</p>
-                                </div>
-                                <div>
-                                    <p className="font-bold text-xs uppercase tracking-widest text-slate-500 mb-6">Service Provider (Gate Guard, LLC)</p>
-                                    <div className="border-b border-slate-300 pb-1 mb-2">
-                                        <span className="font-serif italic text-2xl text-slate-800 block -mb-2">Russel Feldman</span>
-                                    </div>
-                                    <p className="text-xs"><strong>Name:</strong> Russel Feldman</p>
-                                    <p className="text-xs"><strong>Title:</strong> Partner</p>
-                                    <p className="text-xs"><strong>Date:</strong> {today}</p>
-                                </div>
-                                <div>
-                                    <p className="font-bold text-xs uppercase tracking-widest text-slate-500 mb-6">Customer ({formData.ownerName || "Entity"})</p>
-                                    <div className="border-b border-slate-300 pb-1 mb-2 h-[34px] overflow-hidden">
-                                        {formData.signature && <span className="font-serif italic text-2xl text-blue-900 block -mb-2">{formData.signature}</span>}
-                                    </div>
-                                    <p className="text-xs"><strong>Name:</strong> {formData.signerName}</p>
-                                    <p className="text-xs"><strong>Title:</strong> {formData.signerTitle}</p>
-                                    <p className="text-xs"><strong>Date:</strong> {isSigned ? today : ''}</p>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-
-                    {/* RIGHT SIDE: THE BINDING FORM */}
-                    <div className="xl:col-span-4">
-                        <div className="bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 backdrop-blur-xl rounded-2xl p-6 lg:p-8 sticky top-10 shadow-lg dark:shadow-2xl">
-                            <h3 className="text-xl font-black text-slate-900 dark:text-white mb-2 tracking-tight">Contract Setup</h3>
-                            <p className="text-xs text-slate-500 dark:text-slate-400 mb-6 leading-relaxed">Fill out the fields below. The Master Service Agreement will populate in real-time.</p>
-                            
-                            {isSigned ? (
-                                <div className="bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/30 rounded-xl p-8 text-center animate-[fadeIn_0.5s_ease-out]">
-                                    <div className="w-16 h-16 bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center text-3xl mx-auto mb-4 shadow-[0_0_30px_rgba(16,185,129,0.2)]">✓</div>
-                                    <h4 className="text-lg font-black text-slate-900 dark:text-white mb-2">Contract Executed</h4>
-                                    <p className="text-xs text-emerald-800 dark:text-emerald-200/80 leading-relaxed">The final executed document has been emailed to <strong>{formData.email}</strong>. We will contact you shortly.</p>
-                                </div>
-                            ) : (
-                                <div className="space-y-4">
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className="col-span-2">
-                                            <label className="block text-[10px] uppercase tracking-widest text-slate-500 dark:text-slate-400 font-bold mb-1">Owning Entity</label>
-                                            <input type="text" className="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-white/10 rounded-lg p-2.5 text-slate-900 dark:text-white text-sm focus:border-blue-500 outline-none transition-colors" value={formData.ownerName} onChange={e => setFormData({...formData, ownerName: e.target.value})} />
-                                        </div>
-                                        <div className="col-span-1">
-                                            <label className="block text-[10px] uppercase tracking-widest text-slate-500 dark:text-slate-400 font-bold mb-1">Billing Email</label>
-                                            <input type="email" placeholder="ap@company.com" className="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-white/10 rounded-lg p-2.5 text-slate-900 dark:text-white text-sm focus:border-blue-500 outline-none transition-colors placeholder:text-slate-400 dark:placeholder:text-slate-600" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} />
-                                        </div>
-                                        <div className="col-span-1">
-                                            <label className="block text-[10px] uppercase tracking-widest text-slate-500 dark:text-slate-400 font-bold mb-1">Phone</label>
-                                            <input type="tel" placeholder="(555) 123-4567" className="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-white/10 rounded-lg p-2.5 text-slate-900 dark:text-white text-sm focus:border-blue-500 outline-none transition-colors placeholder:text-slate-400 dark:placeholder:text-slate-600" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} />
-                                        </div>
-                                    </div>
-                                    
-                                    <div className="pt-4 border-t border-slate-200 dark:border-white/10 mt-6 space-y-4">
-                                        <h4 className="text-[10px] uppercase tracking-widest text-blue-600 dark:text-blue-400 font-bold">Authorized Signer</h4>
-                                        <div className="grid grid-cols-2 gap-4">
-                                            <div className="col-span-1">
-                                                <label className="block text-[10px] uppercase tracking-widest text-slate-500 dark:text-slate-400 font-bold mb-1">Signer Name</label>
-                                                <input type="text" className="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-white/10 rounded-lg p-2.5 text-slate-900 dark:text-white text-sm focus:border-blue-500 outline-none transition-colors" value={formData.signerName} onChange={e => setFormData({...formData, signerName: e.target.value})} />
-                                            </div>
-                                            <div className="col-span-1">
-                                                <label className="block text-[10px] uppercase tracking-widest text-slate-500 dark:text-slate-400 font-bold mb-1">Signer Title</label>
-                                                <input type="text" className="w-full bg-slate-50 dark:bg-black/50 border border-slate-200 dark:border-white/10 rounded-lg p-2.5 text-slate-900 dark:text-white text-sm focus:border-blue-500 outline-none transition-colors" value={formData.signerTitle} onChange={e => setFormData({...formData, signerTitle: e.target.value})} />
-                                            </div>
-                                        </div>
-                                        
-                                        <div>
-                                            <label className="block text-[10px] uppercase tracking-widest text-slate-500 dark:text-slate-400 font-bold mb-2 mt-2">Digital Signature Binding</label>
-                                            <div className="bg-slate-50 dark:bg-white rounded-lg h-24 flex items-center justify-center border-2 border-dashed border-slate-300 dark:border-slate-400 relative overflow-hidden group hover:border-blue-500 transition-colors">
-                                                <input type="text" placeholder="Type full name to sign electronically..." className="absolute inset-0 w-full h-full text-center text-3xl font-serif italic text-blue-900 outline-none bg-transparent placeholder:text-slate-400 dark:placeholder:text-slate-300 placeholder:not-italic placeholder:text-xs" value={formData.signature} onChange={e => setFormData({...formData, signature: e.target.value})} />
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <button 
-                                        onClick={handleSignContract}
-                                        disabled={!formData.signerName || !formData.signature || !formData.email || !formData.ownerName}
-                                        className="w-full mt-4 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-200 dark:disabled:bg-white/5 disabled:text-slate-400 dark:disabled:text-slate-600 text-white py-4 rounded-xl font-black uppercase tracking-widest text-xs transition-all shadow-[0_0_20px_rgba(37,99,235,0.2)] disabled:shadow-none flex items-center justify-center gap-2"
-                                    >
-                                        Accept & Execute Contract
-                                    </button>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-
-                </div>
+            <div className="p-8 space-y-8">
+              <div>
+                <h4 className="text-lg font-bold text-slate-900 mb-2">Fragmented Technology</h4>
+                <p className="text-slate-600 leading-relaxed">DoorKing, Viking, and All-O-Matic systems that do not talk to each other, leading to massive staff confusion.</p>
+              </div>
+              <div>
+                <h4 className="text-lg font-bold text-slate-900 mb-2">Redundant Telecom Waste</h4>
+                <p className="text-slate-600 leading-relaxed">Multiple sites are paying for up to 8 separate Comcast bills simultaneously just to provide network backhaul.</p>
+              </div>
+              <div>
+                <h4 className="text-lg font-bold text-slate-900 mb-2">Manual Staff Labor</h4>
+                <p className="text-slate-600 leading-relaxed">Property managers waste hours manually adding or removing tenants across multiple software platforms.</p>
+              </div>
             </div>
-        </main>
-      )}
+          </div>
+
+          {/* The GateGuard Elevation Card (UPDATED WITH 5 PILLARS) */}
+          <div className="bg-gradient-to-b from-blue-50 to-white rounded-2xl shadow-lg border border-blue-200 overflow-hidden relative h-full">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-100 rounded-full blur-3xl -mr-10 -mt-10 opacity-50 pointer-events-none"></div>
+            
+            <div className="bg-blue-600/5 border-b border-blue-100 p-8 flex items-center gap-5 relative z-10">
+              <div className="flex items-center justify-center w-14 h-14 rounded-full bg-blue-600 text-white font-bold text-2xl shrink-0 shadow-md">✓</div>
+              <h3 className="text-2xl font-bold text-blue-900 tracking-tight">Moving To:<br/><span className="text-blue-700 font-medium text-xl">Option 1: Your Gate Guard</span></h3>
+            </div>
+            
+            <div className="p-8 space-y-6 relative z-10">
+              <div>
+                <h4 className="text-base font-bold text-blue-900 mb-1">1. Turnkey Rehabilitation</h4>
+                <p className="text-blue-800/80 text-sm leading-relaxed">We take over existing infrastructure, bringing all gates—even those failing—fully online, and guarantee they stay operational.</p>
+              </div>
+              <div>
+                <h4 className="text-base font-bold text-blue-900 mb-1">2. Comprehensive Coverage</h4>
+                <p className="text-blue-800/80 text-sm leading-relaxed">We cover all access devices, tech, and software fees into a single, predictable monthly OpEx.</p>
+              </div>
+              <div>
+                <h4 className="text-base font-bold text-blue-900 mb-1">3. Enhanced Security</h4>
+                <p className="text-blue-800/80 text-sm leading-relaxed">We add a monitored camera at every primary vehicle gate for total accountability.</p>
+              </div>
+              <div>
+                <h4 className="text-base font-bold text-blue-900 mb-1">4. Seamless Syncing</h4>
+                <p className="text-blue-800/80 text-sm leading-relaxed">Direct integration with RealPage, Entrata, and Yardi completely automates resident onboarding.</p>
+              </div>
+              <div>
+                <h4 className="text-base font-bold text-blue-900 mb-1">5. Hinge Upgrade Benefit</h4>
+                <p className="text-blue-800/80 text-sm leading-relaxed">We replace the standard $1,500 CapEx hit for heavy-duty pedestrian hinges with an amortized $500 upfront cost per door.</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      {/* NEW SECTION: THE STRATEGY MATRIX */}
+      <section className="bg-slate-900 py-24 px-6 border-y border-slate-800">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold text-white mb-4 tracking-tight">The Strategy Matrix</h2>
+            <div className="w-16 h-1 bg-blue-500 mx-auto rounded-full mb-6"></div>
+            <p className="text-lg text-slate-400 max-w-3xl mx-auto leading-relaxed">
+              Options 2-4 leave your properties exposed to unpredictable CapEx spikes and extended downtime. <strong>Option 1 (Your Gate Guard)</strong> fundamentally changes the model by absorbing maintenance into a single, proactive OpEx.
+            </p>
+          </div>
+
+          <div className="grid lg:grid-cols-2 gap-8">
+            
+            {/* Mechanicsville Crossing Matrix */}
+            <div className="bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden shadow-2xl">
+              <div className="bg-slate-800/50 p-6 border-b border-slate-700 flex justify-between items-center">
+                <h3 className="text-xl font-bold text-white">Mechanicsville Crossing</h3>
+                <span className="text-xs font-bold bg-slate-700 text-slate-300 px-3 py-1 rounded-full">164 Units</span>
+              </div>
+              <div className="p-0 overflow-x-auto">
+                <table className="w-full text-left text-sm whitespace-nowrap">
+                  <thead className="bg-slate-900/50 text-slate-400 text-xs uppercase tracking-wider">
+                    <tr>
+                      <th className="px-6 py-4 font-semibold">Strategy</th>
+                      <th className="px-6 py-4 font-semibold">Upfront CapEx</th>
+                      <th className="px-6 py-4 font-semibold">Maintenance Model</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-700/50">
+                    <tr className="bg-blue-900/20">
+                      <td className="px-6 py-4 font-bold text-blue-400">Opt 1: Your Gate Guard</td>
+                      <td className="px-6 py-4 font-mono text-white">$13,250</td>
+                      <td className="px-6 py-4"><span className="text-xs font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30 px-2 py-1 rounded">PROACTIVE (INCLUDED)</span></td>
+                    </tr>
+                    <tr className="text-slate-300">
+                      <td className="px-6 py-4 font-medium">Opt 2: Re-Structure</td>
+                      <td className="px-6 py-4 font-mono text-red-400">$22,500</td>
+                      <td className="px-6 py-4"><span className="text-xs font-medium text-slate-500">Break-Fix (Billed Extra)</span></td>
+                    </tr>
+                    <tr className="text-slate-300">
+                      <td className="px-6 py-4 font-medium">Opt 3: Keep & Reduce</td>
+                      <td className="px-6 py-4 font-mono">$18,250</td>
+                      <td className="px-6 py-4"><span className="text-xs font-medium text-slate-500">Break-Fix (Billed Extra)</span></td>
+                    </tr>
+                    <tr className="text-slate-300">
+                      <td className="px-6 py-4 font-medium">Opt 4: Simplify & Remove</td>
+                      <td className="px-6 py-4 font-mono">$11,800</td>
+                      <td className="px-6 py-4"><span className="text-xs font-medium text-slate-500">Break-Fix (Billed Extra)</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Mechanicsville Station Matrix */}
+            <div className="bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden shadow-2xl">
+              <div className="bg-slate-800/50 p-6 border-b border-slate-700 flex justify-between items-center">
+                <h3 className="text-xl font-bold text-white">Mechanicsville Station</h3>
+                <span className="text-xs font-bold bg-slate-700 text-slate-300 px-3 py-1 rounded-full">165 Units</span>
+              </div>
+              <div className="p-0 overflow-x-auto">
+                <table className="w-full text-left text-sm whitespace-nowrap">
+                  <thead className="bg-slate-900/50 text-slate-400 text-xs uppercase tracking-wider">
+                    <tr>
+                      <th className="px-6 py-4 font-semibold">Strategy</th>
+                      <th className="px-6 py-4 font-semibold">Upfront CapEx</th>
+                      <th className="px-6 py-4 font-semibold">Maintenance Model</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-700/50">
+                    <tr className="bg-blue-900/20">
+                      <td className="px-6 py-4 font-bold text-blue-400">Opt 1: Your Gate Guard</td>
+                      <td className="px-6 py-4 font-mono text-white">$11,750</td>
+                      <td className="px-6 py-4"><span className="text-xs font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30 px-2 py-1 rounded">PROACTIVE (INCLUDED)</span></td>
+                    </tr>
+                    <tr className="text-slate-300">
+                      <td className="px-6 py-4 font-medium">Opt 2: Re-Structure</td>
+                      <td className="px-6 py-4 font-mono text-red-400">$20,000</td>
+                      <td className="px-6 py-4"><span className="text-xs font-medium text-slate-500">Break-Fix (Billed Extra)</span></td>
+                    </tr>
+                    <tr className="text-slate-300">
+                      <td className="px-6 py-4 font-medium">Opt 3: Keep & Reduce</td>
+                      <td className="px-6 py-4 font-mono">$17,350</td>
+                      <td className="px-6 py-4"><span className="text-xs font-medium text-slate-500">Break-Fix (Billed Extra)</span></td>
+                    </tr>
+                    <tr className="text-slate-300">
+                      <td className="px-6 py-4 font-medium">Opt 4: Simplify & Remove</td>
+                      <td className="px-6 py-4 font-mono">$11,500</td>
+                      <td className="px-6 py-4"><span className="text-xs font-medium text-slate-500">Break-Fix (Billed Extra)</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* VISITOR WORKFLOW VISUALIZATION */}
+      <section className="py-24 px-6 max-w-7xl mx-auto border-t border-slate-200 overflow-hidden">
+        <div className="grid lg:grid-cols-[1.2fr,1.3fr] gap-12 items-center">
+          
+          <div className="z-30">
+            <h2 className="text-4xl font-extrabold text-slate-900 mb-6 tracking-tight leading-tight">Your Digital Gate Guard: <br className="hidden md:block" />Visitor Tracking Redefined</h2>
+            <div className="w-16 h-1 bg-blue-600 rounded-full mb-8"></div>
+            <p className="text-lg text-slate-600 mb-10 leading-relaxed">
+              We turn physical access into actionable data. When a visitor scans the QR code on our vandal-proof sign, we automatically log their visit, verify their phone number, and record which staff member or resident granted entry. This information is instantly synced to a shared Google Sheet, giving Columbia Residential VP's and site managers a real-time, global ledger of property traffic.
+            </p>
+            
+            <a 
+              href="https://gateguard.co/sales-portal" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-3 bg-slate-900 text-white font-bold py-4 px-8 rounded-xl hover:bg-slate-800 transition-all shadow-md hover:-translate-y-1"
+            >
+              <svg className="w-5 h-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M3 3a1 1 0 000 2v10a1 1 0 000 2h14a1 1 0 000-2V5a1 1 0 000-2H3zm3 4a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm0 4a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1z" clipRule="evenodd"></path></svg>
+              View Interactive Demo
+            </a>
+          </div>
+
+          {/* CSS-Built UI Mockups */}
+          <div className="relative w-full min-h-[500px] mt-10 lg:mt-0 flex items-center justify-center">
+            
+            {/* Mock Google Sheet */}
+            <div className="absolute right-0 top-32 w-11/12 max-w-2xl bg-white rounded-xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.25)] border border-slate-200 overflow-hidden transform rotate-2 hover:rotate-1 transition-transform duration-500 z-10">
+              <div className="bg-[#f0fdf4] border-b border-[#bbf7d0] px-5 py-3 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-7 h-7 bg-[#16a34a] rounded flex items-center justify-center text-white shadow-sm">
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 4v3H4V4h1zm2 0v3h6V4H7zm8 0v3h1V4h-1zM4 9v2h1V9H4zm2 0v2h6V9H7zm8 0v2h1V9h-1zM4 13v3h1v-3H4zm2 0v3h6v-3H7zm8 0v3h1v-3h-1z" clipRule="evenodd"></path></svg>
+                  </div>
+                  <span className="text-sm font-bold text-slate-700">Mechanicsville_Visitor_Log</span>
+                </div>
+                <span className="flex items-center gap-1.5 text-[11px] uppercase tracking-wide text-[#166534] font-bold bg-[#dcfce7] px-3 py-1 rounded-full border border-[#bbf7d0] shadow-sm">
+                  <span className="w-2 h-2 bg-[#22c55e] rounded-full animate-pulse"></span> Live Sync
+                </span>
+              </div>
+              
+              <div className="p-0 overflow-x-auto bg-white">
+                <table className="w-full text-left text-sm whitespace-nowrap">
+                  <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase text-[10px] tracking-wider font-bold">
+                    <tr>
+                      <th className="px-5 py-4 pl-12 sm:pl-5">Timestamp</th>
+                      <th className="px-5 py-4">Visitor Name</th>
+                      <th className="px-5 py-4">Visitor Number</th>
+                      <th className="px-5 py-4">Granted By</th>
+                    </tr>
+                  </thead>
+                  <tbody className="text-slate-700">
+                    <tr className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+                      <td className="px-5 py-4 text-slate-500 pl-12 sm:pl-5">Apr 1, 10:24 AM</td>
+                      <td className="px-5 py-4 font-bold text-slate-900">John Doe</td>
+                      <td className="px-5 py-4 font-mono text-slate-500">***-***-8492</td>
+                      <td className="px-5 py-4"><span className="text-blue-700 bg-blue-50 border border-blue-100 px-2 py-1 rounded font-semibold text-xs">Unit 402</span></td>
+                    </tr>
+                    <tr className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+                      <td className="px-5 py-4 text-slate-500 pl-12 sm:pl-5">Apr 1, 10:15 AM</td>
+                      <td className="px-5 py-4 font-bold text-slate-900">Amazon Delivery</td>
+                      <td className="px-5 py-4 font-mono text-slate-500">***-***-1102</td>
+                      <td className="px-5 py-4"><span className="text-blue-700 bg-blue-50 border border-blue-100 px-2 py-1 rounded font-semibold text-xs">Leasing Office</span></td>
+                    </tr>
+                    <tr className="hover:bg-slate-50 transition-colors">
+                      <td className="px-5 py-4 text-slate-500 pl-12 sm:pl-5">Apr 1, 09:45 AM</td>
+                      <td className="px-5 py-4 font-bold text-slate-900">Sarah Jenkins</td>
+                      <td className="px-5 py-4 font-mono text-slate-500">***-***-5531</td>
+                      <td className="px-5 py-4"><span className="text-red-700 bg-red-50 border border-red-100 px-2 py-1 rounded font-semibold text-xs">Denied - No Answer</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Mock Physical Sign */}
+            <div className="absolute left-0 lg:left-8 top-0 w-72 h-[360px] bg-gradient-to-br from-white to-slate-200 rounded-xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] border-[12px] border-[#1e293b] flex flex-col items-center text-center transform -rotate-3 hover:-rotate-1 transition-transform duration-500 z-20 overflow-hidden ring-1 ring-white/50 inset-0">
+              <div className="absolute top-0 left-0 w-full h-[40%] bg-gradient-to-b from-white/70 to-transparent pointer-events-none"></div>
+              <div className="p-6 flex flex-col h-full w-full justify-between items-center relative z-10">
+                <div className="h-16 mb-2 w-full flex items-center justify-center">
+                  <img src="/columbia-logo.png" alt="Columbia Residential" className="max-h-full max-w-full object-contain drop-shadow-sm" />
+                </div>
+                <div className="space-y-1 w-full">
+                  <h3 className="text-[17px] font-extrabold text-slate-900 leading-tight tracking-tight uppercase">Welcome to <br/>Mechanicsville Crossing</h3>
+                  <p className="text-slate-600 text-[9px] font-bold uppercase tracking-widest border-b border-slate-300 pb-3 mx-4 mt-2">Visitors scan code for access</p>
+                </div>
+                <div className="bg-white p-2.5 rounded-lg shadow-md border border-slate-200 my-2">
+                  <svg className="w-20 h-20 text-slate-900" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M3 3h8v8H3V3zm2 2v4h4V5H5zm8-2h8v8h-8V3zm2 2v4h4V5h-4zM3 13h8v8H3v-8zm2 2v4h4v-4H5zm13-2h-3v2h3v-2zm-3 4h3v2h-3v-2zm-2-2h-2v2h2v-2zm-2 4h-2v2h2v-2zm4 0h2v2h-2v-2zm2-6h2v2h-2v-2zm-4 4h2v2h-2v-2z" />
+                  </svg>
+                </div>
+                <div className="w-full">
+                  <p className="text-slate-500 text-[10px] font-bold uppercase tracking-wider mb-0.5">Or Call Office</p>
+                  <p className="text-[#0f172a] font-black text-xl tracking-wide">(404) 221-0506</p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-blue-300 rounded-full blur-[100px] -z-10 opacity-30 pointer-events-none"></div>
+          </div>
+        </div>
+      </section>
+
+      {/* EXCLUSIVE FINANCING OFFER & CTA */}
+      <section className="py-24 px-6 max-w-5xl mx-auto border-t border-slate-200">
+        
+        {/* Partner Level Financing Callout */}
+        <div className="bg-gradient-to-r from-blue-900 to-slate-900 rounded-3xl p-10 lg:p-12 text-white shadow-2xl mb-12 relative overflow-hidden">
+          <div className="absolute right-0 top-0 w-64 h-64 bg-blue-500 rounded-full blur-3xl opacity-20 -mr-10 -mt-10 pointer-events-none"></div>
+          
+          <div className="relative z-10 grid lg:grid-cols-2 gap-8 items-center">
+            <div>
+              <span className="inline-block bg-blue-500/20 text-blue-300 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest border border-blue-400/30 mb-4">Partner-Level Structure</span>
+              <h3 className="text-3xl font-extrabold mb-4 tracking-tight">CapEx Mitigation Offer</h3>
+              <p className="text-blue-100/80 leading-relaxed mb-6">
+                Upfront Capital Expenditures are the biggest hurdle to property upgrades. To eliminate this friction, we are unlocking our Partner-Level financing specifically for Columbia Residential.
+              </p>
+              <ul className="space-y-3">
+                <li className="flex items-center gap-3 text-sm">
+                  <div className="w-5 h-5 rounded-full bg-blue-500 flex items-center justify-center shrink-0">✓</div>
+                  Flat $2,500 upfront setup fee per site.
+                </li>
+                <li className="flex items-center gap-3 text-sm">
+                  <div className="w-5 h-5 rounded-full bg-blue-500 flex items-center justify-center shrink-0">✓</div>
+                  Remaining hardware and installation costs are amortized.
+                </li>
+              </ul>
+            </div>
+            
+            <div className="bg-white/10 border border-white/20 p-8 rounded-2xl text-center backdrop-blur-sm">
+              <p className="text-sm text-blue-200 font-bold uppercase tracking-widest mb-2">Unlocks With</p>
+              <p className="text-5xl font-black text-white mb-2">20+ Sites</p>
+              <p className="text-sm text-blue-200 mb-6">Standardize access control across the portfolio.</p>
+              <Link 
+               href="https://gateguard.co/pricing/columbiares" 
+               target="_blank" 
+               className="w-full inline-block bg-blue-500 text-white font-bold py-4 px-8 rounded-xl hover:bg-blue-400 transition-all shadow-lg hover:-translate-y-1"
+              >
+               Build Your Custom Agreement
+              </Link>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
     </div>
   );
 }

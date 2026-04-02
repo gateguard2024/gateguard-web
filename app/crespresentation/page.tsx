@@ -63,7 +63,7 @@ export default function ColumbiaResPresentation() {
         {/* Traditional Reality vs GateGuard Summary Cards */}
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
           
-          {/* The Current Reality Card (Redesigned) */}
+          {/* The Current Reality Card */}
           <div className="bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden">
             <div className="bg-slate-50 border-b border-slate-100 p-8 flex items-center gap-5">
               <div className="flex items-center justify-center w-14 h-14 rounded-full bg-red-100 text-red-600 font-bold text-2xl shrink-0 shadow-inner">✕</div>
@@ -90,7 +90,7 @@ export default function ColumbiaResPresentation() {
             </div>
           </div>
 
-          {/* The GateGuard Elevation Card (Redesigned) */}
+          {/* The GateGuard Elevation Card */}
           <div className="bg-gradient-to-b from-blue-50 to-white rounded-2xl shadow-lg border border-blue-200 overflow-hidden relative">
             <div className="absolute top-0 right-0 w-32 h-32 bg-blue-100 rounded-full blur-3xl -mr-10 -mt-10 opacity-50 pointer-events-none"></div>
             
@@ -139,20 +139,20 @@ export default function ColumbiaResPresentation() {
                 <p className="text-slate-400 font-medium tracking-wide text-sm uppercase">290 Units • 6 Vehicle Gates • 19 Amenity & Pedestrian Gates</p>
               </div>
 
-              {/* Narrrative Story Block */}
+              {/* Narrative Story Block - PRESENT & FUTURE TENSE */}
               <div className="bg-slate-900/50 p-6 lg:p-8 rounded-xl border border-slate-700/50 mb-10 shadow-inner">
                 <h4 className="text-white font-bold text-lg mb-2 flex items-center gap-2">
                   <svg className="w-5 h-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd"></path></svg>
-                  The Situation
+                  The Current Situation
                 </h4>
                 <p className="text-slate-300 leading-relaxed">
-                  This property was trapped in a chaotic, reactive break-fix loop. With 25 total gates, management was juggling up to 8 separate Comcast bills just to keep basic systems online. Brittle aluminum gate hardware was constantly snapping, and acts of vandalism went unrecorded. The staff was overwhelmed, and the property was bleeding money with no unified security plan in place.
+                  This property is currently trapped in a chaotic, reactive break-fix loop. With 25 total gates, management is juggling up to 8 separate Comcast bills just to keep basic systems online. Brittle aluminum gate hardware is constantly snapping, and acts of vandalism go completely unrecorded. The staff is overwhelmed, and the property is bleeding money with no unified security plan in place.
                 </p>
               </div>
 
               <div className="grid md:grid-cols-2 gap-12">
                 <div>
-                  <h4 className="text-xl font-semibold mb-6 text-slate-200 border-b border-slate-700 pb-3">Before (The Bleed)</h4>
+                  <h4 className="text-xl font-semibold mb-6 text-slate-200 border-b border-slate-700 pb-3">Current State (The Bleed)</h4>
                   <table className="w-full text-left text-base">
                     <tbody>
                       <tr className="border-b border-slate-700"><td className="py-3 text-slate-400">ISP / Telecom</td><td className="py-3 text-right font-medium text-red-400">$1,200 - $2,400/mo</td></tr>
@@ -165,7 +165,7 @@ export default function ColumbiaResPresentation() {
                 </div>
                 
                 <div>
-                  <h4 className="text-xl font-semibold mb-6 text-slate-200 border-b border-slate-700 pb-3">After (The GateGuard Solution)</h4>
+                  <h4 className="text-xl font-semibold mb-6 text-slate-200 border-b border-slate-700 pb-3">Proposed State (The GateGuard Solution)</h4>
                   <table className="w-full text-left text-base">
                     <tbody>
                       <tr className="border-b border-slate-700"><td className="py-3 text-slate-400">ISP / Telecom</td><td className="py-3 text-right font-medium text-green-400">$400/mo</td></tr>
@@ -192,14 +192,14 @@ export default function ColumbiaResPresentation() {
                 <p className="text-slate-400 font-medium tracking-wide text-sm uppercase">164 Units • 2 Vehicle Gates • 19 Amenity & Pedestrian Gates</p>
               </div>
 
-              {/* Narrative Story Block */}
+              {/* Narrative Story Block - PRESENT & FUTURE TENSE */}
               <div className="bg-slate-900/50 p-6 lg:p-8 rounded-xl border border-slate-700/50 mb-10 shadow-inner">
                 <h4 className="text-white font-bold text-lg mb-2 flex items-center gap-2">
                   <svg className="w-5 h-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd"></path></svg>
-                  The Situation
+                  The Current Situation
                 </h4>
                 <p className="text-slate-300 leading-relaxed">
-                  Situated in a high-traffic area, this property faced relentless vandalism. The magnetic locks were continually abused, causing major safety concerns and code compliance failures. There were redundant callboxes stationed inside the already gated perimeter. Between the high telecom bills and constant repair tickets, the property's NOI was taking a massive, unnecessary hit.
+                  Situated in a high-traffic area, this property faces relentless vandalism. The magnetic locks are continually abused, causing major safety concerns and code compliance failures. Furthermore, there are redundant callboxes stationed inside the already gated perimeter. Between the high telecom bills and constant repair tickets, the property's NOI is taking a massive, unnecessary hit.
                 </p>
               </div>
 
@@ -207,7 +207,7 @@ export default function ColumbiaResPresentation() {
                 
                 {/* Before Table */}
                 <div className="border-r lg:border-r-slate-700 pr-0 lg:pr-10">
-                  <h4 className="text-xl font-semibold mb-6 text-slate-200 border-b border-slate-700 pb-3">Before (The Bleed)</h4>
+                  <h4 className="text-xl font-semibold mb-6 text-slate-200 border-b border-slate-700 pb-3">Current State (The Bleed)</h4>
                   <table className="w-full text-left text-base">
                     <tbody>
                       <tr className="border-b border-slate-700"><td className="py-3 text-slate-400">ISP / Telecom</td><td className="py-3 text-right font-medium text-red-400">$800 - $1,200/mo</td></tr>
@@ -222,7 +222,7 @@ export default function ColumbiaResPresentation() {
                 {/* GateGuard Solution & Hardware Quote */}
                 <div className="space-y-8">
                   <div>
-                    <h4 className="text-xl font-semibold mb-6 text-slate-200 border-b border-slate-700 pb-3">After (The GateGuard Solution)</h4>
+                    <h4 className="text-xl font-semibold mb-6 text-slate-200 border-b border-slate-700 pb-3">Proposed State (The GateGuard Solution)</h4>
                     <table className="w-full text-left text-base">
                       <tbody>
                         <tr className="border-b border-slate-700"><td className="py-3 text-slate-400">ISP / Telecom</td><td className="py-3 text-right font-medium text-green-400">$400/mo</td></tr>
@@ -258,9 +258,9 @@ export default function ColumbiaResPresentation() {
         </div>
       </section>
 
-      {/* NEW SECTION: VISITOR WORKFLOW VISUALIZATION */}
-      <section className="py-24 px-6 max-w-7xl mx-auto border-t border-slate-200">
-        <div className="grid lg:grid-cols-[1.5fr,1fr] gap-16 items-center">
+      {/* NEW SECTION: VISITOR WORKFLOW VISUALIZATION (UI Built, No Image Needed) */}
+      <section className="py-24 px-6 max-w-7xl mx-auto border-t border-slate-200 overflow-hidden">
+        <div className="grid lg:grid-cols-[1.2fr,1fr] gap-16 items-center">
           
           <div>
             <h2 className="text-4xl font-extrabold text-slate-900 mb-6 tracking-tight leading-tight">Your Digital Gate Guard: <br className="hidden md:block" />Visitor Tracking Redefined</h2>
@@ -276,20 +276,75 @@ export default function ColumbiaResPresentation() {
               className="inline-flex items-center gap-3 bg-slate-900 text-white font-bold py-4 px-8 rounded-xl hover:bg-slate-800 transition-all shadow-md hover:-translate-y-1"
             >
               <svg className="w-5 h-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M3 3a1 1 0 000 2v10a1 1 0 000 2h14a1 1 0 000-2V5a1 1 0 000-2H3zm3 4a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm0 4a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1z" clipRule="evenodd"></path></svg>
-              View live Interactive demo
+              View Interactive Demo
             </a>
           </div>
 
-          <div className="relative group">
-            {/* Vercel image */}
-            <img 
-              src="/visitor-workflow-tiles.png" 
-              alt="Visualization of the Gate Guard visitor workflow, sign, and Google Sheet sync." 
-              className="w-full rounded-2xl shadow-2xl border-4 border-white group-hover:scale-105 transition-transform duration-300"
-            />
+          {/* CSS-Built UI Mockup (Replaces Static Image) */}
+          <div className="relative">
+            {/* Mock Sign */}
+            <div className="bg-white rounded-xl shadow-xl border border-slate-200 p-8 flex flex-col items-center text-center transform rotate-2 hover:rotate-0 transition-transform z-20 relative w-4/5 mx-auto -mb-16">
+              <div className="text-blue-900 font-black tracking-widest uppercase text-xs mb-3 bg-blue-50 px-3 py-1 rounded-full">Columbia Residential</div>
+              <h3 className="text-2xl font-bold text-slate-900 mb-2 leading-tight">Welcome to Mechanicsville Crossing</h3>
+              <p className="text-slate-500 text-sm mb-6">Visitors scan code below for access</p>
+              
+              <div className="bg-white p-3 rounded-xl shadow-sm border border-slate-200 mb-6">
+                <svg className="w-28 h-28 text-slate-900" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M3 3h8v8H3V3zm2 2v4h4V5H5zm8-2h8v8h-8V3zm2 2v4h4V5h-4zM3 13h8v8H3v-8zm2 2v4h4v-4H5zm13-2h-3v2h3v-2zm-3 4h3v2h-3v-2zm-2-2h-2v2h2v-2zm-2 4h-2v2h2v-2zm4 0h2v2h-2v-2zm2-6h2v2h-2v-2zm-4 4h2v2h-2v-2z" />
+                </svg>
+              </div>
+              
+              <div className="w-full h-px bg-slate-100 mb-4"></div>
+              <p className="text-slate-500 text-sm font-semibold">Or Call Office: <br/><span className="text-blue-600 text-lg block mt-1">(404) 221-0506</span></p>
+            </div>
+
+            {/* Mock Google Sheet */}
+            <div className="bg-white rounded-xl shadow-2xl border border-slate-200 overflow-hidden transform -rotate-2 hover:rotate-0 transition-transform z-10 relative">
+              <div className="bg-green-50 border-b border-green-100 px-5 py-3 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-6 h-6 bg-green-600 rounded flex items-center justify-center text-white text-xs font-bold shadow-sm">田</div>
+                  <span className="text-sm font-semibold text-slate-800">Mechanicsville_Visitor_Log</span>
+                </div>
+                <span className="flex items-center gap-1.5 text-xs text-green-700 font-bold bg-green-200/50 px-2.5 py-1 rounded-full border border-green-200">
+                  <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> Live Sync
+                </span>
+              </div>
+              <div className="p-0 overflow-x-auto bg-slate-50">
+                <table className="w-full text-left text-sm whitespace-nowrap">
+                  <thead className="bg-white border-b border-slate-200 text-slate-500">
+                    <tr>
+                      <th className="px-4 py-3 font-semibold">Timestamp</th>
+                      <th className="px-4 py-3 font-semibold">Visitor Phone</th>
+                      <th className="px-4 py-3 font-semibold">Granted By</th>
+                      <th className="px-4 py-3 font-semibold">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody className="text-slate-700">
+                    <tr className="border-b border-slate-100 bg-white">
+                      <td className="px-4 py-3 text-slate-500">Apr 1, 10:24 AM</td>
+                      <td className="px-4 py-3 font-mono font-medium text-slate-900">***-***-8492</td>
+                      <td className="px-4 py-3">Unit 402</td>
+                      <td className="px-4 py-3"><span className="text-green-700 bg-green-100 px-2 py-1 rounded font-medium text-xs">Access Granted</span></td>
+                    </tr>
+                    <tr className="border-b border-slate-100 bg-blue-50/30">
+                      <td className="px-4 py-3 text-slate-500">Apr 1, 10:15 AM</td>
+                      <td className="px-4 py-3 font-mono font-medium text-slate-900">***-***-1102</td>
+                      <td className="px-4 py-3">Leasing Office</td>
+                      <td className="px-4 py-3"><span className="text-green-700 bg-green-100 px-2 py-1 rounded font-medium text-xs">Access Granted</span></td>
+                    </tr>
+                    <tr className="bg-white">
+                      <td className="px-4 py-3 text-slate-500">Apr 1, 09:45 AM</td>
+                      <td className="px-4 py-3 font-mono font-medium text-slate-900">***-***-5531</td>
+                      <td className="px-4 py-3 text-slate-500">No Answer</td>
+                      <td className="px-4 py-3"><span className="text-slate-600 bg-slate-200 px-2 py-1 rounded font-medium text-xs">Denied</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
             
             {/* Background flair */}
-            <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-blue-100 rounded-full blur-3xl -z-10 group-hover:opacity-75 transition-opacity pointer-events-none"></div>
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-blue-200 rounded-full blur-3xl -z-10 opacity-50 pointer-events-none"></div>
           </div>
           
         </div>
@@ -305,7 +360,7 @@ export default function ColumbiaResPresentation() {
            </p>
            
            <Link 
-             href="https://gateguard.co/pricing/columbiares" 
+             href="https://www.gateguard.co/pricing/ColumbiaRes" 
              target="_blank" 
              className="inline-block bg-blue-600 text-white font-bold py-5 px-12 rounded-xl hover:bg-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-1 text-lg tracking-wide relative z-10"
            >

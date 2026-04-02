@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export default function ColumbiaResPresentation() {
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-blue-200">
+    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-blue-200 overflow-x-hidden">
       
       {/* 1. HERO SECTION */}
       <header className="bg-slate-900 text-white py-24 px-6 text-center border-b-[8px] border-blue-600 relative overflow-hidden">
@@ -34,27 +34,27 @@ export default function ColumbiaResPresentation() {
         
         {/* Photo Gallery of Pain */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-24">
-          <div className="overflow-hidden rounded-2xl shadow-lg group border border-slate-100">
+          <div className="overflow-hidden rounded-2xl shadow-lg group border border-slate-100 bg-white">
             <img src="/break-fix-1.jpg" alt="Vandalized strike" className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300" />
-            <div className="bg-white p-4 text-center border border-t-0 border-slate-100">
+            <div className="p-4 text-center border-t border-slate-100">
               <p className="text-sm font-semibold text-slate-700">Vandalized strikes and locks requiring expensive repairs.</p>
             </div>
           </div>
-          <div className="overflow-hidden rounded-2xl shadow-lg group border border-slate-100">
+          <div className="overflow-hidden rounded-2xl shadow-lg group border border-slate-100 bg-white">
             <img src="/break-fix-2.jpg" alt="Missing hardware" className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300" />
-            <div className="bg-white p-4 text-center border border-t-0 border-slate-100">
+            <div className="p-4 text-center border-t border-slate-100">
               <p className="text-sm font-semibold text-slate-700">Missing hardware leading to wide-open entries.</p>
             </div>
           </div>
-          <div className="overflow-hidden rounded-2xl shadow-lg group border border-slate-100">
+          <div className="overflow-hidden rounded-2xl shadow-lg group border border-slate-100 bg-white">
             <img src="/break-fix-3.jpg" alt="Empty post" className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300" />
-            <div className="bg-white p-4 text-center border border-t-0 border-slate-100">
+            <div className="p-4 text-center border-t border-slate-100">
               <p className="text-sm font-semibold text-slate-700">Useless, empty posts and decommissioned equipment.</p>
             </div>
           </div>
-          <div className="overflow-hidden rounded-2xl shadow-lg group border border-slate-100">
+          <div className="overflow-hidden rounded-2xl shadow-lg group border border-slate-100 bg-white">
             <img src="/break-fix-4.jpg" alt="Unmonitored gate" className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300" />
-            <div className="bg-white p-4 text-center border border-t-0 border-slate-100">
+            <div className="p-4 text-center border-t border-slate-100">
               <p className="text-sm font-semibold text-slate-700">Unmonitored entries where incidents go unrecorded.</p>
             </div>
           </div>
@@ -139,7 +139,7 @@ export default function ColumbiaResPresentation() {
                 <p className="text-slate-400 font-medium tracking-wide text-sm uppercase">290 Units • 6 Vehicle Gates • 19 Amenity & Pedestrian Gates</p>
               </div>
 
-              {/* Narrative Story Block - PRESENT & FUTURE TENSE */}
+              {/* Narrative Story Block */}
               <div className="bg-slate-900/50 p-6 lg:p-8 rounded-xl border border-slate-700/50 mb-10 shadow-inner">
                 <h4 className="text-white font-bold text-lg mb-2 flex items-center gap-2">
                   <svg className="w-5 h-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd"></path></svg>
@@ -192,7 +192,7 @@ export default function ColumbiaResPresentation() {
                 <p className="text-slate-400 font-medium tracking-wide text-sm uppercase">164 Units • 2 Vehicle Gates • 19 Amenity & Pedestrian Gates</p>
               </div>
 
-              {/* Narrative Story Block - PRESENT & FUTURE TENSE */}
+              {/* Narrative Story Block */}
               <div className="bg-slate-900/50 p-6 lg:p-8 rounded-xl border border-slate-700/50 mb-10 shadow-inner">
                 <h4 className="text-white font-bold text-lg mb-2 flex items-center gap-2">
                   <svg className="w-5 h-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd"></path></svg>
@@ -232,7 +232,7 @@ export default function ColumbiaResPresentation() {
                     </table>
                   </div>
 
-                  {/* Vandalism Solution Callout - The "Quotes on Mag Boxes" */}
+                  {/* Vandalism Solution Callout */}
                   <div className="bg-slate-900 border-l-4 border-blue-500 rounded-xl p-6 shadow-xl">
                     <h5 className="text-xl font-bold text-white mb-3">Targeted Hardware Upgrade: <span className="text-blue-400">Vandal-Proof Mag Covers</span></h5>
                     <p className="text-slate-400 text-sm leading-relaxed mb-5">
@@ -258,15 +258,15 @@ export default function ColumbiaResPresentation() {
         </div>
       </section>
 
-      {/* VISITOR WORKFLOW VISUALIZATION (UI Built, No Image Needed) */}
+      {/* VISITOR WORKFLOW VISUALIZATION (Redesigned Fortune 500 Layout) */}
       <section className="py-24 px-6 max-w-7xl mx-auto border-t border-slate-200 overflow-hidden">
-        <div className="grid lg:grid-cols-[1.2fr,1fr] gap-16 items-center">
+        <div className="grid lg:grid-cols-[1.2fr,1.3fr] gap-12 items-center">
           
-          <div>
+          <div className="z-30">
             <h2 className="text-4xl font-extrabold text-slate-900 mb-6 tracking-tight leading-tight">Your Digital Gate Guard: <br className="hidden md:block" />Visitor Tracking Redefined</h2>
             <div className="w-16 h-1 bg-blue-600 rounded-full mb-8"></div>
             <p className="text-lg text-slate-600 mb-10 leading-relaxed">
-              We turn physical access into actionable data. When a visitor scans the QR code on our vandal-proof sign, we automatically log their visit, verify their phone number, and record which staff member or resident granted entry. This information is instantly synced to a shared Google Sheet, giving Columbia Residential VP's and site managers a real-time, global ledger of property traffic. No more manual entry, no more lost data.
+              We turn physical access into actionable data. When a visitor scans the QR code on our vandal-proof sign, we automatically log their visit, verify their phone number, and record which staff member or resident granted entry. This information is instantly synced to a shared Google Sheet, giving Columbia Residential VP's and site managers a real-time, global ledger of property traffic.
             </p>
             
             <a 
@@ -280,82 +280,90 @@ export default function ColumbiaResPresentation() {
             </a>
           </div>
 
-          {/* CSS-Built UI Mockups */}
-          <div className="relative">
+          {/* CSS-Built UI Mockups - Absolutely Positioned for Perfect Layering */}
+          <div className="relative w-full min-h-[500px] mt-10 lg:mt-0 flex items-center justify-center">
             
-            {/* Mock Sign - Strict 4x5 Aspect Ratio */}
-            <div className="bg-white rounded-lg shadow-xl border border-slate-300 p-6 flex flex-col items-center justify-between text-center transform rotate-2 hover:rotate-0 transition-transform z-20 relative w-64 h-80 mx-auto -mb-16">
-              
-              {/* Custom Columbia Residential Logo Mockup */}
-              <div className="flex flex-col items-center mb-2">
-                <svg className="w-8 h-8 text-blue-800 mb-1" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2L2 12h3v8h14v-8h3L12 2z" />
-                </svg>
-                <span className="text-blue-900 font-serif font-bold text-sm leading-none uppercase tracking-wide">Columbia</span>
-                <span className="text-blue-700 font-sans text-[10px] uppercase tracking-widest mt-0.5">Residential</span>
-              </div>
-              
-              <h3 className="text-lg font-extrabold text-slate-900 mb-1 leading-tight tracking-tight">Welcome to <br/>Mechanicsville Crossing</h3>
-              <p className="text-slate-600 text-[11px] mb-3 font-medium uppercase tracking-wide">Visitors scan code below for access</p>
-              
-              <div className="bg-white p-2 rounded shadow-sm border border-slate-200 mb-3">
-                <svg className="w-20 h-20 text-slate-900" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M3 3h8v8H3V3zm2 2v4h4V5H5zm8-2h8v8h-8V3zm2 2v4h4V5h-4zM3 13h8v8H3v-8zm2 2v4h4v-4H5zm13-2h-3v2h3v-2zm-3 4h3v2h-3v-2zm-2-2h-2v2h2v-2zm-2 4h-2v2h2v-2zm4 0h2v2h-2v-2zm2-6h2v2h-2v-2zm-4 4h2v2h-2v-2z" />
-                </svg>
-              </div>
-              
-              <div className="w-full h-px bg-slate-200 mb-2"></div>
-              <p className="text-slate-500 text-[10px] font-bold uppercase tracking-wider">Or Call Office</p>
-              <p className="text-blue-600 font-black text-sm tracking-wide mt-0.5">(404) 221-0506</p>
-            </div>
-
-            {/* Mock Google Sheet */}
-            <div className="bg-white rounded-xl shadow-2xl border border-slate-200 overflow-hidden transform -rotate-2 hover:rotate-0 transition-transform z-10 relative">
-              <div className="bg-green-50 border-b border-green-100 px-5 py-3 flex items-center justify-between">
+            {/* Mock Google Sheet (Background Layer) */}
+            <div className="absolute right-0 top-32 w-11/12 max-w-2xl bg-white rounded-xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.25)] border border-slate-200 overflow-hidden transform rotate-2 hover:rotate-1 transition-transform duration-500 z-10">
+              <div className="bg-[#f0fdf4] border-b border-[#bbf7d0] px-5 py-3 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-6 h-6 bg-green-600 rounded flex items-center justify-center text-white text-xs font-bold shadow-sm">田</div>
-                  <span className="text-sm font-semibold text-slate-800">Mechanicsville_Visitor_Log</span>
+                  <div className="w-7 h-7 bg-[#16a34a] rounded flex items-center justify-center text-white shadow-sm">
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 4v3H4V4h1zm2 0v3h6V4H7zm8 0v3h1V4h-1zM4 9v2h1V9H4zm2 0v2h6V9H7zm8 0v2h1V9h-1zM4 13v3h1v-3H4zm2 0v3h6v-3H7zm8 0v3h1v-3h-1z" clipRule="evenodd"></path></svg>
+                  </div>
+                  <span className="text-sm font-bold text-slate-700">Mechanicsville_Visitor_Log</span>
                 </div>
-                <span className="flex items-center gap-1.5 text-xs text-green-700 font-bold bg-green-200/50 px-2.5 py-1 rounded-full border border-green-200">
-                  <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> Live Sync
+                <span className="flex items-center gap-1.5 text-[11px] uppercase tracking-wide text-[#166534] font-bold bg-[#dcfce7] px-3 py-1 rounded-full border border-[#bbf7d0] shadow-sm">
+                  <span className="w-2 h-2 bg-[#22c55e] rounded-full animate-pulse"></span> Live Sync
                 </span>
               </div>
-              <div className="p-0 overflow-x-auto bg-slate-50">
+              
+              <div className="p-0 overflow-x-auto bg-white">
                 <table className="w-full text-left text-sm whitespace-nowrap">
-                  <thead className="bg-white border-b border-slate-200 text-slate-500">
+                  <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase text-[10px] tracking-wider font-bold">
                     <tr>
-                      <th className="px-4 py-3 font-semibold">Timestamp</th>
-                      <th className="px-4 py-3 font-semibold">Visitor Name</th>
-                      <th className="px-4 py-3 font-semibold">Visitor Number</th>
-                      <th className="px-4 py-3 font-semibold">Granted By</th>
+                      <th className="px-5 py-4 pl-12 sm:pl-5">Timestamp</th>
+                      <th className="px-5 py-4">Visitor Name</th>
+                      <th className="px-5 py-4">Visitor Number</th>
+                      <th className="px-5 py-4">Granted By</th>
                     </tr>
                   </thead>
                   <tbody className="text-slate-700">
-                    <tr className="border-b border-slate-100 bg-white">
-                      <td className="px-4 py-3 text-slate-500">Apr 1, 10:24 AM</td>
-                      <td className="px-4 py-3 font-medium text-slate-900">John Doe</td>
-                      <td className="px-4 py-3 font-mono text-slate-500">***-***-8492</td>
-                      <td className="px-4 py-3 text-blue-700 font-medium">Unit 402</td>
+                    <tr className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+                      <td className="px-5 py-4 text-slate-500 pl-12 sm:pl-5">Apr 1, 10:24 AM</td>
+                      <td className="px-5 py-4 font-bold text-slate-900">John Doe</td>
+                      <td className="px-5 py-4 font-mono text-slate-500">***-***-8492</td>
+                      <td className="px-5 py-4"><span className="text-blue-700 bg-blue-50 border border-blue-100 px-2 py-1 rounded font-semibold text-xs">Unit 402</span></td>
                     </tr>
-                    <tr className="border-b border-slate-100 bg-blue-50/30">
-                      <td className="px-4 py-3 text-slate-500">Apr 1, 10:15 AM</td>
-                      <td className="px-4 py-3 font-medium text-slate-900">Amazon Delivery</td>
-                      <td className="px-4 py-3 font-mono text-slate-500">***-***-1102</td>
-                      <td className="px-4 py-3 text-blue-700 font-medium">Leasing Office</td>
+                    <tr className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+                      <td className="px-5 py-4 text-slate-500 pl-12 sm:pl-5">Apr 1, 10:15 AM</td>
+                      <td className="px-5 py-4 font-bold text-slate-900">Amazon Delivery</td>
+                      <td className="px-5 py-4 font-mono text-slate-500">***-***-1102</td>
+                      <td className="px-5 py-4"><span className="text-blue-700 bg-blue-50 border border-blue-100 px-2 py-1 rounded font-semibold text-xs">Leasing Office</span></td>
                     </tr>
-                    <tr className="bg-white">
-                      <td className="px-4 py-3 text-slate-500">Apr 1, 09:45 AM</td>
-                      <td className="px-4 py-3 font-medium text-slate-900">Sarah Jenkins</td>
-                      <td className="px-4 py-3 font-mono text-slate-500">***-***-5531</td>
-                      <td className="px-4 py-3 text-red-600 font-medium">No Answer - Denied</td>
+                    <tr className="hover:bg-slate-50 transition-colors">
+                      <td className="px-5 py-4 text-slate-500 pl-12 sm:pl-5">Apr 1, 09:45 AM</td>
+                      <td className="px-5 py-4 font-bold text-slate-900">Sarah Jenkins</td>
+                      <td className="px-5 py-4 font-mono text-slate-500">***-***-5531</td>
+                      <td className="px-5 py-4"><span className="text-red-700 bg-red-50 border border-red-100 px-2 py-1 rounded font-semibold text-xs">Denied - No Answer</span></td>
                     </tr>
                   </tbody>
                 </table>
               </div>
             </div>
+
+            {/* Mock Physical Sign - Strict 4x5 Aspect Ratio & Fortune 500 Feel (Foreground Layer) */}
+            <div className="absolute left-0 lg:left-8 top-0 w-72 h-[360px] bg-gradient-to-br from-white to-slate-200 rounded-xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] border-[12px] border-[#1e293b] flex flex-col items-center text-center transform -rotate-3 hover:-rotate-1 transition-transform duration-500 z-20 overflow-hidden ring-1 ring-white/50 inset-0">
+              
+              {/* Fake light reflection for physical hardware feel */}
+              <div className="absolute top-0 left-0 w-full h-[40%] bg-gradient-to-b from-white/70 to-transparent pointer-events-none"></div>
+
+              <div className="p-6 flex flex-col h-full w-full justify-between items-center relative z-10">
+                
+                {/* Embedded Logo targeting the file you upload */}
+                <div className="h-16 mb-2 w-full flex items-center justify-center">
+                  <img src="/columbia-logo.png" alt="Columbia Residential" className="max-h-full max-w-full object-contain drop-shadow-sm" />
+                </div>
+                
+                <div className="space-y-1 w-full">
+                  <h3 className="text-[17px] font-extrabold text-slate-900 leading-tight tracking-tight uppercase">Welcome to <br/>Mechanicsville Crossing</h3>
+                  <p className="text-slate-600 text-[9px] font-bold uppercase tracking-widest border-b border-slate-300 pb-3 mx-4 mt-2">Visitors scan code for access</p>
+                </div>
+                
+                <div className="bg-white p-2.5 rounded-lg shadow-md border border-slate-200 my-2">
+                  <svg className="w-20 h-20 text-slate-900" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M3 3h8v8H3V3zm2 2v4h4V5H5zm8-2h8v8h-8V3zm2 2v4h4V5h-4zM3 13h8v8H3v-8zm2 2v4h4v-4H5zm13-2h-3v2h3v-2zm-3 4h3v2h-3v-2zm-2-2h-2v2h2v-2zm-2 4h-2v2h2v-2zm4 0h2v2h-2v-2zm2-6h2v2h-2v-2zm-4 4h2v2h-2v-2z" />
+                  </svg>
+                </div>
+                
+                <div className="w-full">
+                  <p className="text-slate-500 text-[10px] font-bold uppercase tracking-wider mb-0.5">Or Call Office</p>
+                  <p className="text-[#0f172a] font-black text-xl tracking-wide">(404) 221-0506</p>
+                </div>
+              </div>
+            </div>
             
             {/* Background flair */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-blue-200 rounded-full blur-3xl -z-10 opacity-50 pointer-events-none"></div>
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-blue-300 rounded-full blur-[100px] -z-10 opacity-30 pointer-events-none"></div>
           </div>
           
         </div>
@@ -371,7 +379,7 @@ export default function ColumbiaResPresentation() {
            </p>
            
            <Link 
-             href="https://www.gateguard.co/pricing/ColumbiaRes" 
+             href="https://gateguard.co/pricing/columbiares" 
              target="_blank" 
              className="inline-block bg-blue-600 text-white font-bold py-5 px-12 rounded-xl hover:bg-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-1 text-lg tracking-wide relative z-10"
            >

@@ -258,7 +258,7 @@ export default function ColumbiaResPresentation() {
         </div>
       </section>
 
-      {/* NEW SECTION: VISITOR WORKFLOW VISUALIZATION (UI Built, No Image Needed) */}
+      {/* VISITOR WORKFLOW VISUALIZATION (UI Built, No Image Needed) */}
       <section className="py-24 px-6 max-w-7xl mx-auto border-t border-slate-200 overflow-hidden">
         <div className="grid lg:grid-cols-[1.2fr,1fr] gap-16 items-center">
           
@@ -280,22 +280,33 @@ export default function ColumbiaResPresentation() {
             </a>
           </div>
 
-          {/* CSS-Built UI Mockup (Replaces Static Image) */}
+          {/* CSS-Built UI Mockups */}
           <div className="relative">
-            {/* Mock Sign */}
-            <div className="bg-white rounded-xl shadow-xl border border-slate-200 p-8 flex flex-col items-center text-center transform rotate-2 hover:rotate-0 transition-transform z-20 relative w-4/5 mx-auto -mb-16">
-              <div className="text-blue-900 font-black tracking-widest uppercase text-xs mb-3 bg-blue-50 px-3 py-1 rounded-full">Columbia Residential</div>
-              <h3 className="text-2xl font-bold text-slate-900 mb-2 leading-tight">Welcome to Mechanicsville Crossing</h3>
-              <p className="text-slate-500 text-sm mb-6">Visitors scan code below for access</p>
+            
+            {/* Mock Sign - Strict 4x5 Aspect Ratio */}
+            <div className="bg-white rounded-lg shadow-xl border border-slate-300 p-6 flex flex-col items-center justify-between text-center transform rotate-2 hover:rotate-0 transition-transform z-20 relative w-64 h-80 mx-auto -mb-16">
               
-              <div className="bg-white p-3 rounded-xl shadow-sm border border-slate-200 mb-6">
-                <svg className="w-28 h-28 text-slate-900" viewBox="0 0 24 24" fill="currentColor">
+              {/* Custom Columbia Residential Logo Mockup */}
+              <div className="flex flex-col items-center mb-2">
+                <svg className="w-8 h-8 text-blue-800 mb-1" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2L2 12h3v8h14v-8h3L12 2z" />
+                </svg>
+                <span className="text-blue-900 font-serif font-bold text-sm leading-none uppercase tracking-wide">Columbia</span>
+                <span className="text-blue-700 font-sans text-[10px] uppercase tracking-widest mt-0.5">Residential</span>
+              </div>
+              
+              <h3 className="text-lg font-extrabold text-slate-900 mb-1 leading-tight tracking-tight">Welcome to <br/>Mechanicsville Crossing</h3>
+              <p className="text-slate-600 text-[11px] mb-3 font-medium uppercase tracking-wide">Visitors scan code below for access</p>
+              
+              <div className="bg-white p-2 rounded shadow-sm border border-slate-200 mb-3">
+                <svg className="w-20 h-20 text-slate-900" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M3 3h8v8H3V3zm2 2v4h4V5H5zm8-2h8v8h-8V3zm2 2v4h4V5h-4zM3 13h8v8H3v-8zm2 2v4h4v-4H5zm13-2h-3v2h3v-2zm-3 4h3v2h-3v-2zm-2-2h-2v2h2v-2zm-2 4h-2v2h2v-2zm4 0h2v2h-2v-2zm2-6h2v2h-2v-2zm-4 4h2v2h-2v-2z" />
                 </svg>
               </div>
               
-              <div className="w-full h-px bg-slate-100 mb-4"></div>
-              <p className="text-slate-500 text-sm font-semibold">Or Call Office: <br/><span className="text-blue-600 text-lg block mt-1">(404) 221-0506</span></p>
+              <div className="w-full h-px bg-slate-200 mb-2"></div>
+              <p className="text-slate-500 text-[10px] font-bold uppercase tracking-wider">Or Call Office</p>
+              <p className="text-blue-600 font-black text-sm tracking-wide mt-0.5">(404) 221-0506</p>
             </div>
 
             {/* Mock Google Sheet */}
@@ -314,29 +325,29 @@ export default function ColumbiaResPresentation() {
                   <thead className="bg-white border-b border-slate-200 text-slate-500">
                     <tr>
                       <th className="px-4 py-3 font-semibold">Timestamp</th>
-                      <th className="px-4 py-3 font-semibold">Visitor Phone</th>
+                      <th className="px-4 py-3 font-semibold">Visitor Name</th>
+                      <th className="px-4 py-3 font-semibold">Visitor Number</th>
                       <th className="px-4 py-3 font-semibold">Granted By</th>
-                      <th className="px-4 py-3 font-semibold">Status</th>
                     </tr>
                   </thead>
                   <tbody className="text-slate-700">
                     <tr className="border-b border-slate-100 bg-white">
                       <td className="px-4 py-3 text-slate-500">Apr 1, 10:24 AM</td>
-                      <td className="px-4 py-3 font-mono font-medium text-slate-900">***-***-8492</td>
-                      <td className="px-4 py-3">Unit 402</td>
-                      <td className="px-4 py-3"><span className="text-green-700 bg-green-100 px-2 py-1 rounded font-medium text-xs">Access Granted</span></td>
+                      <td className="px-4 py-3 font-medium text-slate-900">John Doe</td>
+                      <td className="px-4 py-3 font-mono text-slate-500">***-***-8492</td>
+                      <td className="px-4 py-3 text-blue-700 font-medium">Unit 402</td>
                     </tr>
                     <tr className="border-b border-slate-100 bg-blue-50/30">
                       <td className="px-4 py-3 text-slate-500">Apr 1, 10:15 AM</td>
-                      <td className="px-4 py-3 font-mono font-medium text-slate-900">***-***-1102</td>
-                      <td className="px-4 py-3">Leasing Office</td>
-                      <td className="px-4 py-3"><span className="text-green-700 bg-green-100 px-2 py-1 rounded font-medium text-xs">Access Granted</span></td>
+                      <td className="px-4 py-3 font-medium text-slate-900">Amazon Delivery</td>
+                      <td className="px-4 py-3 font-mono text-slate-500">***-***-1102</td>
+                      <td className="px-4 py-3 text-blue-700 font-medium">Leasing Office</td>
                     </tr>
                     <tr className="bg-white">
                       <td className="px-4 py-3 text-slate-500">Apr 1, 09:45 AM</td>
-                      <td className="px-4 py-3 font-mono font-medium text-slate-900">***-***-5531</td>
-                      <td className="px-4 py-3 text-slate-500">No Answer</td>
-                      <td className="px-4 py-3"><span className="text-slate-600 bg-slate-200 px-2 py-1 rounded font-medium text-xs">Denied</span></td>
+                      <td className="px-4 py-3 font-medium text-slate-900">Sarah Jenkins</td>
+                      <td className="px-4 py-3 font-mono text-slate-500">***-***-5531</td>
+                      <td className="px-4 py-3 text-red-600 font-medium">No Answer - Denied</td>
                     </tr>
                   </tbody>
                 </table>

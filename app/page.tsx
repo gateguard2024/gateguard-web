@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import DealerLocator from './components/DealerLocator';
 
 export default function Home() {
   // ROI Calculator State
@@ -75,16 +76,16 @@ export default function Home() {
             <a href="#services" className="hover:text-cyan-400 transition-colors">Services</a>
             <a href="#roi" className="hover:text-cyan-400 transition-colors">Compare</a>
             
-            {/* NEW SCHEDULE LINK */}
-            <Link href="/schedule" className="hover:text-cyan-400 transition-colors">Schedule</Link>
+            {/* SCHEDULE → portal scheduler (booking app now lives in the portal) */}
+            <a href="https://portal.gateguard.co/schedule" className="hover:text-cyan-400 transition-colors">Schedule</a>
             
-            {/* UPDATED LOGIN LINK */}
-            <Link 
-              href="/login"
+            {/* LOGIN → portal sign-in (one Clerk login lives in the portal) */}
+            <a
+              href="https://portal.gateguard.co"
               className="px-8 py-3 bg-transparent border border-white/20 hover:border-cyan-400 text-white rounded-full transition-all flex items-center justify-center"
             >
               Login
-            </Link>
+            </a>
             
             <button 
               onClick={() => setIsModalOpen(true)}
@@ -549,6 +550,16 @@ export default function Home() {
                 CALL AN EXPERT
               </a>
             </div>
+
+            {/* Find a dealer (pulls live from the Nexus dealer network) */}
+            <DealerLocator />
+
+            {/* Corporate contact */}
+            <div className="mt-10 pt-8 border-t border-white/10 text-zinc-400 text-sm flex flex-wrap items-center justify-center gap-x-8 gap-y-2">
+              <span>Gate Guard HQ · Atlanta, GA</span>
+              <a href="tel:+14048425072" className="hover:text-cyan-400">(404) 842-5072</a>
+              <a href="mailto:support@gateguard.pro" className="hover:text-cyan-400">support@gateguard.pro</a>
+            </div>
           </div>
         </div>
       </section>
@@ -571,7 +582,7 @@ export default function Home() {
                <ul className="space-y-4 text-sm text-zinc-500">
                   <li><a href="#services" className="hover:text-cyan-400 transition-colors">Core Services</a></li>
                   <li><a href="#pricing" className="hover:text-cyan-400 transition-colors">ROI Comparison</a></li>
-                  <li><Link href="/schedule" className="hover:text-cyan-400 transition-colors">Schedule Consultation</Link></li>
+                  <li><a href="https://portal.gateguard.co/schedule" className="hover:text-cyan-400 transition-colors">Schedule Consultation</a></li>
                   <li><a href="#" className="hover:text-cyan-400 transition-colors">Brivo Integration</a></li>
                   
                   {/* ✨ NEW EXPLICIT INVESTOR LINK ✨ */}

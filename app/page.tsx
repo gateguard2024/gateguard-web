@@ -1,47 +1,61 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import DealerLocator from './components/DealerLocator';
 
 export default function Home() {
-  // ROI Calculator State
-  const [units, setUnits] = useState(250);
-  const [vehicleGates, setVehicleGates] = useState(2);
-  const [pedGates, setPedGates] = useState(2);
-  const [cameras, setCameras] = useState(4);
-  const [conciergeShifts, setConciergeShifts] = useState(0);
+  // Calculator inputs. The MATH is server-side in lib/pricing-public.ts and is
+  // reached through /api/pricing/estimate, which returns only customerMonthly
+  // and perUnit. No rate or constant appears in this file on purpose: the cost
+  // sheet and the dealer/sales/distributor splits must never ship to a browser.
+  const [units, setUnits] = useState(300);
+  const [entryPoints, setEntryPoints] = useState(4);
+  const [camerasMonitored, setCamerasMonitored] = useState(4);
+  const [camerasNonMonitored, setCamerasNonMonitored] = useState(6);
+  const [smartPackage, setSmartPackage] = useState<'none' | 'lock' | 'full'>('none');
+  const [cellular, setCellular] = useState<'none' | 'relay' | 'full'>('none');
+  const [dealerMaintainsEntry, setDealerMaintainsEntry] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Math Logic (With Floor Pricing)
-  const MINIMUM_PRICE_PER_SHIFT = 1000;
-  const FIRST_SHIFT_PER_UNIT = 3;
-  const ADDITIONAL_SHIFT_PER_UNIT = 1; 
+  // Live quote from the portal.
+  const [quote, setQuote] = useState<{ customerMonthly: number; perUnit: number } | null>(null);
+  const [quoteState, setQuoteState] = useState<'idle' | 'loading' | 'error'>('idle');
 
-  // 1. Calculate Gate Guard Costs
-  let conciergeMonthly = 0;
-  if (conciergeShifts > 0) {
-    const floorPrice = MINIMUM_PRICE_PER_SHIFT * conciergeShifts;
-    const scalablePrice = (units * FIRST_SHIFT_PER_UNIT) + 
-                          (units * ADDITIONAL_SHIFT_PER_UNIT * (conciergeShifts - 1));
-    conciergeMonthly = Math.max(floorPrice, scalablePrice);
-  }
+  useEffect(() => {
+    const controller = new AbortController();
+    // Debounced so dragging the units slider doesn't fire a request per pixel.
+    const t = setTimeout(async () => {
+      setQuoteState('loading');
+      try {
+        const res = await fetch('/api/pricing/estimate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            livingUnits: units,
+            entryPoints,
+            camerasMonitored,
+            camerasNonMonitored,
+            smartPackage,
+            cellular,
+            dealerMaintainsEntry,
+          }),
+          signal: controller.signal,
+        });
+        if (!res.ok) throw new Error('quote failed');
+        const data = await res.json();
+        setQuote({ customerMonthly: data.customerMonthly, perUnit: data.perUnit });
+        setQuoteState('idle');
+      } catch (err) {
+        if ((err as Error).name === 'AbortError') return;
+        setQuoteState('error');
+      }
+    }, 350);
+    return () => { clearTimeout(t); controller.abort(); };
+  }, [units, entryPoints, camerasMonitored, camerasNonMonitored, smartPackage, cellular, dealerMaintainsEntry]);
 
-  const gatesCost = vehicleGates * 150;
-  const pedCost = pedGates * 125;
-  const cameraCost = cameras * 85;
-  const totalMonthly = gatesCost + pedCost + cameraCost + conciergeMonthly;
-  const perUnitMonthly = (totalMonthly / units).toFixed(2);
-
-  // 2. Calculate "The Old Way" Reactive Costs
-  const GUARD_MONTHLY_PER_SHIFT = 7200; 
-  const oldGuardCost = conciergeShifts > 0 ? (GUARD_MONTHLY_PER_SHIFT * conciergeShifts) : 0;
-  const oldRepairCost = (vehicleGates * 400) + (pedGates * 150); 
-  const oldFobCost = units * 2; 
-  const oldCameraCost = cameras * 150; 
-  
-  const oldTotalMonthly = oldGuardCost + oldRepairCost + oldFobCost + oldCameraCost;
-  const monthlySavings = oldTotalMonthly > totalMonthly ? (oldTotalMonthly - totalMonthly) : 0;
+  const perUnitMonthly = quote ? quote.perUnit.toFixed(2) : '—';
+  const totalMonthly = quote ? quote.customerMonthly : 0;
 
   return (
     <main className="bg-[#050505] text-white min-h-screen selection:bg-cyan-500/30 font-sans overflow-x-hidden">
@@ -416,46 +430,70 @@ export default function Home() {
 
               <div className="grid grid-cols-2 gap-6">
                 <div>
-                  <label className="text-zinc-400 font-bold text-xs tracking-widest uppercase block mb-2">Vehicle Gates</label>
-                  <p className="text-[10px] text-zinc-500 mb-2 leading-tight">Includes cameras & maintenance ($150/ea)</p>
-                  <input 
-                    type="number" min="0" value={vehicleGates} onChange={(e) => setVehicleGates(Number(e.target.value))}
+                  <label className="text-zinc-400 font-bold text-xs tracking-widest uppercase block mb-2">Entry Points</label>
+                  <p className="text-[10px] text-zinc-500 mb-2 leading-tight">Vehicle gates + pedestrian doors on access control</p>
+                  <input
+                    type="number" min="0" value={entryPoints} onChange={(e) => setEntryPoints(Number(e.target.value))}
                     className="w-full bg-black border border-white/10 rounded-lg p-3 text-white font-bold focus:border-cyan-500 outline-none transition-colors"
                   />
                 </div>
                 <div>
-                  <label className="text-zinc-400 font-bold text-xs tracking-widest uppercase block mb-2">Pedestrian Doors</label>
-                  <p className="text-[10px] text-zinc-500 mb-2 leading-tight">Amenities & walk-ins ($125/ea)</p>
-                  <input 
-                    type="number" min="0" value={pedGates} onChange={(e) => setPedGates(Number(e.target.value))}
+                  <label className="text-zinc-400 font-bold text-xs tracking-widest uppercase block mb-2">Connectivity</label>
+                  <p className="text-[10px] text-zinc-500 mb-2 leading-tight">How the site gets online</p>
+                  <select
+                    value={cellular} onChange={(e) => setCellular(e.target.value as 'none' | 'relay' | 'full')}
+                    className="w-full bg-black border border-white/10 rounded-lg p-3 text-white font-bold focus:border-cyan-500 outline-none transition-colors appearance-none"
+                  >
+                    <option value="none">Existing property network</option>
+                    <option value="relay">Cellular relay</option>
+                    <option value="full">Full managed network</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-6">
+                <div>
+                  <label className="text-zinc-400 font-bold text-xs tracking-widest uppercase block mb-2">Monitored Cameras</label>
+                  <p className="text-[10px] text-zinc-500 mb-2 leading-tight">Watched by our call center</p>
+                  <input
+                    type="number" min="0" value={camerasMonitored} onChange={(e) => setCamerasMonitored(Number(e.target.value))}
+                    className="w-full bg-black border border-white/10 rounded-lg p-3 text-white font-bold focus:border-cyan-500 outline-none transition-colors"
+                  />
+                </div>
+                <div>
+                  <label className="text-zinc-400 font-bold text-xs tracking-widest uppercase block mb-2">Recorded Cameras</label>
+                  <p className="text-[10px] text-zinc-500 mb-2 leading-tight">Eagle Eye cloud video, reviewed on demand</p>
+                  <input
+                    type="number" min="0" value={camerasNonMonitored} onChange={(e) => setCamerasNonMonitored(Number(e.target.value))}
                     className="w-full bg-black border border-white/10 rounded-lg p-3 text-white font-bold focus:border-cyan-500 outline-none transition-colors"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="text-zinc-400 font-bold text-xs tracking-widest uppercase block mb-2">Additional Video Monitoring</label>
-                <p className="text-[10px] text-zinc-500 mb-2 leading-tight">Property-wide Eagle Eye cameras ($85/ea)</p>
-                <input 
-                  type="number" min="0" value={cameras} onChange={(e) => setCameras(Number(e.target.value))}
-                  className="w-full bg-black border border-white/10 rounded-lg p-3 text-white font-bold focus:border-cyan-500 outline-none transition-colors"
-                />
-              </div>
-
-              <div>
-                <label className="text-zinc-400 font-bold text-xs tracking-widest uppercase block mb-2">2-Way Video Concierge</label>
-                <p className="text-[10px] text-zinc-500 mb-2 leading-tight">Live operators checking IDs and logging plates</p>
-                <select 
-                  value={conciergeShifts} 
-                  onChange={(e) => setConciergeShifts(Number(e.target.value))}
+                <label className="text-zinc-400 font-bold text-xs tracking-widest uppercase block mb-2">Smart Unit Package</label>
+                <p className="text-[10px] text-zinc-500 mb-2 leading-tight">In-unit access — optional, priced per unit</p>
+                <select
+                  value={smartPackage}
+                  onChange={(e) => setSmartPackage(e.target.value as 'none' | 'lock' | 'full')}
                   className="w-full bg-black border border-white/10 rounded-lg p-3 text-white font-bold focus:border-cyan-500 outline-none transition-colors appearance-none"
                 >
-                  <option value="0">None (Self-Managed via App)</option>
-                  <option value="1">Night Shift Only (11pm - 7am)</option>
-                  <option value="2">2 Shifts (Night plus 1)</option>
-                  <option value="3">24/7 Full Coverage</option>
+                  <option value="none">None — gates, doors & cameras only</option>
+                  <option value="lock">Smart lock on each unit</option>
+                  <option value="full">Full smart home package</option>
                 </select>
               </div>
+
+              <label className="flex items-center gap-3 cursor-pointer group">
+                <input
+                  type="checkbox" checked={dealerMaintainsEntry}
+                  onChange={(e) => setDealerMaintainsEntry(e.target.checked)}
+                  className="w-5 h-5 rounded bg-black border border-white/10 accent-cyan-500 cursor-pointer"
+                />
+                <span className="text-zinc-400 font-bold text-xs tracking-widest uppercase group-hover:text-white transition-colors">
+                  Local dealer maintains the gates
+                </span>
+              </label>
             </div>
 
             {/* Right: The Live Results */}
@@ -463,62 +501,54 @@ export default function Home() {
               <div className="absolute top-0 left-0 w-full h-1 bg-cyan-400 shadow-[0_0_15px_#22d3ee]"></div>
               
               <h3 className="text-center text-zinc-400 text-sm font-bold uppercase tracking-widest mb-2">Estimated Predictable OpEx</h3>
-              
+
               <div className="text-center mb-8">
-                <span className="text-6xl font-black text-white">${perUnitMonthly}</span>
+                <span className={`text-6xl font-black text-white transition-opacity ${quoteState === 'loading' ? 'opacity-40' : 'opacity-100'}`}>
+                  ${perUnitMonthly}
+                </span>
                 <span className="text-zinc-500 font-bold"> / unit / mo</span>
               </div>
 
               <div className="space-y-4 border-t border-white/10 pt-6">
                 <div className="flex justify-between text-sm">
-                  <span className="text-zinc-400">Gate Guard Monthly</span>
-                  <span className="text-white font-bold">${totalMonthly.toLocaleString()}</span>
+                  <span className="text-zinc-400">All-In Site Monthly</span>
+                  <span className="text-white font-bold">
+                    {quote ? `$${totalMonthly.toLocaleString()}` : '—'}
+                  </span>
                 </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-zinc-400">One-Time Setup Fee (Avg)</span>
-                  <span className="text-white font-bold">${((vehicleGates + pedGates) * 500).toLocaleString()}</span>
-                </div>
-                
-                {oldTotalMonthly > 0 && (
-                  <div className="mt-6 p-4 bg-red-500/5 border border-red-500/20 rounded-xl space-y-3">
-                    <p className="text-[10px] font-bold text-red-400 uppercase tracking-widest border-b border-red-500/20 pb-2">Estimated Cost of the "Old Way"</p>
-                    {oldGuardCost > 0 && (
-                      <div className="flex justify-between text-xs">
-                        <span className="text-zinc-500">Physical Guard Contracts</span>
-                        <span className="text-zinc-400 line-through">${oldGuardCost.toLocaleString()}</span>
-                      </div>
-                    )}
-                    {oldCameraCost > 0 && (
-                      <div className="flex justify-between text-xs">
-                        <span className="text-zinc-500">3rd-Party Video Monitoring</span>
-                        <span className="text-zinc-400 line-through">${oldCameraCost.toLocaleString()}</span>
-                      </div>
-                    )}
-                    {(vehicleGates > 0 || pedGates > 0) && (
-                      <div className="flex justify-between text-xs">
-                        <span className="text-zinc-500">Reactive Repairs & Fobs</span>
-                        <span className="text-zinc-400 line-through">${(oldRepairCost + oldFobCost).toLocaleString()}</span>
-                      </div>
-                    )}
-                    <div className="flex justify-between text-sm font-bold pt-2 border-t border-red-500/10">
-                      <span className="text-red-400">Old Way Total</span>
-                      <span className="text-red-400 line-through">${oldTotalMonthly.toLocaleString()} / mo</span>
+
+                <div className="mt-6 p-4 bg-cyan-500/5 border border-cyan-500/20 rounded-xl space-y-3">
+                  <p className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest border-b border-cyan-500/20 pb-2">What This Covers</p>
+                  {[
+                    'Brivo access control & PMS sync',
+                    'Gate operators — parts & labor',
+                    'Eagle Eye video & proactive monitoring',
+                    'Digital call box for every resident',
+                  ].map((line) => (
+                    <div key={line} className="flex items-start gap-2 text-xs">
+                      <span className="text-cyan-400 mt-0.5">✓</span>
+                      <span className="text-zinc-400">{line}</span>
                     </div>
-                    {monthlySavings > 0 && (
-                      <div className="mt-4 p-3 bg-cyan-500/10 border border-cyan-500/30 rounded-lg flex justify-between items-center transform transition-all hover:scale-105 shadow-[0_0_15px_rgba(6,182,212,0.3)]">
-                        <span className="text-cyan-400 font-bold text-xs uppercase tracking-wider">Your Monthly Savings</span>
-                        <span className="text-cyan-300 font-black text-lg">${monthlySavings.toLocaleString()}</span>
-                      </div>
-                    )}
-                  </div>
+                  ))}
+                </div>
+
+                {quoteState === 'error' && (
+                  <p className="text-xs text-zinc-500 text-center">
+                    Pricing is temporarily unavailable. Call{' '}
+                    <a href="tel:+14048425072" className="text-cyan-400">(404) 842-5072</a> for a quote.
+                  </p>
                 )}
+
+                <p className="text-[10px] text-zinc-600 leading-relaxed text-center pt-2">
+                  Estimate only. Your local dealer confirms final pricing after a site survey.
+                </p>
               </div>
 
-               <button 
+               <button
                 onClick={() => setIsModalOpen(true)}
                 className="w-full mt-8 px-8 py-4 bg-cyan-500 text-black font-black rounded-full hover:shadow-[0_0_30px_-5px_rgba(6,182,212,0.5)] transition-all transform hover:-translate-y-1"
               >
-                LOCK IN THIS RATE
+                GET THIS QUOTE
               </button>
             </div>
           </div>
@@ -623,9 +653,9 @@ export default function Home() {
               ✕
             </button>
             
-            <h3 className="text-3xl font-bold mb-2 text-white tracking-tight">Lock In Your Rate.</h3>
+            <h3 className="text-3xl font-bold mb-2 text-white tracking-tight">Get Your Quote.</h3>
             <p className="text-zinc-400 text-sm mb-8 leading-relaxed">
-              Your estimate is <strong className="text-cyan-400">${perUnitMonthly} / unit</strong>. Enter your details and our team will securely log this build in our system.
+              Your estimate is <strong className="text-cyan-400">${perUnitMonthly} / unit</strong>. Enter your details and we'll connect you with your local dealer to confirm it.
             </p>
 
             <form action="https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8" method="POST" className="space-y-5">
@@ -633,7 +663,7 @@ export default function Home() {
               <input type="hidden" name="oid" value="00Dam00001a4k0S" />
               <input type="hidden" name="retURL" value="https://gateguard.co" />
               <input type="hidden" name="lead_source" value="ROI Calculator" />
-              <input type="hidden" name="description" value={`Calculated Quote: ${units} Units | ${vehicleGates} Vehicle Gates | ${pedGates} Ped Gates | ${cameras} Cameras | Concierge Shifts: ${conciergeShifts} ($${conciergeMonthly}/mo) | Estimated Total: $${totalMonthly.toLocaleString()}/mo ($${perUnitMonthly}/unit)`} />
+              <input type="hidden" name="description" value={`Calculated Quote: ${units} Units | ${entryPoints} Entry Points | ${camerasMonitored} Monitored Cams | ${camerasNonMonitored} Recorded Cams | Smart: ${smartPackage} | Connectivity: ${cellular} | Dealer maintains: ${dealerMaintainsEntry ? 'yes' : 'no'} | Estimated Total: $${totalMonthly.toLocaleString()}/mo ($${perUnitMonthly}/unit)`} />
 
               <div className="grid grid-cols-2 gap-4">
                 <div>

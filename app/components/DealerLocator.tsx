@@ -43,7 +43,7 @@ export default function DealerLocator() {
       {dealers !== null && (
         <div className="mt-6 space-y-3">
           {dealers.length === 0 ? (
-            <p className="text-zinc-400 text-sm text-center">No dealers found{state ? ` in ${state}` : ""}. Call us and we'll connect you: <a href="tel:+14048425072" className="text-cyan-400">(404) 842-5072</a>.</p>
+            <p className="text-zinc-400 text-sm text-center">No dealers found{state ? ` in ${state}` : ""}. Call us and we'll connect you: <a href="tel:+18444694283" className="text-cyan-400">844-4MY-GATE</a>.</p>
           ) : dealers.map(d => (
             <div key={d.id} className="bg-white/5 border border-white/10 rounded-2xl px-5 py-4 flex flex-wrap items-center justify-between gap-3">
               <div>

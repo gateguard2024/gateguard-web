@@ -4,11 +4,11 @@ import './globals.css';
 
 // 1. Your SEO and Tab Title Data (Including Open Graph for Social Sharing!)
 export const metadata: Metadata = {
-  title: 'Gate Guard | Security Ecosystem',
-  description: 'Redefining multi-family access control through edge-computing, proactive monitoring, and intelligent integration.',
+  title: 'Gate Guard | Security That Pays for Itself',
+  description: 'One partner for every gate, door, camera and package room. Installed, monitored and maintained on the Nexus platform, with a self-funding program or one flat bulk rate.',
   openGraph: {
-    title: 'Gate Guard | Security Ecosystem',
-    description: 'Predictable per-unit operating expenses for complete gate management and security.',
+    title: 'Gate Guard | Security That Pays for Itself',
+    description: 'Gates, access, cameras and package rooms, installed, monitored and maintained by one partner, and funded so it pays for itself.',
     url: 'https://gateguard.co',
     siteName: 'Gate Guard',
     images: [
@@ -33,7 +33,7 @@ const jsonLd = {
   "logo": "https://gateguard.co/logo.png",
   "image": "https://gateguard.co/hero-bg.jpg",
   "description": "Proactive multi-family access control, commercial gate repair, virtual concierge, and security monitoring for apartments and HOAs.",
-  "telephone": "+1-404-842-5072",
+  "telephone": "+1-844-469-4283",
   "priceRange": "$$",
   "areaServed": [
     { "@type": "City", "name": "Atlanta" },
